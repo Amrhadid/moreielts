@@ -6,6 +6,7 @@ import { Logo } from "~/components/layout/Logo";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
 import { getSection } from "~/mock/testForm";
+import { ThemeToggle } from "~/components/ui/ThemeToggle";
 
 export const Route = createFileRoute("/test/speaking")({ component: SpeakingPlayer });
 
@@ -149,7 +150,7 @@ function SpeakingPlayer() {
       <header className="border-b border-line bg-surface">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <Logo />
-          <p className="text-sm text-muted">Speaking · 11–14 minutes</p>
+          <div className="flex items-center gap-3"><p className="text-sm text-muted">Speaking · 11–14 minutes</p><ThemeToggle compact /></div>
         </div>
       </header>
 

@@ -5,13 +5,14 @@ import { useState } from "react";
 import { mockUser } from "~/mock/user";
 import { Logo } from "./Logo";
 import { PRIMARY_NAV } from "./nav";
+import { ThemeToggle } from "../ui/ThemeToggle";
 
 export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-[90rem] items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="shrink-0">
           <Logo />
         </Link>
@@ -29,6 +30,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           <Link
             to="/admin"
             className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted hover:text-ink sm:block"

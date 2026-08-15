@@ -7,14 +7,15 @@ import { Progress } from "~/components/ui/Progress";
 import { formatBand } from "~/lib/band";
 import { cn } from "~/lib/cn";
 import { mockAttempts, mockBandTrend, mockInProgress, mockUser } from "~/mock/user";
+import { mockResult } from "~/mock/result";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
 const SECTION_LINKS = [
-  { code: "listening", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening" },
-  { code: "reading", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/test/reading" },
-  { code: "writing", label: "Writing", detail: "2 tasks · 60 min", to: "/test/writing" },
-  { code: "speaking", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking" },
+  { code: "listening", icon: "◖", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening", band: mockResult.listening.band },
+  { code: "reading", icon: "▤", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/test/reading", band: mockResult.reading.band },
+  { code: "writing", icon: "✎", label: "Writing", detail: "2 tasks · 60 min", to: "/test/writing", band: mockResult.writing.band },
+  { code: "speaking", icon: "◉", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking", band: mockResult.speaking.band },
 ] as const;
 
 function Dashboard() {
@@ -22,9 +23,10 @@ function Dashboard() {
 
   return (
     <AppShell>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Welcome back, {mockUser.name.split(" ")[0]}
+      <div className="mb-7">
+        <p className="text-sm font-medium text-muted">Your Academic preparation</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
+          Good afternoon, {mockUser.name.split(" ")[0]}
         </h1>
         <p className="mt-1.5 text-sm text-muted">
           Academic · test booked for{" "}
@@ -37,15 +39,15 @@ function Dashboard() {
       </div>
 
       {/* Band summary */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="sm:col-span-2">
-          <CardBody className="pt-5">
-            <div className="flex flex-wrap items-end gap-8">
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card className="overflow-hidden lg:col-span-2">
+          <CardBody className="pt-6 sm:px-7 sm:pb-7">
+            <div className="flex flex-wrap items-center gap-x-10 gap-y-6">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                  Estimated band
+                  Current estimate
                 </p>
-                <p className="mt-1 text-5xl font-semibold tabular-nums">
+                <p className="mt-1 text-5xl font-semibold tabular-nums text-brand-700 sm:text-6xl">
                   {formatBand(mockUser.estimatedBand)}
                 </p>
               </div>
@@ -53,7 +55,7 @@ function Dashboard() {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
                   Target band
                 </p>
-                <p className="mt-1 text-5xl font-semibold tabular-nums text-brand-600">
+                <p className="mt-1 text-5xl font-semibold tabular-nums sm:text-6xl" style={{ color: "var(--score-accent)" }}>
                   {formatBand(mockUser.targetBand)}
                 </p>
               </div>
@@ -63,7 +65,7 @@ function Dashboard() {
                     ? `${gap.toFixed(1)} bands to go`
                     : "You are at your target band"}
                 </p>
-                <Progress
+                <Progress className="h-2.5"
                   value={(mockUser.estimatedBand / mockUser.targetBand) * 100}
                 />
                 {/* Trend bars scale against the range shown, not the full 0-9
@@ -79,8 +81,8 @@ function Dashboard() {
                         className={cn(
                           "w-full rounded-sm",
                           i === mockBandTrend.length - 1
-                            ? "bg-brand-600"
-                            : "bg-brand-200",
+                            ? "bg-warn"
+                            : "bg-line-strong",
                         )}
                         style={{ height: `${Math.max(15, pct)}%` }}
                       />
@@ -90,8 +92,8 @@ function Dashboard() {
                 <p className="mt-1.5 text-xs text-muted">Last six weeks</p>
               </div>
             </div>
-            <p className="mt-5 text-xs text-muted">
-              AI estimated band — not an official IELTS result.
+            <p className="mt-5 border-t border-line pt-4 text-xs text-muted">
+              Your estimate is based on recent practice and updates as you complete work.
             </p>
           </CardBody>
         </Card>
@@ -99,8 +101,8 @@ function Dashboard() {
         {/* Continue where you left off */}
         <Card className="border-brand-200 bg-brand-50/40">
           <CardHeader>
-            <Badge tone="brand">In progress</Badge>
-            <CardTitle className="mt-2">{mockInProgress.formTitle}</CardTitle>
+            <Badge tone="brand">Continue where you left off</Badge>
+            <CardTitle className="mt-3">{mockInProgress.formTitle}</CardTitle>
           </CardHeader>
           <CardBody>
             <p className="text-sm capitalize text-ink-soft">
@@ -115,21 +117,24 @@ function Dashboard() {
       </div>
 
       {/* Quick links to each section */}
-      <h2 className="mb-3 mt-10 text-lg font-semibold tracking-tight">
-        Practise a section
+      <h2 className="mb-3 mt-9 text-lg font-semibold tracking-tight">
+        Your skills
       </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {SECTION_LINKS.map((section) => (
-          <Link key={section.code} to={section.to} className="group">
+          <Link key={section.code} to={section.to} className="group rounded-card">
             <Card className="h-full transition-colors group-hover:border-brand-200 group-hover:bg-brand-50/30">
               <CardBody className="pt-5">
-                <p className="font-medium">{section.label}</p>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-lg text-brand-700" aria-hidden>{section.icon}</div>
+                  <p className="text-3xl font-semibold tabular-nums text-brand-700">{formatBand(section.band)}</p>
+                </div>
+                <p className="mt-4 font-semibold">{section.label}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted">
                   {section.detail}
                 </p>
-                <span className="mt-4 inline-block text-sm font-medium text-brand-600">
-                  Start →
-                </span>
+                <Progress className="mt-4 h-1.5" value={(section.band / 9) * 100} tone={section.band >= 7 ? "good" : "brand"} />
+                <span className="mt-3 inline-block text-sm font-medium text-brand-700">Practise →</span>
               </CardBody>
             </Card>
           </Link>

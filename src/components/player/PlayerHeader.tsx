@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
+import { ThemeToggle } from "~/components/ui/ThemeToggle";
 
 /** Sticky test-player header: identity on the left, clock on the right. */
 export function PlayerHeader({
@@ -30,6 +31,7 @@ export function PlayerHeader({
           <p className="truncate text-xs text-muted">{contextLabel}</p>
         </div>
         <div className="ml-auto flex items-center gap-3">
+          <ThemeToggle compact />
           {right}
           <div
             aria-live="polite"
