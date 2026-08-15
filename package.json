@@ -12,7 +12,8 @@
     "test:db": "bash scripts/test-db.sh",
     "seed:generate": "esbuild scripts/generate-seed.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/seed.mjs --log-level=error && node node_modules/.cache/seed.mjs",
     "db:push": "supabase db push",
-    "functions:deploy": "supabase functions deploy submit-attempt grade-writing grade-speaking upload-url"
+    "functions:deploy": "supabase functions deploy submit-attempt grade-writing grade-speaking upload-url",
+    "sql:bundle": "bash scripts/bundle-sql.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

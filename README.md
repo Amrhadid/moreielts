@@ -26,6 +26,11 @@ supabase secrets set ANTHROPIC_API_KEY=... R2_ACCOUNT_ID=...   # see the table b
 npm run functions:deploy
 ```
 
+Prefer the dashboard? `npm run sql:bundle` concatenates the migrations and the
+seed into a single `moreielts-setup.sql` you can paste into the Supabase SQL
+editor in one go. It is a generated artifact and is gitignored —
+`supabase/migrations` remains the single source of truth.
+
 Promote your first admin from the SQL editor — the profile trigger creates
 every user as `role = 'user'`:
 
@@ -98,6 +103,7 @@ scripts/
   generate-seed.ts         Emits supabase/seed.sql from seed-content/
   seed-content/            The authored test content (3 passages, 4 parts, …)
   test-db.sh               Scratch DB -> migrations -> seed -> RLS suite
+  bundle-sql.sh            Concatenates migrations + seed for the SQL editor
   supabase-stubs.sql       Local stand-ins for auth schema/roles. Never applied
                            to a real project
 
