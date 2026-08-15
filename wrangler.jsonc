@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers deployment target.
+  // `npm run build` emits the SSR bundle to dist/server and static assets to
+  // dist/client.
+  "name": "moreielts",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "dist/server/server.js",
+  "assets": { "directory": "dist/client" }
+}
