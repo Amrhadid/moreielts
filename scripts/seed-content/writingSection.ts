@@ -1,4 +1,4 @@
-import type { Section } from "~/types/content";
+import type { Section } from "../../src/types/content";
 
 /**
  * Academic Writing: Task 1 (150 words) + Task 2 (250 words), 60 minutes total

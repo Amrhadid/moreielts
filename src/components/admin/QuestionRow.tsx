@@ -3,36 +3,36 @@ import { Input, Label, Textarea } from "~/components/ui/Field";
 import { Select } from "~/components/ui/Select";
 import { Switch } from "~/components/ui/Switch";
 import { cn } from "~/lib/cn";
-import { getQuestionType, questionTypesForSection } from "~/registry/questionTypes";
-import type { Question, QuestionTypeCode, SectionCode } from "~/types/content";
+import { useQuestionTypes } from "~/lib/queries";
+import type { AdminQuestion } from "~/lib/queries";
 
 /**
- * One editable question. The type dropdown is populated from the registry, and
- * the options builder appears only for renderers that consume options.
+ * One editable question row, backed by the questions table.
+ *
+ * The type dropdown is populated from question_types, so adding an IELTS
+ * question type is an INSERT into that table and needs no code change here.
+ * The options builder appears only for renderers that consume options.
  */
 export function QuestionRow({
   question,
-  section,
   index,
   onChange,
   onDelete,
   dragProps,
 }: {
-  question: Question;
-  section: SectionCode;
+  question: AdminQuestion;
   index: number;
-  onChange: (next: Question) => void;
+  onChange: (next: AdminQuestion) => void;
   onDelete: () => void;
   dragProps: Record<string, unknown>;
 }) {
-  const entry = getQuestionType(question.type);
-  const needsOptions = entry.renderer !== "text_input";
-  const typeOptions = questionTypesForSection(section).map((t) => ({
-    value: t.code,
-    label: t.label,
-  }));
+  const { data: types } = useQuestionTypes();
+  const entry = types?.find((t) => t.code === question.type_code);
+  const needsOptions = entry ? entry.renderer !== "text_input" : false;
 
-  function patch(partial: Partial<Question>) {
+  const typeOptions = (types ?? []).map((t) => ({ value: t.code, label: t.label }));
+
+  function patch(partial: Partial<AdminQuestion>) {
     onChange({ ...question, ...partial });
   }
 
@@ -59,15 +59,15 @@ export function QuestionRow({
         <div className="grid min-w-0 flex-1 gap-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <Label htmlFor={`${question.id}-type`}>Question type</Label>
+              <Label>Question type</Label>
               <Select
                 aria-label="Question type"
-                value={question.type}
+                value={question.type_code}
                 onValueChange={(value) => {
-                  const next = value as QuestionTypeCode;
+                  const next = types?.find((t) => t.code === value);
                   patch({
-                    type: next,
-                    wordLimit: getQuestionType(next).defaultWordLimit,
+                    type_code: value,
+                    word_limit: next?.default_word_limit ?? question.word_limit,
                   });
                 }}
                 options={typeOptions}
@@ -79,8 +79,8 @@ export function QuestionRow({
                 id={`${question.id}-limit`}
                 type="number"
                 min={0}
-                value={question.wordLimit ?? entry.defaultWordLimit}
-                onChange={(e) => patch({ wordLimit: Number(e.target.value) })}
+                value={question.word_limit}
+                onChange={(e) => patch({ word_limit: Number(e.target.value) })}
               />
             </div>
           </div>
@@ -143,9 +143,7 @@ export function QuestionRow({
                       options: [
                         ...(question.options ?? []),
                         {
-                          value: String.fromCharCode(
-                            65 + (question.options?.length ?? 0),
-                          ),
+                          value: String.fromCharCode(65 + (question.options?.length ?? 0)),
                           label: "",
                         },
                       ],
@@ -158,36 +156,60 @@ export function QuestionRow({
             </div>
           )}
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label htmlFor={`${question.id}-answers`}>
-                Accepted answers (comma separated)
-              </Label>
-              <Input
-                id={`${question.id}-answers`}
-                value={question.acceptedAnswers.join(", ")}
-                placeholder="tendon, tendons"
-                onChange={(e) =>
-                  patch({
-                    acceptedAnswers: e.target.value
-                      .split(",")
-                      .map((s) => s.trim())
-                      .filter(Boolean),
-                  })
-                }
-              />
-            </div>
-            <div className="flex items-end gap-3 pb-1">
+          <div>
+            <Label htmlFor={`${question.id}-answers`}>
+              Accepted answers (comma separated)
+            </Label>
+            <Input
+              id={`${question.id}-answers`}
+              value={(question.accepted_answers ?? []).join(", ")}
+              placeholder="tendon, tendons"
+              onChange={(e) =>
+                patch({
+                  accepted_answers: e.target.value
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean),
+                })
+              }
+            />
+            <p className="mt-1 text-xs text-muted">
+              Marking also accepts case, article, plural, number-word and UK/US
+              spelling variants automatically.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2.5">
               <Switch
                 id={`${question.id}-spelling`}
-                checked={question.spellingStrict !== false}
-                onCheckedChange={(checked) => patch({ spellingStrict: checked })}
+                checked={question.spelling_policy === "strict"}
+                onCheckedChange={(checked) =>
+                  patch({ spelling_policy: checked ? "strict" : "lenient" })
+                }
               />
-              <label
-                htmlFor={`${question.id}-spelling`}
-                className="text-sm text-ink-soft"
-              >
-                Penalise spelling errors
+              <label htmlFor={`${question.id}-spelling`} className="text-sm text-ink-soft">
+                Strict spelling
+              </label>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Switch
+                id={`${question.id}-plural`}
+                checked={question.accepts_plural}
+                onCheckedChange={(checked) => patch({ accepts_plural: checked })}
+              />
+              <label htmlFor={`${question.id}-plural`} className="text-sm text-ink-soft">
+                Accept plurals
+              </label>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Switch
+                id={`${question.id}-case`}
+                checked={question.case_sensitive}
+                onCheckedChange={(checked) => patch({ case_sensitive: checked })}
+              />
+              <label htmlFor={`${question.id}-case`} className="text-sm text-ink-soft">
+                Case sensitive
               </label>
             </div>
           </div>

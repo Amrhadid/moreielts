@@ -1,9 +1,9 @@
-/** Word count used by the writing player's live counter. */
-export function countWords(text: string): number {
-  const trimmed = text.trim();
-  if (!trimmed) return 0;
-  return trimmed.split(/\s+/).length;
-}
+/*
+ * Word counting lives in answer-check, where it is unit tested against the
+ * IELTS rules (a hyphenated word is one word, a number is one word). Re-exported
+ * here so callers have one obvious import.
+ */
+export { countWords } from "./answer-check";
 
 /** mm:ss for the countdown clocks. */
 export function formatClock(totalSeconds: number): string {

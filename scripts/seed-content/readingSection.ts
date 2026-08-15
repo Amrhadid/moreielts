@@ -1,4 +1,4 @@
-import type { ItemGroup, Question, Section } from "~/types/content";
+import type { ItemGroup, Question, Section } from "../../src/types/content";
 
 /**
  * Academic Reading: 3 passages, 40 questions, 60 minutes.

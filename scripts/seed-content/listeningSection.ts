@@ -1,4 +1,4 @@
-import type { ItemGroup, Question, QuestionTypeCode, Section } from "~/types/content";
+import type { ItemGroup, Question, QuestionTypeCode, Section } from "../../src/types/content";
 
 /**
  * Listening: 4 parts, 40 questions, ~30 minutes. The audio for each part plays

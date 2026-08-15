@@ -6,7 +6,13 @@
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "start": "vite start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:db": "bash scripts/test-db.sh",
+    "seed:generate": "esbuild scripts/generate-seed.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/seed.mjs --log-level=error && node node_modules/.cache/seed.mjs",
+    "db:push": "supabase db push",
+    "functions:deploy": "supabase functions deploy submit-attempt grade-writing grade-speaking upload-url"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -22,6 +28,8 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/supabase-js": "^2.112.3",
+    "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-router": "^1.170.29",
     "@tanstack/react-start": "^1.168.46",
     "clsx": "^2.1.1",
@@ -40,6 +48,7 @@
     "playwright": "^1.62.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.9",
+    "vitest": "^4.1.10"
   }
 }

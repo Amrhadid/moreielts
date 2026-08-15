@@ -1,4 +1,4 @@
-import type { Section } from "~/types/content";
+import type { Section } from "../../src/types/content";
 
 /**
  * Speaking: 3 parts, 11-14 minutes in total.

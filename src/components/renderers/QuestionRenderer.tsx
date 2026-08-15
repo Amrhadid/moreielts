@@ -1,4 +1,3 @@
-import { getQuestionType } from "~/registry/questionTypes";
 import type { RendererKey } from "~/types/content";
 import { CheckboxRenderer } from "./CheckboxRenderer";
 import { DropdownRenderer } from "./DropdownRenderer";
@@ -18,6 +17,9 @@ const RENDERERS: Record<RendererKey, (p: RendererProps) => React.ReactElement> =
 };
 
 export function QuestionRenderer(props: RendererProps) {
-  const Renderer = RENDERERS[getQuestionType(props.question.type).renderer];
-  return <Renderer {...props} />;
+  // question_types.renderer is the single source of truth, supplied with every
+  // row by the questions_public view. text_input is the safe fallback for a
+  // renderer this client build does not recognise yet.
+  const renderer = props.question.renderer ?? "text_input";
+  return (RENDERERS[renderer] ?? RENDERERS.text_input)(props);
 }
