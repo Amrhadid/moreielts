@@ -8,7 +8,7 @@ import { PRIMARY_NAV } from "./nav";
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const { profile, user, isAdmin } = useAuth();
+  const { profile, user, session, isAdmin } = useAuth();
 
   const email = profile?.email ?? user?.email ?? "";
   const name = profile?.full_name ?? email;
@@ -49,6 +49,16 @@ export function Header() {
             </Link>
           )}
 
+          {!session && (
+            <Link
+              to="/login"
+              className="inline-flex h-9 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              Sign in
+            </Link>
+          )}
+
+          {session && (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
               aria-label="Profile menu"
@@ -90,6 +100,7 @@ export function Header() {
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
+          )}
 
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger

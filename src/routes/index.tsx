@@ -6,10 +6,11 @@ import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Progress } from "~/components/ui/Progress";
 import { formatBand } from "~/lib/scoring";
 import { cn } from "~/lib/cn";
-import { Protected, useAuth } from "~/lib/auth";
+import { useAuth } from "~/lib/auth";
+import { Landing } from "~/components/layout/Landing";
 import { useAttempts } from "~/lib/queries";
 
-export const Route = createFileRoute("/")({ component: DashboardRoute });
+export const Route = createFileRoute("/")({ component: HomeRoute });
 
 const SECTION_LINKS = [
   { code: "listening", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening" },
@@ -18,12 +19,19 @@ const SECTION_LINKS = [
   { code: "speaking", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking" },
 ] as const;
 
-function DashboardRoute() {
-  return (
-    <Protected>
-      <Dashboard />
-    </Protected>
-  );
+/**
+ * The homepage is public: visitors without a session get the marketing landing
+ * page, signed-in users get their dashboard.
+ */
+function HomeRoute() {
+  const { session, loading } = useAuth();
+
+  // Render the landing page while the session lookup settles (and on the SSR
+  // pass, where there is never a session) so the public page is what a first
+  // visit paints.
+  if (loading || !session) return <Landing />;
+
+  return <Dashboard />;
 }
 
 function Dashboard() {
