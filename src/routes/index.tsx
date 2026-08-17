@@ -13,10 +13,10 @@ import { useAttempts } from "~/lib/queries";
 export const Route = createFileRoute("/")({ component: HomeRoute });
 
 const SECTION_LINKS = [
-  { code: "listening", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening" },
-  { code: "reading", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/test/reading" },
-  { code: "writing", label: "Writing", detail: "2 tasks · 60 min", to: "/test/writing" },
-  { code: "speaking", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking" },
+  { code: "listening", icon: "◉", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening", color: "text-[#607eea] bg-[#eef1ff]" },
+  { code: "reading", icon: "▤", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/test/reading", color: "text-[#07966f] bg-[#e8f8f2]" },
+  { code: "writing", icon: "✎", label: "Writing", detail: "2 tasks · 60 min", to: "/test/writing", color: "text-[#c47918] bg-[#fff4df]" },
+  { code: "speaking", icon: "◌", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking", color: "text-[#a055c9] bg-[#f7ecfc]" },
 ] as const;
 
 /**
@@ -59,8 +59,9 @@ function Dashboard() {
 
   return (
     <AppShell>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+      <div className="mb-8 animate-rise">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-brand-600">Your study space</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Welcome back, {firstName}
         </h1>
         <p className="mt-1.5 text-sm capitalize text-muted">
@@ -70,14 +71,15 @@ function Dashboard() {
 
       {/* Band summary */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="sm:col-span-2">
+        <Card className="relative overflow-hidden border-brand-100 sm:col-span-2">
           <CardBody className="pt-5">
+            <span className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-brand-50" aria-hidden />
             <div className="flex flex-wrap items-end gap-8">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
                   Estimated band
                 </p>
-                <p className="mt-1 text-5xl font-semibold tabular-nums">
+                <p className="mt-1 text-5xl font-extrabold tabular-nums">
                   {currentBand !== null ? formatBand(currentBand) : "—"}
                 </p>
               </div>
@@ -85,7 +87,7 @@ function Dashboard() {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
                   Target band
                 </p>
-                <p className="mt-1 text-5xl font-semibold tabular-nums text-brand-600">
+                <p className="mt-1 text-5xl font-extrabold tabular-nums text-brand-600">
                   {formatBand(targetBand)}
                 </p>
               </div>
@@ -186,9 +188,10 @@ function Dashboard() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {SECTION_LINKS.map((section) => (
           <Link key={section.code} to={section.to} className="group">
-            <Card className="h-full transition-colors group-hover:border-brand-200 group-hover:bg-brand-50/30">
+            <Card className="h-full transition-all group-hover:-translate-y-1 group-hover:border-brand-200 group-hover:bg-brand-50/30 group-hover:shadow-[0_14px_30px_rgba(20,75,120,.09)]">
               <CardBody className="pt-5">
-                <p className="font-medium">{section.label}</p>
+                <span className={`grid h-11 w-11 place-items-center rounded-xl text-lg font-bold ${section.color}`} aria-hidden>{section.icon}</span>
+                <p className="mt-4 font-semibold">{section.label}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted">{section.detail}</p>
                 <span className="mt-4 inline-block text-sm font-medium text-brand-600">
                   Start →

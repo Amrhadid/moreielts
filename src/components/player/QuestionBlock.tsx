@@ -31,7 +31,7 @@ export function QuestionBlock({
             key={q.id}
             ref={(el) => registerRef(q.number, el)}
             className={cn(
-              "scroll-mt-24 rounded-card border p-4 transition-colors",
+              "scroll-mt-24 rounded-card border p-4 shadow-[0_3px_12px_rgba(20,49,78,.035)] transition-all",
               q.number === current
                 ? "border-brand-200 bg-brand-50/40"
                 : "border-line bg-surface",
