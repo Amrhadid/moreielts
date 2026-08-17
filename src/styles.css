@@ -1,27 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  /* Calm, exam-appropriate palette. High contrast, low chroma. */
-  --color-paper: #f6f8fb;
+  /* MoreIELTS exam palette: warm paper, ink blue and restrained brass. */
+  --color-paper: #f8f6f1;
   --color-surface: #ffffff;
-  --color-ink: #14181f;
-  --color-ink-soft: #3c4552;
-  --color-muted: #6b7482;
-  --color-line: #e4e2dd;
-  --color-line-strong: #cfccc5;
+  --color-ink: #24313a;
+  --color-ink-soft: #46545d;
+  --color-muted: #69747b;
+  --color-line: #e2ded5;
+  --color-line-strong: #cbc5ba;
 
-  --color-brand-50: #edf6ff;
-  --color-brand-100: #d8ebff;
-  --color-brand-200: #acd6ff;
-  --color-brand-500: #1687df;
-  --color-brand-600: #0875c9;
-  --color-brand-700: #075ea2;
+  --color-brand-50: #eef4fa;
+  --color-brand-100: #d7e5f2;
+  --color-brand-200: #b0cbe5;
+  --color-brand-500: #234a68;
+  --color-brand-600: #18324a;
+  --color-brand-700: #102b42;
 
-  --color-good: #1f7a4d;
+  --color-good: #2f7d5c;
   --color-good-soft: #e6f2ec;
-  --color-warn: #9a6314;
+  --color-warn: #8a6424;
   --color-warn-soft: #fbf1de;
-  --color-bad: #a32b2b;
+  --color-bad: #b6534b;
   --color-bad-soft: #f8eaea;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
@@ -30,6 +30,36 @@
     "Times New Roman", serif;
 
   --radius-card: 1.125rem;
+}
+
+:root {
+  color-scheme: light;
+  --score-accent: #c9963b;
+}
+
+/* A composed nighttime palette, rather than an inversion of the daytime UI. */
+:root.dark {
+  color-scheme: dark;
+  --color-paper: #111a21;
+  --color-surface: #18242d;
+  --color-ink: #edf0ed;
+  --color-ink-soft: #c6ceca;
+  --color-muted: #9eaaa7;
+  --color-line: #2c3a43;
+  --color-line-strong: #40515b;
+  --color-brand-50: #1b3040;
+  --color-brand-100: #27465a;
+  --color-brand-200: #365d73;
+  --color-brand-500: #91b5c8;
+  --color-brand-600: #aac7d5;
+  --color-brand-700: #d8e5e9;
+  --color-good: #68b58e;
+  --color-good-soft: #18372b;
+  --color-warn: #d4ad66;
+  --color-warn-soft: #382f20;
+  --color-bad: #dc8178;
+  --color-bad-soft: #402725;
+  --score-accent: #d5a957;
 }
 
 @layer base {
@@ -75,8 +105,8 @@
   /* Passage body copy: serif, generous leading, comfortable measure. */
   .prose-passage {
     font-family: var(--font-serif);
-    font-size: 1.0625rem;
-    line-height: 1.85;
+    font-size: clamp(1.0625rem, 1rem + 0.18vw, 1.1875rem);
+    line-height: 1.82;
     color: var(--color-ink);
   }
   .prose-passage p + p {
@@ -86,6 +116,15 @@
     font-weight: 600;
     font-size: 1.25rem;
     margin-bottom: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

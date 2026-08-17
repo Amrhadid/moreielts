@@ -294,9 +294,13 @@ function ResultPage() {
         <BandTile label="Speaking" band={num(scores?.speaking_band)} />
       </div>
 
-      <p className="mt-4 rounded-lg border border-warn/20 bg-warn-soft px-4 py-3 text-sm text-warn">
-        AI estimated band — not an official IELTS result.
-      </p>
+      <aside className="mt-4 flex gap-3 rounded-lg border border-warn/30 bg-warn-soft px-4 py-3 text-sm text-warn" role="note">
+        <span aria-hidden>ⓘ</span>
+        <div>
+          <p className="font-medium">AI-estimated band — for practice only. This is not an official IELTS result.</p>
+          <p className="mt-0.5 text-xs">Use this estimate to guide your study plan.</p>
+        </div>
+      </aside>
 
       <p className="mt-3 text-xs leading-relaxed text-muted">
         The overall band is the average of the four component bands, rounded to the

@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/Button";
 import { Textarea } from "~/components/ui/Field";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
+import { ThemeToggle } from "~/components/ui/ThemeToggle";
 import { Protected } from "~/lib/auth";
 import { uploadToR2, useSubmitAttempt } from "~/lib/queries";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
@@ -226,7 +227,7 @@ function SpeakingPlayer() {
       <header className="border-b border-line bg-surface">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <Logo />
-          <p className="text-sm text-muted">Speaking · 11–14 minutes</p>
+          <div className="flex items-center gap-3"><p className="text-sm text-muted">Speaking · 11–14 minutes</p><ThemeToggle compact /></div>
         </div>
       </header>
 
