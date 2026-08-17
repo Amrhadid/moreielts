@@ -1,23 +1,17 @@
+import { useState } from "react";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Input, Label, Textarea } from "~/components/ui/Field";
-import { Select } from "~/components/ui/Select";
 import { cn } from "~/lib/cn";
-import { questionTypesForSection } from "~/registry/questionTypes";
+import { uploadToR2, useDeleteQuestion, useQuestionTypes } from "~/lib/queries";
+import type { AdminQuestion } from "~/lib/queries";
+import type { ItemGroupRow, SectionCode } from "~/types/database";
 import { moveItem, useDragList } from "./useDragList";
 import { QuestionRow } from "./QuestionRow";
-import type { ItemGroup, Question, SectionCode, StimulusKind } from "~/types/content";
 
-const STIMULUS_OPTIONS: Array<{ value: StimulusKind; label: string }> = [
-  { value: "passage", label: "Reading passage" },
-  { value: "audio", label: "Audio part" },
-  { value: "image", label: "Image / diagram" },
-  { value: "cue_card", label: "Speaking cue card" },
-  { value: "writing_task", label: "Writing task prompt" },
-  { value: "none", label: "No stimulus" },
-];
+export type AdminGroup = ItemGroupRow & { questions: AdminQuestion[] };
 
-/** An item group card: shared stimulus + instructions + its ordered questions. */
+/** Item group card: shared stimulus + instructions + its ordered questions. */
 export function GroupCard({
   group,
   section,
@@ -25,42 +19,71 @@ export function GroupCard({
   onDelete,
   dragProps,
 }: {
-  group: ItemGroup;
+  group: AdminGroup;
   section: SectionCode;
-  onChange: (next: ItemGroup) => void;
+  onChange: (next: AdminGroup) => void;
   onDelete: () => void;
   dragProps: Record<string, unknown>;
 }) {
+  const { data: types } = useQuestionTypes();
+  const deleteQuestion = useDeleteQuestion();
+  const [uploading, setUploading] = useState<null | "audio" | "image">(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const { dragProps: questionDrag } = useDragList((from, to) =>
     onChange({ ...group, questions: moveItem(group.questions, from, to) }),
   );
 
-  function patch(partial: Partial<ItemGroup>) {
+  function patch(partial: Partial<AdminGroup>) {
     onChange({ ...group, ...partial });
   }
 
   function addQuestion() {
-    const fallback = questionTypesForSection(section)[0];
-    const nextNumber =
-      Math.max(0, ...group.questions.map((q) => q.number)) + 1;
-    const question: Question = {
-      id: `${group.id}-q${nextNumber}-${group.questions.length}`,
-      number: nextNumber,
-      type: fallback.code,
-      prompt: "",
-      acceptedAnswers: [],
-      wordLimit: fallback.defaultWordLimit,
-      options: fallback.renderer === "text_input" ? undefined : [],
-    };
-    patch({ questions: [...group.questions, question] });
+    const fallback = types?.[0];
+    if (!fallback) return;
+    patch({
+      questions: [
+        ...group.questions,
+        {
+          id: crypto.randomUUID(),
+          group_id: group.id,
+          type_code: fallback.code,
+          prompt: "",
+          options: fallback.renderer === "text_input" ? [] : [],
+          accepted_answers: [],
+          word_limit: fallback.default_word_limit,
+          spelling_policy: "lenient",
+          accepts_plural: true,
+          case_sensitive: false,
+          scoring_rules: {},
+          order_index: group.questions.length,
+        },
+      ],
+    });
   }
+
+  /** Uploads through the upload-url Edge Function; no R2 keys in the browser. */
+  async function upload(file: File, kind: "item_audio" | "item_image") {
+    setUploadError(null);
+    setUploading(kind === "item_audio" ? "audio" : "image");
+    try {
+      const url = await uploadToR2(file, kind, { slug: file.name.split(".")[0] });
+      patch(kind === "item_audio" ? { audio_url: url } : { image_url: url });
+    } catch (error) {
+      setUploadError((error as Error).message ?? "Upload failed");
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  const showPassage = section === "reading" || section === "writing" || section === "speaking";
+  const showAudio = section === "listening";
+  const showImage = section === "listening" || section === "writing" || section === "reading";
 
   return (
     <Card
       {...dragProps}
-      className={cn(
-        "data-[dragging=true]:opacity-40 data-[over=true]:border-brand-500",
-      )}
+      className={cn("data-[dragging=true]:opacity-40 data-[over=true]:border-brand-500")}
     >
       <CardBody className="pt-5">
         <div className="flex items-start gap-3">
@@ -72,13 +95,15 @@ export function GroupCard({
             ⠿
           </span>
           <div className="min-w-0 flex-1">
-            <div className="grid gap-3 sm:grid-cols-[1fr_9rem_11rem]">
+            <div className="grid gap-3 sm:grid-cols-[1fr_9rem]">
               <div>
-                <Label htmlFor={`${group.id}-title`}>Group title</Label>
-                <Input
-                  id={`${group.id}-title`}
-                  value={group.title}
-                  onChange={(e) => patch({ title: e.target.value })}
+                <Label htmlFor={`${group.id}-instructions`}>Shared instructions</Label>
+                <Textarea
+                  id={`${group.id}-instructions`}
+                  rows={2}
+                  value={group.shared_instructions ?? ""}
+                  onChange={(e) => patch({ shared_instructions: e.target.value })}
+                  placeholder="Questions 1-13. Write NO MORE THAN TWO WORDS…"
                 />
               </div>
               <div>
@@ -87,83 +112,96 @@ export function GroupCard({
                   id={`${group.id}-part`}
                   type="number"
                   min={1}
-                  value={group.partNumber}
-                  onChange={(e) => patch({ partNumber: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Stimulus</Label>
-                <Select
-                  aria-label="Stimulus kind"
-                  value={group.stimulusKind}
-                  onValueChange={(value) =>
-                    patch({ stimulusKind: value as StimulusKind })
-                  }
-                  options={STIMULUS_OPTIONS}
+                  value={group.part_number}
+                  onChange={(e) => patch({ part_number: Number(e.target.value) })}
                 />
               </div>
             </div>
 
-            {/* Stimulus editor varies by kind. */}
-            <div className="mt-3">
-              {(group.stimulusKind === "passage" ||
-                group.stimulusKind === "cue_card" ||
-                group.stimulusKind === "writing_task") && (
-                <>
-                  <Label htmlFor={`${group.id}-passage`}>
-                    {group.stimulusKind === "passage" ? "Passage text" : "Prompt text"}
-                  </Label>
-                  <Textarea
-                    id={`${group.id}-passage`}
-                    rows={group.stimulusKind === "passage" ? 8 : 4}
-                    value={group.passageText ?? ""}
-                    onChange={(e) => patch({ passageText: e.target.value })}
-                    placeholder="Paragraphs separated by a blank line."
+            {showPassage && (
+              <div className="mt-3">
+                <Label htmlFor={`${group.id}-passage`}>
+                  {section === "reading" ? "Passage text" : "Prompt / cue card text"}
+                </Label>
+                <Textarea
+                  id={`${group.id}-passage`}
+                  rows={section === "reading" ? 8 : 4}
+                  value={group.passage_text ?? ""}
+                  onChange={(e) => patch({ passage_text: e.target.value })}
+                  placeholder="Paragraphs separated by a blank line."
+                />
+              </div>
+            )}
+
+            {showAudio && (
+              <div className="mt-3 rounded-lg border border-dashed border-line-strong bg-paper p-4">
+                <p className="text-sm font-medium">Part audio</p>
+                <p className="mt-1 break-all text-xs text-muted">
+                  {group.audio_url ?? "No file uploaded"}
+                </p>
+                <label className="mt-3 inline-flex cursor-pointer items-center rounded-lg border border-line-strong bg-surface px-3 py-1.5 text-sm hover:bg-paper">
+                  {uploading === "audio" ? "Uploading…" : "Upload MP3"}
+                  <input
+                    type="file"
+                    accept="audio/mpeg,audio/mp4,audio/aac,audio/ogg"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) void upload(file, "item_audio");
+                    }}
                   />
-                </>
-              )}
+                </label>
+                {group.audio_url && (
+                  <audio controls src={group.audio_url} className="mt-3 h-9 w-full" />
+                )}
+              </div>
+            )}
 
-              {group.stimulusKind === "audio" && (
-                <div className="rounded-lg border border-dashed border-line-strong bg-paper p-4">
-                  <p className="text-sm font-medium">Audio file</p>
-                  <p className="mt-1 text-xs text-muted">
-                    {group.audioUrl ?? "No file uploaded"}
-                  </p>
-                  {/* TODO(backend): upload to R2 and store the object URL. */}
-                  <Button variant="outline" size="sm" className="mt-3">
-                    Upload MP3
-                  </Button>
+            {showImage && (
+              <div className="mt-3 rounded-lg border border-dashed border-line-strong bg-paper p-4">
+                <p className="text-sm font-medium">Image (chart, map or diagram)</p>
+                <p className="mt-1 break-all text-xs text-muted">
+                  {group.image_url ?? "No image uploaded"}
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <label className="inline-flex cursor-pointer items-center rounded-lg border border-line-strong bg-surface px-3 py-1.5 text-sm hover:bg-paper">
+                    {uploading === "image" ? "Uploading…" : "Upload image"}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) void upload(file, "item_image");
+                      }}
+                    />
+                  </label>
+                  <Input
+                    value={(group.metadata?.image_caption as string) ?? ""}
+                    placeholder="Caption"
+                    className="max-w-xs"
+                    onChange={(e) =>
+                      patch({
+                        metadata: { ...group.metadata, image_caption: e.target.value },
+                      })
+                    }
+                  />
                 </div>
-              )}
+                {group.image_url && (
+                  <img
+                    src={group.image_url}
+                    alt=""
+                    className="mt-3 max-h-48 rounded border border-line object-contain"
+                  />
+                )}
+              </div>
+            )}
 
-              {group.stimulusKind === "image" && (
-                <div className="rounded-lg border border-dashed border-line-strong bg-paper p-4">
-                  <p className="text-sm font-medium">Image</p>
-                  <p className="mt-1 text-xs text-muted">
-                    {group.imageUrl ?? "No image uploaded"}
-                  </p>
-                  {/* TODO(backend): upload to R2 and store the object URL. */}
-                  <Button variant="outline" size="sm" className="mt-3">
-                    Upload image
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-3">
-              <Label htmlFor={`${group.id}-instructions`}>Shared instructions</Label>
-              <Textarea
-                id={`${group.id}-instructions`}
-                rows={2}
-                value={group.instructions}
-                onChange={(e) => patch({ instructions: e.target.value })}
-              />
-            </div>
+            {uploadError && <p className="mt-2 text-xs text-bad">{uploadError}</p>}
 
             <div className="mb-2 mt-5 flex items-center justify-between">
               <p className="text-sm font-medium">
-                Questions{" "}
-                <span className="text-muted">({group.questions.length})</span>
+                Questions <span className="text-muted">({group.questions.length})</span>
               </p>
               <Button variant="outline" size="sm" onClick={addQuestion}>
                 Add question
@@ -175,7 +213,6 @@ export function GroupCard({
                 <QuestionRow
                   key={question.id}
                   question={question}
-                  section={section}
                   index={i}
                   dragProps={questionDrag(i)}
                   onChange={(next) =>
@@ -183,9 +220,10 @@ export function GroupCard({
                       questions: group.questions.map((q, j) => (j === i ? next : q)),
                     })
                   }
-                  onDelete={() =>
-                    patch({ questions: group.questions.filter((_, j) => j !== i) })
-                  }
+                  onDelete={async () => {
+                    await deleteQuestion.mutateAsync(question.id).catch(() => {});
+                    patch({ questions: group.questions.filter((_, j) => j !== i) });
+                  }}
                 />
               ))}
             </div>

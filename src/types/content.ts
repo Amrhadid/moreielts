@@ -51,6 +51,13 @@ export interface Question {
   wordLimit?: number;
   /** false => spelling is not penalised (rare, but supported by the builder). */
   spellingStrict?: boolean;
+  /**
+   * Renderer and label as supplied by question_types via the database. When
+   * present these win over the static registry, so adding a question type is
+   * an INSERT and needs no client release.
+   */
+  renderer?: RendererKey;
+  typeLabel?: string;
 }
 
 export type StimulusKind =

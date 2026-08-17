@@ -1,5 +1,4 @@
 import { QuestionRenderer } from "~/components/renderers/QuestionRenderer";
-import { getQuestionType } from "~/registry/questionTypes";
 import { cn } from "~/lib/cn";
 import type { AnswerSheet, ItemGroup } from "~/types/content";
 
@@ -32,7 +31,7 @@ export function QuestionBlock({
             key={q.id}
             ref={(el) => registerRef(q.number, el)}
             className={cn(
-              "scroll-mt-24 rounded-card border p-4 transition-colors",
+              "scroll-mt-24 rounded-card border p-4 shadow-[0_3px_12px_rgba(20,49,78,.035)] transition-all",
               q.number === current
                 ? "border-brand-200 bg-brand-50/40"
                 : "border-line bg-surface",
@@ -41,7 +40,7 @@ export function QuestionBlock({
             <div className="mb-2 flex items-baseline gap-2">
               <span className="text-sm font-semibold text-brand-700">{q.number}</span>
               <span className="text-[0.6875rem] uppercase tracking-wide text-muted">
-                {getQuestionType(q.type).label}
+                {q.typeLabel ?? q.type}
               </span>
             </div>
             <p className="mb-3 text-sm leading-relaxed">{q.prompt}</p>

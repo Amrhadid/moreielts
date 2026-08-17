@@ -7,3 +7,6 @@ dist
 src/routeTree.gen.ts
 .DS_Store
 *.log
+
+.env
+moreielts-setup.sql

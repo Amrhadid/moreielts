@@ -5,10 +5,19 @@ import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { cn } from "~/lib/cn";
-import { questionTypesForSection } from "~/registry/questionTypes";
-import type { Difficulty, QuestionTypeCode, SectionCode } from "~/types/content";
+import { Protected, useAuth } from "~/lib/auth";
+import { useQuestionTypes } from "~/lib/queries";
+import type { Difficulty, SectionCode } from "~/types/content";
 
-export const Route = createFileRoute("/practice")({ component: PracticePicker });
+export const Route = createFileRoute("/practice")({ component: PracticeRoute });
+
+function PracticeRoute() {
+  return (
+    <Protected>
+      <PracticePicker />
+    </Protected>
+  );
+}
 
 const SECTIONS: Array<{ code: SectionCode; label: string; detail: string }> = [
   { code: "listening", label: "Listening", detail: "4 parts · audio plays once" },
@@ -23,7 +32,6 @@ const DIFFICULTIES: Array<{ code: Difficulty; label: string; detail: string }> =
   { code: "challenge", label: "Challenge", detail: "Around band 7.5+" },
 ];
 
-/** Writing and Speaking are practised whole, not by question type. */
 const PLAYER_ROUTE: Record<SectionCode, string> = {
   listening: "/test/listening",
   reading: "/test/reading",
@@ -45,13 +53,25 @@ function Step({ n, title, hint }: { n: number; title: string; hint?: string }) {
 
 function PracticePicker() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  // The registry now comes from question_types, so a new type appears here
+  // without a client release.
+  const { data: allTypes, isLoading } = useQuestionTypes();
+
   const [section, setSection] = useState<SectionCode>("reading");
-  const [type, setType] = useState<QuestionTypeCode | null>(null);
+  const [type, setType] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
 
-  const types = questionTypesForSection(section);
   const typeRequired = section === "reading" || section === "listening";
+  const types = (allTypes ?? []).filter((t) =>
+    typeRequired
+      ? t.section === section ||
+        (section === "listening" && t.renderer === "text_input") ||
+        (section === "reading" && t.section === "reading")
+      : false,
+  );
   const ready = !typeRequired || type !== null;
+  const isPremiumUser = profile?.tier === "premium";
 
   return (
     <AppShell>
@@ -91,7 +111,17 @@ function PracticePicker() {
           title="Choose a question type"
           hint={typeRequired ? undefined : "Not applicable for this section"}
         />
-        {typeRequired ? (
+        {!typeRequired ? (
+          <Card>
+            <CardBody className="pt-5 text-sm text-muted">
+              {section === "writing"
+                ? "Writing practice runs a full Task 1 or Task 2 prompt with the live word count."
+                : "Speaking practice runs all three parts, including the Part 2 cue card."}
+            </CardBody>
+          </Card>
+        ) : isLoading ? (
+          <p className="text-sm text-muted">Loading question types…</p>
+        ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {types.map((t) => (
               <button
@@ -107,22 +137,16 @@ function PracticePicker() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-medium">{t.label}</p>
-                  <Badge tone={t.tier === "premium" ? "warn" : "good"}>
-                    {t.tier === "premium" ? "Premium" : "Free"}
+                  <Badge tone={isPremiumUser ? "good" : "neutral"}>
+                    {isPremiumUser ? "Included" : "Free"}
                   </Badge>
                 </div>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted">{t.blurb}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted">
+                  Answered with the {t.renderer.replace("_", " ")} control.
+                </p>
               </button>
             ))}
           </div>
-        ) : (
-          <Card>
-            <CardBody className="pt-5 text-sm text-muted">
-              {section === "writing"
-                ? "Writing practice runs a full Task 1 or Task 2 prompt with the live word count."
-                : "Speaking practice runs all three parts, including the Part 2 cue card."}
-            </CardBody>
-          </Card>
         )}
       </section>
 

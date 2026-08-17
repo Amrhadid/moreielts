@@ -1,7 +1,12 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { Header } from "~/components/layout/Header";
+import { AdminOnly } from "~/lib/auth";
 
-export const Route = createFileRoute("/admin")({ component: AdminLayout });
+export const Route = createFileRoute("/admin")({ component: AdminRoute });
+
+function AdminRoute() {
+  return <AdminLayout />;
+}
 
 const ADMIN_NAV = [
   { label: "Test forms", to: "/admin" },
@@ -30,7 +35,11 @@ function AdminLayout() {
         </nav>
       </div>
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <Outlet />
+        {/* Guarded here so the nav renders but no admin data is fetched
+            for a non-admin. RLS blocks the queries regardless. */}
+        <AdminOnly>
+          <Outlet />
+        </AdminOnly>
       </main>
     </div>
   );

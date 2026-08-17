@@ -1,20 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Logo } from "~/components/layout/Logo";
+import { PlayerStatus } from "~/components/player/PlayerStatus";
 import { Button } from "~/components/ui/Button";
 import { Textarea } from "~/components/ui/Field";
-import { Logo } from "~/components/layout/Logo";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
-import { getSection } from "~/mock/testForm";
 import { ThemeToggle } from "~/components/ui/ThemeToggle";
+import { Protected } from "~/lib/auth";
+import { uploadToR2, useSubmitAttempt } from "~/lib/queries";
+import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/speaking")({ component: SpeakingPlayer });
+export const Route = createFileRoute("/test/speaking")({ component: SpeakingRoute });
+
+function SpeakingRoute() {
+  return (
+    <Protected>
+      <SpeakingPlayer />
+    </Protected>
+  );
+}
 
 const PREP_SECONDS = 60;
 /** Part 2 long turn: candidates speak for one to two minutes. */
 const LONG_TURN_SECONDS = 120;
 
-/** Static bar heights so the placeholder does not re-randomise every render. */
 const WAVE = [8, 16, 26, 14, 30, 22, 34, 18, 28, 12, 24, 32, 20, 10, 26, 18, 30, 14, 22, 8];
 
 function Waveform({ active }: { active: boolean }) {
@@ -35,38 +45,94 @@ function Waveform({ active }: { active: boolean }) {
 }
 
 /**
- * Recorder placeholder.
- * TODO(backend): replace with MediaRecorder + upload to R2. Nothing is captured
- * in this pass -- the states below are UI only.
+ * Real recorder. Captures with MediaRecorder, uploads the blob to R2 through a
+ * presigned URL issued by the upload-url Edge Function, then stores the object
+ * URL on the response row. The browser never holds an R2 credential.
  */
 function Recorder({
-  onDone,
+  attemptId,
+  questionId,
   maxSeconds,
   autoStart = false,
+  onUploaded,
+  onDone,
 }: {
-  onDone: () => void;
+  attemptId: string;
+  questionId: string;
   maxSeconds: number;
   autoStart?: boolean;
+  onUploaded: (url: string) => void;
+  onDone: () => void;
 }) {
-  const [state, setState] = useState<"idle" | "recording" | "recorded">(
-    autoStart ? "recording" : "idle",
+  const [state, setState] = useState<"idle" | "recording" | "recorded" | "uploading">(
+    "idle",
   );
   const [elapsed, setElapsed] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
+
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<BlobPart[]>([]);
 
   useEffect(() => {
     if (state !== "recording") return;
     const id = setInterval(() => {
       setElapsed((prev) => {
         if (prev >= maxSeconds - 1) {
-          clearInterval(id);
-          setState("recorded");
+          stop();
           return maxSeconds;
         }
         return prev + 1;
       });
     }, 1000);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, maxSeconds]);
+
+  async function start() {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setPlaybackUrl(URL.createObjectURL(blob));
+        setState("uploading");
+        try {
+          const file = new File([blob], `${questionId}.webm`, { type: "audio/webm" });
+          const url = await uploadToR2(file, "response_audio", {
+            attempt_id: attemptId,
+            question_id: questionId,
+          });
+          onUploaded(url);
+          setState("recorded");
+        } catch (err) {
+          setError(
+            `Recording saved locally but the upload failed: ${(err as Error).message}`,
+          );
+          setState("recorded");
+        }
+      };
+      recorder.start();
+      recorderRef.current = recorder;
+      setState("recording");
+    } catch {
+      setError("Microphone access was denied. Allow it to record your answer.");
+      setState("idle");
+    }
+  }
+
+  function stop() {
+    recorderRef.current?.stop();
+  }
+
+  useEffect(() => {
+    if (autoStart && state === "idle") void start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart]);
 
   return (
     <div className="rounded-card border border-line bg-surface p-6 text-center">
@@ -75,25 +141,30 @@ function Recorder({
         {formatClock(elapsed)} / {formatClock(maxSeconds)}
       </p>
 
+      {error && <p className="mt-3 text-sm text-bad">{error}</p>}
+
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         {state === "idle" && (
-          <Button size="lg" onClick={() => setState("recording")}>
+          <Button size="lg" onClick={start}>
             <span aria-hidden className="mr-1">●</span> Record answer
           </Button>
         )}
         {state === "recording" && (
-          <Button size="lg" variant="danger" onClick={() => setState("recorded")}>
+          <Button size="lg" variant="danger" onClick={stop}>
             <span aria-hidden className="mr-1">■</span> Stop
           </Button>
         )}
+        {state === "uploading" && <p className="text-sm text-muted">Uploading…</p>}
         {state === "recorded" && (
           <>
-            {/* TODO(backend): play back the stored blob. */}
-            <Button variant="outline">▶ Play back</Button>
+            {playbackUrl && (
+              <audio controls src={playbackUrl} className="h-9 max-w-full" />
+            )}
             <Button
               variant="ghost"
               onClick={() => {
                 setElapsed(0);
+                setPlaybackUrl(null);
                 setState("idle");
               }}
             >
@@ -108,16 +179,17 @@ function Recorder({
 }
 
 function SpeakingPlayer() {
-  const section = getSection("speaking");
+  const player = usePlayerAttempt("speaking");
+  const submit = useSubmitAttempt();
   const [partIndex, setPartIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [notes, setNotes] = useState("");
   const [prepRemaining, setPrepRemaining] = useState(PREP_SECONDS);
   const [phase, setPhase] = useState<"prep" | "talk">("prep");
 
-  const group = section.itemGroups[partIndex];
-  const question = group.questions[questionIndex];
-  const isCueCard = group.stimulusKind === "cue_card";
+  const group = player.groups[partIndex];
+  const question = group?.questions[questionIndex];
+  const isCueCard = group?.stimulusKind === "cue_card";
 
   // Part 2 preparation minute.
   useEffect(() => {
@@ -130,10 +202,14 @@ function SpeakingPlayer() {
     return () => clearTimeout(id);
   }, [isCueCard, phase, prepRemaining]);
 
+  if (player.loading || player.error) {
+    return <PlayerStatus loading={player.loading} error={player.error} />;
+  }
+
   function advance() {
-    if (questionIndex < group.questions.length - 1) {
+    if (group && questionIndex < group.questions.length - 1) {
       setQuestionIndex(questionIndex + 1);
-    } else if (partIndex < section.itemGroups.length - 1) {
+    } else if (partIndex < player.groups.length - 1) {
       setPartIndex(partIndex + 1);
       setQuestionIndex(0);
       setPhase("prep");
@@ -142,7 +218,8 @@ function SpeakingPlayer() {
   }
 
   const finished =
-    partIndex === section.itemGroups.length - 1 &&
+    partIndex === player.groups.length - 1 &&
+    group !== undefined &&
     questionIndex === group.questions.length - 1;
 
   return (
@@ -154,16 +231,15 @@ function SpeakingPlayer() {
         </div>
       </header>
 
+      <PlayerStatus saving={player.saving} saveError={player.saveError} inline />
+
       {/* Part progress */}
       <div className="mx-auto w-full max-w-3xl px-4 pt-6">
         <ol className="flex gap-2">
-          {section.itemGroups.map((g, i) => (
+          {player.groups.map((g, i) => (
             <li key={g.id} className="flex-1">
               <div
-                className={cn(
-                  "h-1 rounded-full",
-                  i <= partIndex ? "bg-brand-600" : "bg-line",
-                )}
+                className={cn("h-1 rounded-full", i <= partIndex ? "bg-brand-600" : "bg-line")}
               />
               <p
                 className={cn(
@@ -180,18 +256,15 @@ function SpeakingPlayer() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
         <p className="text-xs font-medium uppercase tracking-wide text-muted">
-          {group.title}
+          {group?.title}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-          {group.instructions}
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-ink-soft">{group?.instructions}</p>
 
         {isCueCard ? (
           <>
-            {/* Cue card */}
             <div className="mt-6 rounded-card border-2 border-line-strong bg-surface p-6">
               <div className="prose-passage whitespace-pre-line text-[1rem]">
-                {group.passageText}
+                {group?.passageText}
               </div>
             </div>
 
@@ -225,14 +298,20 @@ function SpeakingPlayer() {
                     <p className="whitespace-pre-line text-sm">{notes}</p>
                   </div>
                 )}
-                <Recorder
-                  maxSeconds={LONG_TURN_SECONDS}
-                  autoStart
-                  onDone={advance}
-                />
+                {question && player.attemptId && (
+                  <Recorder
+                    key={question.id}
+                    attemptId={player.attemptId}
+                    questionId={question.id}
+                    maxSeconds={LONG_TURN_SECONDS}
+                    autoStart
+                    onUploaded={(url) => player.setAnswer(question.id, url)}
+                    onDone={advance}
+                  />
+                )}
                 <p className="mt-3 text-center text-xs text-muted">
-                  Speak for one to two minutes. The recording stops automatically at
-                  two minutes.
+                  Speak for one to two minutes. The recording stops automatically at two
+                  minutes.
                 </p>
               </div>
             )}
@@ -241,16 +320,21 @@ function SpeakingPlayer() {
           <>
             <div className="mt-6 rounded-card border border-line bg-surface p-6">
               <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                Question {questionIndex + 1} of {group.questions.length}
+                Question {questionIndex + 1} of {group?.questions.length ?? 0}
               </p>
-              <p className="mt-2 text-lg leading-relaxed">{question.prompt}</p>
+              <p className="mt-2 text-lg leading-relaxed">{question?.prompt}</p>
             </div>
             <div className="mt-5">
-              <Recorder
-                key={question.id}
-                maxSeconds={60}
-                onDone={advance}
-              />
+              {question && player.attemptId && (
+                <Recorder
+                  key={question.id}
+                  attemptId={player.attemptId}
+                  questionId={question.id}
+                  maxSeconds={60}
+                  onUploaded={(url) => player.setAnswer(question.id, url)}
+                  onDone={advance}
+                />
+              )}
             </div>
           </>
         )}
@@ -261,11 +345,24 @@ function SpeakingPlayer() {
             <p className="mt-1 text-sm text-muted">
               Your recordings will be scored against the four speaking criteria.
             </p>
-            <Button asChild className="mt-4">
-              <Link to="/results/$attemptId" params={{ attemptId: "a-104" }}>
-                See your result
-              </Link>
+            <Button
+              className="mt-4"
+              disabled={submit.isPending}
+              onClick={() => submit.mutate({ attemptId: player.attemptId! })}
+            >
+              {submit.isPending ? "Submitting…" : "Finish and score"}
             </Button>
+            {submit.isSuccess && (
+              <p className="mt-3">
+                <Link
+                  to="/results/$attemptId"
+                  params={{ attemptId: player.attemptId! }}
+                  className="text-sm font-medium text-brand-600"
+                >
+                  See your result →
+                </Link>
+              </p>
+            )}
           </div>
         )}
       </main>

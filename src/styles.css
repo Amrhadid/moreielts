@@ -29,7 +29,7 @@
   --font-serif: "Charter", "Bitstream Charter", "Iowan Old Style", Georgia,
     "Times New Roman", serif;
 
-  --radius-card: 0.75rem;
+  --radius-card: 1.125rem;
 }
 
 :root {
@@ -79,6 +79,28 @@
   }
 }
 
+@keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes soft-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-9px) rotate(1deg); } }
+@keyframes breathe { 0%, 100% { transform: scale(1); opacity: .7; } 50% { transform: scale(1.06); opacity: 1; } }
+.animate-rise { animation: rise-in .65s cubic-bezier(.2,.8,.2,1) both; }
+.animate-rise-delay { animation: rise-in .65s .14s cubic-bezier(.2,.8,.2,1) both; }
+.animate-float { animation: soft-float 5s ease-in-out infinite; }
+.animate-breathe { animation: breathe 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: #0e1724; --color-surface: #142131; --color-ink: #f4f7fb;
+    --color-ink-soft: #c9d4df; --color-muted: #93a2b3; --color-line: #26374a;
+    --color-line-strong: #3a4d62; --color-brand-50: #112d45; --color-brand-100: #153d5e;
+    --color-brand-200: #1f5b86; --color-brand-500: #4cb4ff; --color-brand-600: #2da3f4;
+    --color-brand-700: #8dccff; --color-good-soft: #16392d; --color-warn-soft: #3d3018; --color-bad-soft: #452424;
+  }
+}
+
 @layer components {
   /* Passage body copy: serif, generous leading, comfortable measure. */
   .prose-passage {
@@ -114,3 +136,5 @@
   background: var(--color-line-strong);
   border-radius: 999px;
 }
+
+::selection { background: var(--color-brand-100); }

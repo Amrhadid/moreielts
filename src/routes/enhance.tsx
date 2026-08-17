@@ -3,13 +3,39 @@ import { AppShell } from "~/components/layout/AppShell";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Progress } from "~/components/ui/Progress";
-import { mockResult } from "~/mock/result";
+import { tallyBy } from "~/lib/scoring";
+import { Protected, useAuth } from "~/lib/auth";
+import { useAttempts, useAttemptReview } from "~/lib/queries";
 
-export const Route = createFileRoute("/enhance")({ component: Enhance });
+export const Route = createFileRoute("/enhance")({ component: EnhanceRoute });
+
+function EnhanceRoute() {
+  return (
+    <Protected>
+      <Enhance />
+    </Protected>
+  );
+}
 
 function Enhance() {
-  // Weakest question types across the last attempt drive the suggestions.
-  const weakest = [...mockResult.reading.byQuestionType, ...mockResult.listening.byQuestionType]
+  const { user } = useAuth();
+  const { data: attempts } = useAttempts(user?.id);
+
+  // Weakest question types from the most recent completed attempt.
+  const latest = attempts?.find((a) => a.status === "completed");
+  const { data: review, isLoading } = useAttemptReview(latest?.id, Boolean(latest));
+
+  const weakest = tallyBy(
+    (review ?? [])
+      .filter((r) => r.section === "listening" || r.section === "reading")
+      .map((r) => ({
+        questionId: r.question_id,
+        typeCode: r.type_label,
+        partNumber: r.part_number,
+        isCorrect: r.is_correct === true,
+      })),
+    (r) => r.typeCode,
+  )
     .filter((row) => row.total >= 3)
     .sort((a, b) => a.correct / a.total - b.correct / b.total)
     .slice(0, 4);
@@ -22,32 +48,42 @@ function Enhance() {
         most on in your latest attempt.
       </p>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
-        {weakest.map((row) => {
-          const pct = (row.correct / row.total) * 100;
-          return (
-            <Card key={`${row.code}-${row.label}`}>
-              <CardHeader>
-                <CardTitle>{row.label}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="mb-2 flex items-baseline justify-between text-sm">
-                  <span className="text-muted">Accuracy</span>
-                  <span className="tabular-nums">
-                    {row.correct}/{row.total} · {Math.round(pct)}%
-                  </span>
-                </div>
-                <Progress value={pct} tone={pct >= 70 ? "good" : "brand"} />
-                <Button asChild variant="secondary" size="sm" className="mt-4">
-                  <Link to="/practice">Practise this type</Link>
-                </Button>
-              </CardBody>
-            </Card>
-          );
-        })}
-      </div>
+      {isLoading ? (
+        <p className="mt-6 text-sm text-muted">Loading your last attempt…</p>
+      ) : weakest.length === 0 ? (
+        <Card className="mt-6">
+          <CardBody className="pt-5 text-sm text-muted">
+            Complete a Listening or Reading section to see your weakest question types.
+          </CardBody>
+        </Card>
+      ) : (
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          {weakest.map((row) => {
+            const pct = (row.correct / row.total) * 100;
+            return (
+              <Card key={row.key}>
+                <CardHeader>
+                  <CardTitle>{row.key}</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <div className="mb-2 flex items-baseline justify-between text-sm">
+                    <span className="text-muted">Accuracy</span>
+                    <span className="tabular-nums">
+                      {row.correct}/{row.total} · {Math.round(pct)}%
+                    </span>
+                  </div>
+                  <Progress value={pct} tone={pct >= 70 ? "good" : "brand"} />
+                  <Button asChild variant="secondary" size="sm" className="mt-4">
+                    <Link to="/practice">Practise this type</Link>
+                  </Button>
+                </CardBody>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
-      {/* TODO(backend): AI-generated study plan goes here. */}
+      {/* TODO(backend): an AI-generated study plan can replace this static one. */}
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>Suggested plan</CardTitle>

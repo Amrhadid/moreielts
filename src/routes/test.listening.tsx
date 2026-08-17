@@ -1,63 +1,62 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PlayerHeader } from "~/components/player/PlayerHeader";
+import { PlayerStatus } from "~/components/player/PlayerStatus";
 import { QuestionBlock } from "~/components/player/QuestionBlock";
 import { QuestionNavigator } from "~/components/player/QuestionNavigator";
 import { SubmitDialog } from "~/components/player/SubmitDialog";
-import { useAnswers } from "~/components/player/useAnswers";
 import { Button } from "~/components/ui/Button";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
-import { useCountdown } from "~/lib/useCountdown";
-import { flatQuestions, getSection } from "~/mock/testForm";
+import { Protected } from "~/lib/auth";
+import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/listening")({
-  component: ListeningPlayer,
-});
+export const Route = createFileRoute("/test/listening")({ component: ListeningRoute });
 
-/** Stand-in duration per part. TODO(backend): read from the audio metadata. */
-const PART_SECONDS = 420;
+function ListeningRoute() {
+  return (
+    <Protected>
+      <ListeningPlayer />
+    </Protected>
+  );
+}
 
 /**
- * Audio pane. IELTS listening audio plays exactly once: there is no scrub bar,
- * no replay and no pause. The progress bar is display-only.
+ * Audio pane. IELTS listening audio plays exactly once: no scrub bar, no
+ * replay, no pause. The progress bar is display-only.
  *
- * TODO(backend): swap the simulated ticker for an <audio> element pointed at
- * the group's R2 object URL, with controls suppressed.
+ * The <audio> element is deliberately created without controls and its
+ * currentTime is never written, so there is no seek surface at all.
  */
 function AudioPane({
+  audioUrl,
+  durationMs,
   partNumber,
   totalParts,
   title,
 }: {
+  audioUrl: string | null;
+  durationMs: number | null;
   partNumber: number;
   totalParts: number;
   title: string;
 }) {
   const [state, setState] = useState<"idle" | "playing" | "finished">("idle");
   const [elapsed, setElapsed] = useState(0);
+  const [duration, setDuration] = useState((durationMs ?? 0) / 1000);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setState("idle");
     setElapsed(0);
-  }, [partNumber]);
+  }, [audioUrl]);
 
-  useEffect(() => {
-    if (state !== "playing") return;
-    const id = setInterval(() => {
-      setElapsed((prev) => {
-        if (prev >= PART_SECONDS - 1) {
-          clearInterval(id);
-          setState("finished");
-          return PART_SECONDS;
-        }
-        return prev + 1;
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, [state]);
+  function play() {
+    setState("playing");
+    audioRef.current?.play().catch(() => setState("idle"));
+  }
 
-  const pct = (elapsed / PART_SECONDS) * 100;
+  const pct = duration > 0 ? (elapsed / duration) * 100 : 0;
 
   return (
     <div className="mx-auto max-w-md text-center">
@@ -65,6 +64,17 @@ function AudioPane({
         Part {partNumber} of {totalParts}
       </p>
       <h2 className="mt-1 text-xl font-semibold tracking-tight">{title}</h2>
+
+      {audioUrl && (
+        <audio
+          ref={audioRef}
+          src={audioUrl}
+          preload="auto"
+          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || duration)}
+          onTimeUpdate={(e) => setElapsed(e.currentTarget.currentTime)}
+          onEnded={() => setState("finished")}
+        />
+      )}
 
       <div
         aria-hidden
@@ -80,8 +90,8 @@ function AudioPane({
 
       {state === "idle" && (
         <>
-          <Button size="lg" onClick={() => setState("playing")}>
-            Play audio
+          <Button size="lg" onClick={play} disabled={!audioUrl}>
+            {audioUrl ? "Play audio" : "No audio uploaded"}
           </Button>
           <p className="mt-4 text-sm leading-relaxed text-muted">
             The recording plays <strong className="text-ink">once only</strong>. You
@@ -92,7 +102,6 @@ function AudioPane({
 
       {state !== "idle" && (
         <div>
-          {/* Display-only: not a slider, and it carries no click handler. */}
           <div
             className="h-2 w-full overflow-hidden rounded-full bg-line"
             role="progressbar"
@@ -107,7 +116,7 @@ function AudioPane({
             />
           </div>
           <p className="mt-2 font-mono text-xs tabular-nums text-muted">
-            {formatClock(elapsed)} / {formatClock(PART_SECONDS)}
+            {formatClock(elapsed)} / {formatClock(duration)}
           </p>
           <p className="mt-4 text-sm text-muted">
             {state === "playing"
@@ -121,38 +130,51 @@ function AudioPane({
 }
 
 function ListeningPlayer() {
-  const section = getSection("listening");
-  const items = useMemo(() => flatQuestions("listening"), []);
-  const numbers = useMemo(() => items.map((i) => i.question.number), [items]);
-  const idFor = useMemo(() => {
-    const map = new Map(items.map((i) => [i.question.number, i.question.id]));
-    return (n: number) => map.get(n) ?? "";
-  }, [items]);
-
-  const { answers, setAnswer, current, jumpTo, answered, registerRef } = useAnswers(
-    numbers,
-    idFor,
-  );
-  const { remaining } = useCountdown(section.durationMinutes * 60);
+  const player = usePlayerAttempt("listening");
   const [mobilePane, setMobilePane] = useState<"audio" | "questions">("audio");
+  const [current, setCurrent] = useState(1);
+  const refs = useRef(new Map<number, HTMLDivElement>());
+
+  const numbers = useMemo(
+    () => player.flat.map((i) => i.question.number),
+    [player.flat],
+  );
+
+  const registerRef = useCallback((n: number, el: HTMLDivElement | null) => {
+    if (el) refs.current.set(n, el);
+    else refs.current.delete(n);
+  }, []);
+
+  if (player.loading || player.error) {
+    return <PlayerStatus loading={player.loading} error={player.error} />;
+  }
 
   const currentGroup =
-    items.find((i) => i.question.number === current)?.group ?? section.itemGroups[0];
-  const partIndex = section.itemGroups.indexOf(currentGroup);
+    player.flat.find((i) => i.question.number === current)?.group ?? player.groups[0];
+  const partIndex = player.groups.indexOf(currentGroup);
 
   function goToPart(index: number) {
-    const group = section.itemGroups[index];
-    if (group) jumpTo(group.questions[0].number);
+    const group = player.groups[index];
+    if (group?.questions[0]) setCurrent(group.questions[0].number);
   }
 
   return (
     <div className="flex h-screen flex-col bg-paper">
       <PlayerHeader
         sectionName="Listening"
-        contextLabel={`Part ${currentGroup.partNumber} of ${section.itemGroups.length} · Question ${current} of 40`}
-        remaining={remaining}
-        right={<SubmitDialog answeredCount={answered.size} total={numbers.length} />}
+        contextLabel={`Part ${currentGroup?.partNumber ?? 1} of ${player.groups.length} · Question ${current} of ${numbers.length}`}
+        remaining={player.remaining ?? 0}
+        right={
+          <SubmitDialog
+            attemptId={player.attemptId!}
+            section="listening"
+            answeredCount={player.answered.size}
+            total={numbers.length}
+          />
+        }
       />
+
+      <PlayerStatus saving={player.saving} saveError={player.saveError} inline />
 
       <div className="flex border-b border-line bg-surface md:hidden">
         {(["audio", "questions"] as const).map((pane) => (
@@ -181,14 +203,16 @@ function ListeningPlayer() {
           aria-label="Audio"
         >
           <AudioPane
-            key={currentGroup.id}
-            partNumber={currentGroup.partNumber}
-            totalParts={section.itemGroups.length}
-            title={currentGroup.title.replace(/^Part \d+ — /, "")}
+            key={currentGroup?.id}
+            audioUrl={currentGroup?.audioUrl ?? null}
+            durationMs={null}
+            partNumber={currentGroup?.partNumber ?? 1}
+            totalParts={player.groups.length}
+            title={currentGroup?.title ?? ""}
           />
         </section>
 
-        {/* Only the current part's questions are shown, as in the real test. */}
+        {/* Only the current part's questions, as in the real test. */}
         <section
           className={cn(
             "thin-scroll min-h-0 overflow-y-auto px-4 py-6 md:block md:w-1/2 md:px-6",
@@ -197,13 +221,15 @@ function ListeningPlayer() {
           aria-label="Questions"
         >
           <div className="mx-auto max-w-2xl">
-            <QuestionBlock
-              group={currentGroup}
-              answers={answers}
-              onAnswer={setAnswer}
-              current={current}
-              registerRef={registerRef}
-            />
+            {currentGroup && (
+              <QuestionBlock
+                group={currentGroup}
+                answers={player.answers}
+                onAnswer={player.setAnswer}
+                current={current}
+                registerRef={registerRef}
+              />
+            )}
             <div className="flex items-center justify-between gap-3 pb-4">
               <Button
                 variant="outline"
@@ -215,7 +241,7 @@ function ListeningPlayer() {
               <Button
                 variant="outline"
                 onClick={() => goToPart(partIndex + 1)}
-                disabled={partIndex >= section.itemGroups.length - 1}
+                disabled={partIndex >= player.groups.length - 1}
               >
                 Next part →
               </Button>
@@ -226,11 +252,12 @@ function ListeningPlayer() {
 
       <QuestionNavigator
         numbers={numbers}
-        answered={answered}
+        answered={player.answered}
         current={current}
         onJump={(n) => {
           setMobilePane("questions");
-          jumpTo(n);
+          setCurrent(n);
+          refs.current.get(n)?.scrollIntoView({ behavior: "smooth", block: "center" });
         }}
       />
     </div>

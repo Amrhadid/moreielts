@@ -17,8 +17,8 @@ export function PlayerHeader({
 }) {
   const low = remaining <= 300;
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface">
-      <div className="flex h-14 items-center gap-3 px-3 sm:px-5">
+    <header className="sticky top-0 z-30 border-b border-line bg-surface/95 shadow-[0_4px_20px_rgba(20,49,78,.05)] backdrop-blur">
+      <div className="flex h-16 items-center gap-3 px-3 sm:px-5">
         <Link
           to="/"
           className="hidden text-sm font-medium text-muted hover:text-ink sm:block"

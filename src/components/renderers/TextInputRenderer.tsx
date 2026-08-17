@@ -1,6 +1,5 @@
 import { Input } from "~/components/ui/Field";
-import { getQuestionType } from "~/registry/questionTypes";
-import { countWords } from "~/lib/text";
+import { countWords } from "~/lib/answer-check";
 import type { RendererProps } from "./types";
 
 /**
@@ -14,7 +13,7 @@ export function TextInputRenderer({
   onChange,
   disabled,
 }: RendererProps) {
-  const limit = question.wordLimit ?? getQuestionType(question.type).defaultWordLimit;
+  const limit = question.wordLimit ?? 0;
   const text = typeof value === "string" ? value : "";
   const over = limit > 0 && countWords(text) > limit;
 
