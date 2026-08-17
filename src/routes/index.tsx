@@ -73,8 +73,8 @@ function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="relative overflow-hidden border-brand-100 sm:col-span-2">
           <CardBody className="pt-5">
-            <span className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-brand-50" aria-hidden />
-            <div className="flex flex-wrap items-end gap-8">
+            <span className="pointer-events-none absolute -right-16 -top-16 z-0 h-32 w-32 rounded-full bg-brand-50/70" aria-hidden />
+            <div className="relative z-10 flex flex-wrap items-end gap-8">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
                   Estimated band
