@@ -21,8 +21,8 @@ export function Header() {
       .join("") || "?";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Link to="/" className="shrink-0">
           <Logo />
         </Link>
@@ -32,7 +32,7 @@ export function Header() {
             <Link
               key={item.to}
               to={item.to}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-paper hover:text-ink data-[status=active]:bg-brand-50 data-[status=active]:text-brand-700"
+              className="rounded-xl px-3.5 py-2.5 text-sm font-semibold text-ink-soft transition-all hover:bg-paper hover:text-ink data-[status=active]:bg-brand-50 data-[status=active]:text-brand-700"
             >
               {item.label}
             </Link>

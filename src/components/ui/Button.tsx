@@ -17,8 +17,8 @@ const VARIANTS: Record<Variant, string> = {
 
 const SIZES: Record<Size, string> = {
   sm: "h-8 px-3 text-sm gap-1.5",
-  md: "h-10 px-4 text-sm gap-2",
-  lg: "h-12 px-6 text-base gap-2",
+  md: "h-11 px-5 text-sm gap-2",
+  lg: "h-13 px-7 text-base gap-2",
 };
 
 export function Button({
@@ -36,7 +36,7 @@ export function Button({
   return (
     <Comp
       className={cn(
-        "inline-flex items-center justify-center rounded-lg font-medium transition-colors",
+        "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0",
         "disabled:pointer-events-none disabled:opacity-50",
         VARIANTS[variant],
         SIZES[size],
