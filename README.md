@@ -101,6 +101,7 @@ supabase/
 
 scripts/
   generate-seed.ts         Emits supabase/seed.sql from seed-content/
+  generate-practice-audio.ts  Listening practice MP3 from its transcript
   seed-content/            The authored test content (3 passages, 4 parts, …)
   test-db.sh               Scratch DB -> migrations -> seed -> RLS suite
   bundle-sql.sh            Concatenates migrations + seed for the SQL editor
@@ -108,7 +109,9 @@ scripts/
                            to a real project
 
 src/
+  data/practice/           The practice sets: 5 items per skill, tested
   lib/
+    practice/              AI client (claude-completion), graders, history
     answer-check.ts        Pure marking rules. Unit tested (59 cases)
     scoring.ts             Pure band maths. Unit tested (37 cases)
     supabase.ts            Browser client (anon key only)
@@ -118,6 +121,7 @@ src/
     adapters.ts            Database rows -> the shapes the components consume
   types/                   content.ts (UI shapes), database.ts (row shapes)
   components/
+    practice/              Practice runners, band card, Task 1 chart/table
     ui/                    Radix-backed primitives
     renderers/             The four question renderers + renderer dispatch
     layout/                Header, Sidebar, Footer, AppShell
@@ -164,7 +168,8 @@ existing renderer, nothing else changes.
 |---|---|
 | `/login`, `/signup`, `/auth/callback` | Email + password and Google OAuth |
 | `/` | Dashboard — target vs estimated band, resume card, recent attempts |
-| `/practice` | Practice picker — section → question type → difficulty |
+| `/practice` | Practice — the four skills, five AI-corrected items each, recent results |
+| `/practice/$section` | Practice runner for `listening`, `reading`, `writing` or `speaking` |
 | `/mock` | Published forms and the section order |
 | `/learn` | Format reference and every question type |
 | `/enhance` | Weakest question types from your last attempt |
@@ -241,6 +246,38 @@ Per-question switches (`spelling_policy`, `accepts_plural`, `case_sensitive`,
 The criterion bands themselves come from Claude, but every band *calculation* is
 done here rather than taken from the model.
 
+## Practice sets and AI correction
+
+`/practice` is a self-contained drill module: five items per skill, authored
+in `src/data/practice/` and shipped with the build, so it needs no published
+test form and no table. Each section is corrected by AI:
+
+| Section | Content | Marking | AI step |
+|---|---|---|---|
+| Listening | One Part 1 telephone conversation (`public/audio/practice/*.mp3`), 4 form-completion + 1 multiple-choice | `answer-check.ts`, instantly in the browser | Explains every answer from the transcript, with a verbatim quote and a technique tip |
+| Reading | One Academic passage, True/False/Not Given + multiple choice + sentence completion | `answer-check.ts`, instantly in the browser | Explains every answer from the passage, with the locating quote |
+| Writing | Two Task 1 data prompts (SVG bar chart, table) and three Task 2 essays | — | Four criteria in half bands with quotes as evidence; the task band is `writingTaskBand()` |
+| Speaking | Two Part 1 questions, a Part 2 cue card with its preparation minute, two Part 3 questions | Web Speech API transcript, editable before grading | Four criteria in half bands with quotes; the band is `speakingBand()` |
+
+The AI step calls the **`claude-completion` Edge Function already deployed and
+keyed on the MoreTOEFL Supabase project** (`nlsuvapjkznatczghvay`) — the same
+wired path MoreTOEFL's own drills use — via `src/lib/practice/ai.ts`. The
+examiner prompts in `src/lib/practice/grading.ts` are the same briefs as
+`grade-writing` and `grade-speaking`; strict JSON is required and every band is
+validated as 0–9 in half steps before it is shown. The Anthropic key never
+leaves the function environment. For this to work the site must be built
+against that project (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in
+`.env.example`), so a signed-in learner's token is accepted by the function.
+
+Listening audio is generated from the transcript in
+`src/data/practice/listening.ts` by `npm run practice:audio` (OpenAI speech,
+one voice per speaker, joined with ffmpeg) and committed, so it needs
+re-running only when a line changes. The transcript is revealed after the
+answers are checked.
+
+Practice results are kept per user in `localStorage` (last forty) and shown as
+"Recent practice" on `/practice`; there is no practice attempt table yet.
+
 ## AI grading
 
 `grade-writing` and `grade-speaking` call Claude with criterion-specific prompts
@@ -265,4 +302,6 @@ reach the browser.
 ## Not built
 
 Cloudflare Stream video, payments, and course content. Speech-to-text for
-speaking recordings is stubbed as described above.
+speaking recordings in the mock test is stubbed as described above (Speaking
+*practice* transcribes in the browser with the Web Speech API). Practice
+results are not yet stored server-side.

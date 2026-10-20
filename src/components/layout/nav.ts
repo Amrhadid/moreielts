@@ -8,7 +8,7 @@ export interface NavItem {
 
 export const PRIMARY_NAV: NavItem[] = [
   { label: "My Tests", to: "/", icon: "🏠", blurb: "Dashboard and progress" },
-  { label: "Practice", to: "/practice", icon: "🎯", blurb: "Drill one question type" },
+  { label: "Practice", to: "/practice", icon: "🎯", blurb: "Short sets with AI correction" },
   { label: "Mock Test", to: "/mock", icon: "📝", blurb: "Full timed exam" },
   { label: "Learn", to: "/learn", icon: "📖", blurb: "Strategy and format" },
   { label: "Enhance", to: "/enhance", icon: "✨", blurb: "Targeted improvement" },
