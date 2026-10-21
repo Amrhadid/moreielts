@@ -1,0 +1,20 @@
+{
+  "name": "MoreIELTS — IELTS practice and mock exams",
+  "short_name": "MoreIELTS",
+  "description": "Practise every IELTS question type, sit timed mock exams and get AI band feedback.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#0875c9",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Study plan", "url": "/enhance" },
+    { "name": "Review mistakes", "url": "/review" },
+    { "name": "Vocabulary", "url": "/vocabulary" }
+  ]
+}

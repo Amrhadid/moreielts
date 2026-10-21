@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 460" font-family="Inter, system-ui, sans-serif" role="img" aria-labelledby="t">
+  <title id="t">Site plan of the arts centre with three unlabelled buildings, 18 to 20</title>
+  <rect width="640" height="460" fill="#ffffff"/>
+  <!-- compass -->
+  <g transform="translate(590 50)" fill="#3c4552" font-size="13" font-weight="700" text-anchor="middle">
+    <path d="M0-26 8 0H-8Z" fill="#0875c9"/><text y="-30">N</text>
+  </g>
+  <!-- courtyard -->
+  <rect x="170" y="110" width="300" height="190" rx="10" fill="#eef6ec" stroke="#a9c9a1"/>
+  <text x="320" y="210" text-anchor="middle" font-size="15" fill="#4c7a44">Courtyard</text>
+  <!-- path -->
+  <path d="M250 420V300M170 300H95V150M250 420H320" fill="none" stroke="#cfccc5" stroke-width="14" stroke-linecap="round"/>
+  <!-- buildings -->
+  <g font-size="14" text-anchor="middle">
+    <rect x="265" y="318" width="110" height="56" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/>
+    <text x="320" y="353" font-size="20" font-weight="700">18</text>
+    <rect x="400" y="384" width="110" height="44" rx="6" fill="#d8ebff" stroke="#0875c9"/>
+    <text x="455" y="411" fill="#075ea2">Reception</text>
+    <rect x="250" y="30" width="140" height="64" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/>
+    <text x="320" y="70" font-size="20" font-weight="700">19</text>
+    <rect x="480" y="120" width="120" height="70" rx="6" fill="#f3f1ec" stroke="#6b7482"/>
+    <text x="540" y="160">Studio 1</text>
+    <rect x="480" y="210" width="120" height="70" rx="6" fill="#f3f1ec" stroke="#6b7482"/>
+    <text x="540" y="250">Studio 2</text>
+    <rect x="20" y="40" width="130" height="70" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/>
+    <text x="85" y="82" font-size="20" font-weight="700">20</text>
+    <rect x="20" y="170" width="60" height="150" rx="6" fill="#eceff3" stroke="#6b7482" stroke-dasharray="5 4"/>
+    <text x="50" y="250" transform="rotate(-90 50 250)">Car park</text>
+    <rect x="190" y="130" width="100" height="56" rx="6" fill="#f3f1ec" stroke="#6b7482"/>
+    <text x="240" y="163">Outdoor court</text>
+  </g>
+  <!-- entrance -->
+  <g text-anchor="middle" font-size="14" font-weight="700" fill="#a32b2b">
+    <path d="M320 452v-28m-9 10 9-12 9 12" stroke="#a32b2b" stroke-width="3" fill="none"/>
+    <text x="200" y="446">Main entrance (you are here)</text>
+  </g>
+</svg>

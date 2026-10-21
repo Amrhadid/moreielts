@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /test/
+Disallow: /results
+Disallow: /drill/
+Sitemap: https://moreielts.com/sitemap.xml
