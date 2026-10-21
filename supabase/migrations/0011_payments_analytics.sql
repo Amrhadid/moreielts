@@ -200,7 +200,7 @@ revoke all on
   public.ielts_drill_responses, public.ielts_mistakes, public.ielts_writing_submissions,
   public.ielts_vocab_learned, public.ielts_study_plan_checks, public.ielts_activity_log,
   public.ielts_payments, public.ielts_client_errors
-from anon;
+from anon, authenticated;
 
 grant all on
   public.ielts_item_group_scripts, public.ielts_grading_jobs, public.ielts_drill_attempts,

@@ -346,11 +346,11 @@ begin
     insert into public.ielts_learners (user_id) values (auth.uid())
     on conflict (user_id) do nothing;
 
-    select greatest(coalesce(premium_expires_at, now()), now())
+    select greatest(coalesce(l.premium_expires_at, now()), now())
       + make_interval(days => coalesce(v_code.duration_days, 30))
     into v_expires
-    from public.ielts_learners
-    where user_id = auth.uid();
+    from public.ielts_learners l
+    where l.user_id = auth.uid();
 
     update public.ielts_learners
     set premium_expires_at = v_expires
