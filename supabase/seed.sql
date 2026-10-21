@@ -10,16 +10,16 @@
 begin;
 
 -- Academic Mock Test 1 (academic-1)
-insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)
-values ('11111111-2222-4333-8444-555555555555', 'academic-1', 'Academic Mock Test 1', 'A full Academic practice test covering all four sections.', 'academic', 'computer', true, false, 'standard', 'v1')
-on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('11111111-2222-4333-8444-555555555555', 'academic-1', 'Academic Mock Test 1', 'A full Academic practice test covering all four sections.', 'academic', 'computer', true, true, 'standard', 'practice', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
 
 insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
 values ('f3c4fb7e-431e-4178-bfbd-cceeefdf9190', '11111111-2222-4333-8444-555555555555', 'listening', 1800, 40, NULL, 0)
 on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('d31cbca2-6b8d-4ecf-9f35-673a337b2a93', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 1, NULL, '/mock-audio/part-1.mp3', NULL, 'Questions 1-10. Complete the form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Enquiry about a community sports centre"}'::jsonb, 0)
+values ('d31cbca2-6b8d-4ecf-9f35-673a337b2a93', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 1, NULL, '/audio/forms/academic-1-part-1.mp3', NULL, 'Questions 1-10. Complete the form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Enquiry about a community sports centre"}'::jsonb, 0)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('d31cbca2-6b8d-4ecf-9f35-673a337b2a93', 'RECEPTIONIST: Good morning, Riverside Community Sports Centre, Ellie speaking. How can I help you?
@@ -98,7 +98,7 @@ values ('f4f73c77-5811-4d38-8f85-4e6cd68a5baf', 'd31cbca2-6b8d-4ecf-9f35-673a337
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('ad934cc2-03d8-474b-97e2-fb90ca09728b', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 2, NULL, '/mock-audio/part-2.mp3', '/mock-images/site-plan.svg', 'Questions 11-20. Choose the correct letter for Questions 11-14, match the facilities for Questions 15-17, and label the plan for Questions 18-20.', '{"image_caption":"Site plan referred to in Questions 18-20","title":"Part 2 — Introductory talk at an arts centre"}'::jsonb, 1)
+values ('ad934cc2-03d8-474b-97e2-fb90ca09728b', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 2, NULL, '/audio/forms/academic-1-part-2.mp3', '/mock-images/site-plan.svg', 'Questions 11-20. Choose the correct letter for Questions 11-14, match the facilities for Questions 15-17, and label the plan for Questions 18-20.', '{"image_caption":"Site plan referred to in Questions 18-20","title":"Part 2 — Introductory talk at an arts centre"}'::jsonb, 1)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('ad934cc2-03d8-474b-97e2-fb90ca09728b', 'HELEN: Good evening, everyone, and welcome to the Depot Arts Centre. My name''s Helen Carter, and I''m the centre manager. I''m going to give you a short introduction to the building and what goes on here, and then you''re welcome to look around.
@@ -152,7 +152,7 @@ values ('6b8a0ab1-d0f6-4cd0-9acd-47c4319d349f', 'ad934cc2-03d8-474b-97e2-fb90ca0
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('09df0e36-86a8-4c2a-9012-a3bdd6f0716e', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 3, NULL, '/mock-audio/part-3.mp3', NULL, 'Questions 21-30. Choose the correct letter for Questions 21-24, choose TWO letters for Questions 25-26, and match the speakers for Questions 27-30.', '{"title":"Part 3 — Two students discuss a field-work project"}'::jsonb, 2)
+values ('09df0e36-86a8-4c2a-9012-a3bdd6f0716e', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 3, NULL, '/audio/forms/academic-1-part-3.mp3', NULL, 'Questions 21-30. Choose the correct letter for Questions 21-24, choose TWO letters for Questions 25-26, and match the speakers for Questions 27-30.', '{"title":"Part 3 — Two students discuss a field-work project"}'::jsonb, 2)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('09df0e36-86a8-4c2a-9012-a3bdd6f0716e', 'TOMAS: Hi, Priya. Have you had a chance to look at the data from the last site visit?
@@ -225,7 +225,7 @@ values ('b253ec3f-3642-4262-87a5-4b41de60c10e', '09df0e36-86a8-4c2a-9012-a3bdd6f
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('3fc1bd89-1a8b-4d45-81fe-4b8c89057fa1', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 4, NULL, '/mock-audio/part-4.mp3', NULL, 'Questions 31-40. Complete the notes, table and flow-chart below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture on the history of standardised time"}'::jsonb, 3)
+values ('3fc1bd89-1a8b-4d45-81fe-4b8c89057fa1', 'f3c4fb7e-431e-4178-bfbd-cceeefdf9190', 4, NULL, '/audio/forms/academic-1-part-4.mp3', NULL, 'Questions 31-40. Complete the notes, table and flow-chart below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture on the history of standardised time"}'::jsonb, 3)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('3fc1bd89-1a8b-4d45-81fe-4b8c89057fa1', 'LECTURER: Good morning. Today I want to look at something we all take for granted: the idea that everyone in a country shares the same time.
@@ -581,16 +581,16 @@ values ('7452fdde-27e1-443e-a987-1b2c7fe0786c', 'e4a32f98-d8ae-4066-bb7d-a23a07d
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 -- Academic Mock Test 2 (academic-2)
-insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)
-values ('be1b01a1-baba-43ea-a644-82c9fca21664', 'academic-2', 'Academic Mock Test 2', 'A second full Academic practice test covering all four sections.', 'academic', 'computer', true, false, 'standard', 'v1')
-on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('be1b01a1-baba-43ea-a644-82c9fca21664', 'academic-2', 'Academic Mock Test 2', 'A second full Academic practice test covering all four sections.', 'academic', 'computer', true, true, 'standard', 'practice', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
 
 insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
 values ('38268768-a9a8-495c-b42d-ff90ca81df51', 'be1b01a1-baba-43ea-a644-82c9fca21664', 'listening', 1800, 40, NULL, 0)
 on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('f894d089-3acd-4eb1-88c5-5ea0808472f9', '38268768-a9a8-495c-b42d-ff90ca81df51', 1, NULL, NULL, NULL, 'Questions 1-10. Complete the booking form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Booking a walking holiday"}'::jsonb, 0)
+values ('f894d089-3acd-4eb1-88c5-5ea0808472f9', '38268768-a9a8-495c-b42d-ff90ca81df51', 1, NULL, '/audio/forms/academic-2-part-1.mp3', NULL, 'Questions 1-10. Complete the booking form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Booking a walking holiday"}'::jsonb, 0)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('f894d089-3acd-4eb1-88c5-5ea0808472f9', 'AGENT: Good afternoon, Fellside Walking Holidays, Mark speaking. How can I help?
@@ -665,7 +665,7 @@ values ('3e6b1ec7-ad0a-4f8a-ac0c-cafd5491965e', 'f894d089-3acd-4eb1-88c5-5ea0808
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('5a0507f4-4fa4-4cef-8030-beacd6fc0850', '38268768-a9a8-495c-b42d-ff90ca81df51', 2, NULL, NULL, NULL, 'Questions 11-20. Choose the correct letter for Questions 11-14, choose TWO letters for Questions 15-16, and for Questions 17-20 say where each item should go.', '{"title":"Part 2 — A radio talk about a food waste scheme"}'::jsonb, 1)
+values ('5a0507f4-4fa4-4cef-8030-beacd6fc0850', '38268768-a9a8-495c-b42d-ff90ca81df51', 2, NULL, '/audio/forms/academic-2-part-2.mp3', NULL, 'Questions 11-20. Choose the correct letter for Questions 11-14, choose TWO letters for Questions 15-16, and for Questions 17-20 say where each item should go.', '{"title":"Part 2 — A radio talk about a food waste scheme"}'::jsonb, 1)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('5a0507f4-4fa4-4cef-8030-beacd6fc0850', 'OFFICER: Good morning. My name is Rachel Osei, and I''m the waste services officer for the city council. I''ve been invited onto the programme this morning to explain the new food waste collection scheme, which will change how every household in the city deals with its rubbish.
@@ -720,7 +720,7 @@ values ('f5a74d22-b312-4fb6-bc15-6c9043ee347a', '5a0507f4-4fa4-4cef-8030-beacd6f
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('9f65b0a2-7f5e-4c07-ba01-1901657329e8', '38268768-a9a8-495c-b42d-ff90ca81df51', 3, NULL, NULL, NULL, 'Questions 21-30. Choose the correct letter for Questions 21-25. For Questions 26-30, what do the students say about each source? Choose the correct letter, A-F.', '{"title":"Part 3 — Planning a presentation on urban beekeeping"}'::jsonb, 2)
+values ('9f65b0a2-7f5e-4c07-ba01-1901657329e8', '38268768-a9a8-495c-b42d-ff90ca81df51', 3, NULL, '/audio/forms/academic-2-part-3.mp3', NULL, 'Questions 21-30. Choose the correct letter for Questions 21-25. For Questions 26-30, what do the students say about each source? Choose the correct letter, A-F.', '{"title":"Part 3 — Planning a presentation on urban beekeeping"}'::jsonb, 2)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('9f65b0a2-7f5e-4c07-ba01-1901657329e8', 'KATE: Thanks for seeing us, Professor Lane. We wanted to talk about our presentation on urban beekeeping.
@@ -790,7 +790,7 @@ values ('f54debaf-0b17-4214-a12b-c96cce72286b', '9f65b0a2-7f5e-4c07-ba01-1901657
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('ecb021eb-e379-405c-8549-f7e7d0e3cefa', '38268768-a9a8-495c-b42d-ff90ca81df51', 4, NULL, NULL, NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture on the history of glass"}'::jsonb, 3)
+values ('ecb021eb-e379-405c-8549-f7e7d0e3cefa', '38268768-a9a8-495c-b42d-ff90ca81df51', 4, NULL, '/audio/forms/academic-2-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture on the history of glass"}'::jsonb, 3)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('ecb021eb-e379-405c-8549-f7e7d0e3cefa', 'LECTURER: Good morning, everyone. In today''s lecture on the history of materials, we''re going to look at glass, which is one of the oldest manufactured materials and still one of the most important.
@@ -1160,16 +1160,16 @@ values ('c786547f-8b27-452a-89f9-70beb3b4aab4', 'bdb16a56-cfc3-4f06-bf5c-c7ca7a9
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 -- Academic Mock Test 3 (academic-3)
-insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)
-values ('4aaa0f29-4099-43d9-98a7-770e52e4690d', 'academic-3', 'Academic Mock Test 3', 'A foundation-level Academic practice test (around band 5-6) covering all four sections.', 'academic', 'computer', true, false, 'foundation', 'v1')
-on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('4aaa0f29-4099-43d9-98a7-770e52e4690d', 'academic-3', 'Academic Mock Test 3', 'A foundation-level Academic practice test (around band 5-6) covering all four sections.', 'academic', 'computer', true, true, 'foundation', 'practice', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
 
 insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
 values ('68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', '4aaa0f29-4099-43d9-98a7-770e52e4690d', 'listening', 1800, 40, NULL, 0)
 on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('57ea542c-dca7-4937-8f35-4c84e1865e64', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 1, NULL, NULL, NULL, 'Questions 1-10. Complete the booking form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Hiring bicycles for a family holiday"}'::jsonb, 0)
+values ('57ea542c-dca7-4937-8f35-4c84e1865e64', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 1, NULL, '/audio/forms/academic-3-part-1.mp3', NULL, 'Questions 1-10. Complete the booking form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Hiring bicycles for a family holiday"}'::jsonb, 0)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('57ea542c-dca7-4937-8f35-4c84e1865e64', 'LUCY: Good morning, Greenway Cycle Hire, Lucy speaking. How can I help you?
@@ -1248,7 +1248,7 @@ values ('7defa312-fe44-46fb-a8b4-9c9162dc9040', '57ea542c-dca7-4937-8f35-4c84e18
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('5ba1f061-5b07-46d4-b485-7ef7460d4d0f', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 2, NULL, NULL, NULL, 'Questions 11-20. Choose the correct letter for Questions 11-14. For Questions 15-18, choose what each area of the garden offers (A-F). For Questions 19-20, write NO MORE THAN TWO WORDS AND/OR A NUMBER.', '{"title":"Part 2 — Welcome talk at a botanical garden"}'::jsonb, 1)
+values ('5ba1f061-5b07-46d4-b485-7ef7460d4d0f', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 2, NULL, '/audio/forms/academic-3-part-2.mp3', NULL, 'Questions 11-20. Choose the correct letter for Questions 11-14. For Questions 15-18, choose what each area of the garden offers (A-F). For Questions 19-20, write NO MORE THAN TWO WORDS AND/OR A NUMBER.', '{"title":"Part 2 — Welcome talk at a botanical garden"}'::jsonb, 1)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('5ba1f061-5b07-46d4-b485-7ef7460d4d0f', 'GUIDE: Good morning, everyone, and welcome to Ashford Botanical Garden. My name is Peter, and I''ll be your guide this morning. Before we set off, I''d like to tell you a little about the garden and explain what you can see today.
@@ -1306,7 +1306,7 @@ values ('2e7361ae-3d18-49c0-9f3f-194dfc308805', '5ba1f061-5b07-46d4-b485-7ef7460
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('696cc755-91c3-4f1c-91e6-49457c1ba2c6', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 3, NULL, NULL, NULL, 'Questions 21-30. Choose the correct letter for Questions 21-25. For Questions 26-30, decide who will do each task: A Maya, B Ben, or C both.', '{"title":"Part 3 — Planning a presentation on campus recycling"}'::jsonb, 2)
+values ('696cc755-91c3-4f1c-91e6-49457c1ba2c6', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 3, NULL, '/audio/forms/academic-3-part-3.mp3', NULL, 'Questions 21-30. Choose the correct letter for Questions 21-25. For Questions 26-30, decide who will do each task: A Maya, B Ben, or C both.', '{"title":"Part 3 — Planning a presentation on campus recycling"}'::jsonb, 2)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('696cc755-91c3-4f1c-91e6-49457c1ba2c6', 'DR HOLT: Come in, Maya, Ben. So, you wanted to talk about your presentation for the environmental studies module.
@@ -1385,7 +1385,7 @@ values ('7cac2fa0-30aa-4d5c-8872-21785365e914', '696cc755-91c3-4f1c-91e6-49457c1
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('3d3b3970-42f4-4f7e-b2ba-61aaea8268f9', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 4, NULL, NULL, NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD AND/OR A NUMBER for each answer.', '{"title":"Part 4 — Lecture: how honeybees communicate"}'::jsonb, 3)
+values ('3d3b3970-42f4-4f7e-b2ba-61aaea8268f9', '68e2e502-8a0e-4ca1-aae2-5a2d1b7b0ed7', 4, NULL, '/audio/forms/academic-3-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD AND/OR A NUMBER for each answer.', '{"title":"Part 4 — Lecture: how honeybees communicate"}'::jsonb, 3)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('3d3b3970-42f4-4f7e-b2ba-61aaea8268f9', 'LECTURER: Good afternoon. In today''s lecture I''m going to talk about one of the most remarkable animals in the natural world, the honeybee, and in particular about how honeybees share information with each other. Then, at the end, I''ll say something about the problems bees face today.
@@ -1756,16 +1756,16 @@ values ('fd41f6a9-26ff-4c14-9b40-fcfeeaa9c732', '795e4111-656f-4e08-a3fd-9614fd9
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 -- Academic Mock Test 4 (academic-4)
-insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)
-values ('09ba0ecc-c1cf-45a6-8667-2bfbf893228a', 'academic-4', 'Academic Mock Test 4', 'A challenge-level Academic practice test (band 7.5+) covering all four sections.', 'academic', 'computer', true, true, 'challenge', 'v1')
-on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('09ba0ecc-c1cf-45a6-8667-2bfbf893228a', 'academic-4', 'Academic Mock Test 4', 'A challenge-level Academic practice test (band 7.5+) covering all four sections.', 'academic', 'computer', true, true, 'challenge', 'practice', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
 
 insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
 values ('7bde28fd-7f67-435d-988f-d67b248e2991', '09ba0ecc-c1cf-45a6-8667-2bfbf893228a', 'listening', 1800, 40, NULL, 0)
 on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('166d9c5f-ea60-4db9-8299-16578200e05e', '7bde28fd-7f67-435d-988f-d67b248e2991', 1, NULL, NULL, NULL, 'Questions 1-10. Complete the application notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Volunteering at a wildlife rescue centre"}'::jsonb, 0)
+values ('166d9c5f-ea60-4db9-8299-16578200e05e', '7bde28fd-7f67-435d-988f-d67b248e2991', 1, NULL, '/audio/forms/academic-4-part-1.mp3', NULL, 'Questions 1-10. Complete the application notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Volunteering at a wildlife rescue centre"}'::jsonb, 0)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('166d9c5f-ea60-4db9-8299-16578200e05e', 'HANNAH: Hello, Fernhill Wildlife Rescue, Hannah speaking.
@@ -1842,7 +1842,7 @@ values ('8350a023-f1a0-4b7f-85be-40f0246757e1', '166d9c5f-ea60-4db9-8299-1657820
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('4c1ccd01-31f8-42b2-837b-b106d962a3df', '7bde28fd-7f67-435d-988f-d67b248e2991', 2, NULL, NULL, NULL, 'Questions 11-20. Choose the correct letter for Questions 11-14. For Questions 15-20, choose the feature (A-G) that matches each site on the canal.', '{"title":"Part 2 — Talk on the restoration of the Harnley Canal"}'::jsonb, 1)
+values ('4c1ccd01-31f8-42b2-837b-b106d962a3df', '7bde28fd-7f67-435d-988f-d67b248e2991', 2, NULL, '/audio/forms/academic-4-part-2.mp3', NULL, 'Questions 11-20. Choose the correct letter for Questions 11-14. For Questions 15-20, choose the feature (A-G) that matches each site on the canal.', '{"title":"Part 2 — Talk on the restoration of the Harnley Canal"}'::jsonb, 1)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('4c1ccd01-31f8-42b2-837b-b106d962a3df', 'SPEAKER: Good evening, and thank you for coming. I''m Clare Sowerby, chair of the Harnley Canal Trust, and tonight I want to give you an overview of where the restoration stands, twenty years after we began.
@@ -1901,7 +1901,7 @@ values ('9f990b14-ccb2-47c1-a63e-b295be097bcf', '4c1ccd01-31f8-42b2-837b-b106d96
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('929c6273-a4e5-4890-87db-62f81802400d', '7bde28fd-7f67-435d-988f-d67b248e2991', 3, NULL, NULL, NULL, 'Questions 21-30. Choose the correct letter for Questions 21-25. For Questions 26-30, decide who expresses each view: A Lena only, B Omar only, or C both Lena and Omar.', '{"title":"Part 3 — Tutorial on a dissertation about behavioural ''nudges''"}'::jsonb, 2)
+values ('929c6273-a4e5-4890-87db-62f81802400d', '7bde28fd-7f67-435d-988f-d67b248e2991', 3, NULL, '/audio/forms/academic-4-part-3.mp3', NULL, 'Questions 21-30. Choose the correct letter for Questions 21-25. For Questions 26-30, decide who expresses each view: A Lena only, B Omar only, or C both Lena and Omar.', '{"title":"Part 3 — Tutorial on a dissertation about behavioural ''nudges''"}'::jsonb, 2)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('929c6273-a4e5-4890-87db-62f81802400d', 'PROF GRANT: Right, Lena, Omar, thanks for coming. You''ve sent me a joint proposal on nudges in pension saving. Before we get into detail, tell me in a sentence what you''re actually trying to find out.
@@ -1977,7 +1977,7 @@ values ('1f6d0c40-c28b-4d97-ae39-478918828a85', '929c6273-a4e5-4890-87db-62f8180
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('c05a456a-f45b-4f09-9355-9f8105da6f74', '7bde28fd-7f67-435d-988f-d67b248e2991', 4, NULL, NULL, NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: life around deep-sea hydrothermal vents"}'::jsonb, 3)
+values ('c05a456a-f45b-4f09-9355-9f8105da6f74', '7bde28fd-7f67-435d-988f-d67b248e2991', 4, NULL, '/audio/forms/academic-4-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: life around deep-sea hydrothermal vents"}'::jsonb, 3)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('c05a456a-f45b-4f09-9355-9f8105da6f74', 'LECTURER: Good morning. Today we turn to one of the most significant discoveries in twentieth-century biology, the ecosystems that surround hydrothermal vents on the deep ocean floor, and what they have done to our ideas about where life can exist.
@@ -2345,16 +2345,16 @@ values ('01319329-dd0e-457b-b253-fbd3779a37e1', 'e3286c5c-0a14-4eb7-ae85-abe062b
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 -- General Training Mock Test 1 (general-1)
-insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)
-values ('f08fa3c1-8485-4593-b50e-b1bb033c1368', 'general-1', 'General Training Mock Test 1', 'A full General Training practice test covering all four sections.', 'general_training', 'computer', true, false, 'standard', 'v1')
-on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('f08fa3c1-8485-4593-b50e-b1bb033c1368', 'general-1', 'General Training Mock Test 1', 'A full General Training practice test covering all four sections.', 'general_training', 'computer', true, true, 'standard', 'practice', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
 
 insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
 values ('f21bc676-935b-425d-92d8-aabddef3b09f', 'f08fa3c1-8485-4593-b50e-b1bb033c1368', 'listening', 1800, 40, NULL, 0)
 on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('2186b970-8f9e-4945-9158-1237d6b23b11', 'f21bc676-935b-425d-92d8-aabddef3b09f', 1, NULL, NULL, NULL, 'Questions 1-10. Complete the booking form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Booking a house removal"}'::jsonb, 0)
+values ('2186b970-8f9e-4945-9158-1237d6b23b11', 'f21bc676-935b-425d-92d8-aabddef3b09f', 1, NULL, '/audio/forms/general-1-part-1.mp3', NULL, 'Questions 1-10. Complete the booking form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Booking a house removal"}'::jsonb, 0)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('2186b970-8f9e-4945-9158-1237d6b23b11', 'HELEN: Good morning, Swift Move Removals, Helen speaking. How can I help?
@@ -2443,7 +2443,7 @@ values ('513a125d-f098-41a8-96e3-59dc01f810ee', '2186b970-8f9e-4945-9158-1237d6b
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('d6908b0e-e829-4515-b3a1-d5c596d0279c', 'f21bc676-935b-425d-92d8-aabddef3b09f', 2, NULL, NULL, NULL, 'Questions 11-15: choose the correct letter, A, B or C. Questions 16-20: which task will each group do? Choose from the list A-G.', '{"title":"Part 2 — Volunteer day at Elmbridge Riverside Park"}'::jsonb, 1)
+values ('d6908b0e-e829-4515-b3a1-d5c596d0279c', 'f21bc676-935b-425d-92d8-aabddef3b09f', 2, NULL, '/audio/forms/general-1-part-2.mp3', NULL, 'Questions 11-15: choose the correct letter, A, B or C. Questions 16-20: which task will each group do? Choose from the list A-G.', '{"title":"Part 2 — Volunteer day at Elmbridge Riverside Park"}'::jsonb, 1)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('d6908b0e-e829-4515-b3a1-d5c596d0279c', 'SPEAKER: Good morning, everyone, and thank you for coming along to the Elmbridge Riverside Park volunteer day. My name''s Fiona Grant, and I''m the volunteer coordinator here. Before we split into groups, I want to give you a little background and go through the plan for the day.
@@ -2502,7 +2502,7 @@ values ('33f4d18e-5544-4f44-b0c5-89cb6dda7300', 'd6908b0e-e829-4515-b3a1-d5c596d
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('57515e31-a084-4e1f-b4c7-4c04b8d39c9f', 'f21bc676-935b-425d-92d8-aabddef3b09f', 3, NULL, NULL, NULL, 'Questions 21-25: choose the correct letter, A, B or C. Questions 26-30: what do the students say about each part of their research? Choose from the list A-F.', '{"title":"Part 3 — Discussing a survey on commuting habits"}'::jsonb, 2)
+values ('57515e31-a084-4e1f-b4c7-4c04b8d39c9f', 'f21bc676-935b-425d-92d8-aabddef3b09f', 3, NULL, '/audio/forms/general-1-part-3.mp3', NULL, 'Questions 21-25: choose the correct letter, A, B or C. Questions 26-30: what do the students say about each part of their research? Choose from the list A-F.', '{"title":"Part 3 — Discussing a survey on commuting habits"}'::jsonb, 2)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('57515e31-a084-4e1f-b4c7-4c04b8d39c9f', 'TUTOR: Come in, Leila, Owen. So, you wanted to talk about your project on how staff at the hospital get to work?
@@ -2582,7 +2582,7 @@ values ('7038e953-7300-4d4a-936c-aff449ce08f0', '57515e31-a084-4e1f-b4c7-4c04b8d
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('97d8e374-d80b-4c74-ad4f-ef54a73694af', 'f21bc676-935b-425d-92d8-aabddef3b09f', 4, NULL, NULL, NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: the history of the public library"}'::jsonb, 3)
+values ('97d8e374-d80b-4c74-ad4f-ef54a73694af', 'f21bc676-935b-425d-92d8-aabddef3b09f', 4, NULL, '/audio/forms/general-1-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: the history of the public library"}'::jsonb, 3)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('97d8e374-d80b-4c74-ad4f-ef54a73694af', 'LECTURER: Good afternoon. Today I want to look at the history of the public library, an institution most of us take for granted, but which is surprisingly recent in its modern form.
@@ -2973,16 +2973,16 @@ values ('ac8b2a10-7100-4a72-bb6e-9c24fb39b4fd', 'b145e4a8-bd8d-41cf-8395-104b85d
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 -- General Training Mock Test 2 (general-2)
-insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)
-values ('aefc3b54-b041-4a2e-936c-90c87fa1c92e', 'general-2', 'General Training Mock Test 2', 'A full General Training practice test covering all four sections.', 'general_training', 'computer', true, true, 'standard', 'v1')
-on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('aefc3b54-b041-4a2e-936c-90c87fa1c92e', 'general-2', 'General Training Mock Test 2', 'A full General Training practice test covering all four sections.', 'general_training', 'computer', true, true, 'standard', 'practice', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
 
 insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
 values ('e51b1718-51a7-41b0-837d-551f0bca320c', 'aefc3b54-b041-4a2e-936c-90c87fa1c92e', 'listening', 1800, 40, NULL, 0)
 on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('cc2cfcdb-35d4-4b5c-b4c1-7e852e6eae1d', 'e51b1718-51a7-41b0-837d-551f0bca320c', 1, NULL, NULL, NULL, 'Questions 1-10. Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Enrolling a child in a holiday activity club"}'::jsonb, 0)
+values ('cc2cfcdb-35d4-4b5c-b4c1-7e852e6eae1d', 'e51b1718-51a7-41b0-837d-551f0bca320c', 1, NULL, '/audio/forms/general-2-part-1.mp3', NULL, 'Questions 1-10. Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Enrolling a child in a holiday activity club"}'::jsonb, 0)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('cc2cfcdb-35d4-4b5c-b4c1-7e852e6eae1d', 'MAN: Good afternoon, Oakfield Holiday Club. This is Raj. How can I help you?
@@ -3065,7 +3065,7 @@ values ('53ba0338-6529-4975-bab7-daef78741182', 'cc2cfcdb-35d4-4b5c-b4c1-7e852e6
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('2385a9b3-c993-4fa5-badf-e36abfd1af88', 'e51b1718-51a7-41b0-837d-551f0bca320c', 2, NULL, NULL, NULL, 'Questions 11-14: choose the correct letter, A, B or C. Questions 15-20: on which floor can visitors find each of the following? Choose from the list A-F. You may use any letter more than once.', '{"title":"Part 2 — Welcome talk at the Harbourside Museum of Making"}'::jsonb, 1)
+values ('2385a9b3-c993-4fa5-badf-e36abfd1af88', 'e51b1718-51a7-41b0-837d-551f0bca320c', 2, NULL, '/audio/forms/general-2-part-2.mp3', NULL, 'Questions 11-14: choose the correct letter, A, B or C. Questions 15-20: on which floor can visitors find each of the following? Choose from the list A-F. You may use any letter more than once.', '{"title":"Part 2 — Welcome talk at the Harbourside Museum of Making"}'::jsonb, 1)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('2385a9b3-c993-4fa5-badf-e36abfd1af88', 'GUIDE: Hello everyone, and welcome to the Harbourside Museum of Making. I''m Sam, and I''ll be giving you a quick introduction before you explore on your own.
@@ -3126,7 +3126,7 @@ values ('8c958d45-3caa-4287-bae5-04d5f79ba924', '2385a9b3-c993-4fa5-badf-e36abfd
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('4d6ec4c6-6859-48b4-97dd-137d17519f72', 'e51b1718-51a7-41b0-837d-551f0bca320c', 3, NULL, NULL, NULL, 'Questions 21-25: choose the correct letter, A, B or C. Questions 26-30: complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.', '{"title":"Part 3 — Planning a presentation on food waste"}'::jsonb, 2)
+values ('4d6ec4c6-6859-48b4-97dd-137d17519f72', 'e51b1718-51a7-41b0-837d-551f0bca320c', 3, NULL, '/audio/forms/general-2-part-3.mp3', NULL, 'Questions 21-25: choose the correct letter, A, B or C. Questions 26-30: complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.', '{"title":"Part 3 — Planning a presentation on food waste"}'::jsonb, 2)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('4d6ec4c6-6859-48b4-97dd-137d17519f72', 'MAYA: Right, Tom, we need to plan the presentation on food waste in the college canteen. It''s on Friday, so we haven''t got long.
@@ -3206,7 +3206,7 @@ values ('d92650df-2c99-4037-a84b-fdd9e0939d07', '4d6ec4c6-6859-48b4-97dd-137d175
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
-values ('c7b9d6e7-2049-46d2-b9b8-7276dfaef124', 'e51b1718-51a7-41b0-837d-551f0bca320c', 4, NULL, NULL, NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: beekeeping in cities"}'::jsonb, 3)
+values ('c7b9d6e7-2049-46d2-b9b8-7276dfaef124', 'e51b1718-51a7-41b0-837d-551f0bca320c', 4, NULL, '/audio/forms/general-2-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: beekeeping in cities"}'::jsonb, 3)
 on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
 
 insert into public.ielts_item_group_scripts (group_id, transcript) values ('c7b9d6e7-2049-46d2-b9b8-7276dfaef124', 'LECTURER: Good morning. In this session I''m going to talk about urban beekeeping: the practice of keeping honeybees in towns and cities, which has grown remarkably over the past twenty years.
@@ -3607,6 +3607,2519 @@ on conflict (id) do update set prompt = excluded.prompt, options = excluded.opti
 
 insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
 values ('cd214e36-d6f3-4889-ab88-8a65436ea8a4', 'bf3b8d78-7669-4837-b631-3b70a5c65fa5', 'short_answer', 'Is it the government''s responsibility to help people in need, or the community''s?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+-- IELTS Academic Mock Exam 1 (mock-academic-1)
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('df616ac8-34ad-4c73-9f54-1498929233c2', 'mock-academic-1', 'IELTS Academic Mock Exam 1', 'A full timed IELTS Academic mock exam: Listening, Reading, Writing and Speaking.', 'academic', 'computer', true, true, 'standard', 'mock', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('ecdf9470-e30a-4574-95bc-b55a37cbd26c', 'df616ac8-34ad-4c73-9f54-1498929233c2', 'listening', 1800, 40, NULL, 0)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('c5014007-3e63-4c27-bf23-f30440f0c5fa', 'ecdf9470-e30a-4574-95bc-b55a37cbd26c', 1, NULL, '/audio/mock/mock-academic-1-part-1.mp3', NULL, 'Questions 1-10. Complete the lost property form below. Write ONE WORD AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Reporting a lost bag to a rail company"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('c5014007-3e63-4c27-bf23-f30440f0c5fa', 'CLERK: Good morning, Westline Railways lost property office, Sarah speaking. How can I help you?
+DANIEL: Oh, hello. I left a bag on one of your trains, and I''m hoping someone might have handed it in.
+CLERK: I''m sorry to hear that. Nothing has been matched to a description yet this morning, but things come in from all over the network, so let me take some details and I''ll create a report. Can I start with your name?
+DANIEL: Yes, it''s Daniel Thewlis.
+CLERK: Could you spell the surname for me?
+DANIEL: Sure. T-H-E-W-L-I-S.
+CLERK: T-H-E-W-L-I-S. Thank you. And you lost the bag yesterday?
+DANIEL: Well, actually, no, sorry, I''m getting confused. I phoned my sister yesterday to tell her about it, but the journey itself was the day before. So that would be the fourteenth of October.
+CLERK: The fourteenth. That was a Tuesday. And where did you get on the train?
+DANIEL: I live in Millford, but the trains from there are so slow that I drove to Stanton and caught the eight fifteen from there.
+CLERK: So the train departed from Stanton. Is that S-T-A-N-T-O-N?
+DANIEL: That''s right.
+CLERK: And it was the direct service to the city, was it?
+DANIEL: Yes, I got off at Central Station at about half past nine.
+CLERK: Do you remember which carriage you were sitting in? It really helps the cleaning teams when they search.
+DANIEL: I think it was carriage C. Hang on, no, it can''t have been, because I specifically went to the quiet coach to do some reading, and on that train the quiet coach is carriage D. Yes, it was D.
+CLERK: Carriage D. And what exactly did you leave behind?
+DANIEL: A bag. It''s not a suitcase or anything like that. It''s a canvas rucksack, a fairly big one.
+CLERK: A rucksack. And the colour?
+DANIEL: It''s green, a dark green, although under the lights on the train it can look almost grey. It has brown leather straps, which are quite distinctive.
+CLERK: Dark green with brown straps. Is there a brand name on it?
+DANIEL: There''s a small label on the front, but it''s worn away, so I''m afraid I can''t tell you what it says.
+CLERK: Not to worry. And what was inside the bag?
+DANIEL: The thing I''m most worried about is my camera. It''s in a black case with a shoulder strap. There''s also a waterproof jacket, which doesn''t matter so much, and a book.
+CLERK: Can you tell me anything about the book? If it has a name inside, that could help us identify the bag.
+DANIEL: It''s a library book, actually, so it has the library stamp in it. It''s about astronomy. I''m doing an evening course on the night sky, and it''s the main text for the course.
+CLERK: Astronomy. Okay. And roughly what would you say the whole bag and its contents are worth? We ask for an estimate for insurance purposes.
+DANIEL: Well, the camera cost me four hundred pounds new, but that was a few years ago, so it wouldn''t be worth that now. Altogether, including the bag and the jacket, I''d say about three hundred and fifty pounds.
+CLERK: Three hundred and fifty. Fine. Now, there is a small fee if we do find it. It''s a fixed charge of fifteen pounds, which covers storage, and if you want it posted to you, there''s a postage charge as well, depending on the size.
+DANIEL: I''d rather come and collect it, if that''s possible. I work near Central Station.
+CLERK: That''s fine. The office is on the lower ground floor, next to platform one, and we''re open from seven in the morning until seven in the evening, Monday to Saturday.
+DANIEL: Great.
+CLERK: And how would you like us to contact you if the bag turns up? We can phone, email or send a text message.
+DANIEL: Email''s no good, I''m afraid, as I don''t check my personal account at work. And I often can''t answer the phone in meetings. So a text message would be best.
+CLERK: A text it is. Could I have your mobile number?
+DANIEL: It''s oh seven seven double oh, nine one four, three eight two.
+CLERK: Thank you. I''ll read it back to you. Oh seven seven double oh, nine one four, three eight two.
+DANIEL: That''s right.
+CLERK: Lovely. Your report reference is L P six four seven. If you need to call us again, please quote that number and it''ll save time.
+DANIEL: L P six four seven. Let me write that down. And how long do you keep things for?
+CLERK: We hold items for one month. After that, anything unclaimed is given to charity, except for valuables like phones and cameras, which are handed to the police.
+DANIEL: Okay. And do most things get found?
+CLERK: A surprising number do. Rucksacks especially, because they''re easy to spot. The cleaning team will have searched that train at the end of the line, so if it was still on board, it''ll be on its way to us. It can take up to three days for items to reach this office.
+DANIEL: Three days. All right, I''ll try to be patient. Thank you so much for your help.
+CLERK: You''re welcome, Mr Thewlis. We''ll be in touch as soon as we have any news.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('93b3cafb-3abc-4753-922a-71cefaa80d63', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Name: Daniel ______', '[]'::jsonb, ARRAY['Thewlis']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The surname is spelt "T-H-E-W-L-I-S."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('83f1f5da-7fa8-42ee-b209-9bee6caa0aef', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Date of journey: ______ October', '[]'::jsonb, ARRAY['14th', '14', 'fourteenth']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Not yesterday: "the journey itself was the day before. So that would be the fourteenth of October."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bf85ea45-9736-4808-8a8b-5d01d56a27c3', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Train departed from: ______', '[]'::jsonb, ARRAY['Stanton']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'He lives in Millford but "drove to Stanton and caught the eight fifteen from there."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('92d73cfa-7de4-407c-b58a-1d0986fabe64', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Carriage: ______', '[]'::jsonb, ARRAY['D']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'He first says C, then corrects himself: "the quiet coach is carriage D. Yes, it was D."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f729b81e-9fa0-40d9-9865-776ff9055606', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Item lost: a canvas ______', '[]'::jsonb, ARRAY['rucksack', 'backpack']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"It''s not a suitcase or anything like that. It''s a canvas rucksack".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3fd39022-be03-47b1-a94a-278ff9aa486f', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Colour: ______, with brown leather straps', '[]'::jsonb, ARRAY['green', 'dark green']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"It''s green, a dark green, although under the lights on the train it can look almost grey."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7d9d8f82-3e7a-4417-8cf4-5d3807003484', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Contents: a ______ in a black case', '[]'::jsonb, ARRAY['camera']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"The thing I''m most worried about is my camera. It''s in a black case".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2e076070-0021-4722-9245-adce22588df2', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Contents: a library book about ______', '[]'::jsonb, ARRAY['astronomy']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"It''s a library book, actually" and "It''s about astronomy."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d8e430f9-4b14-4546-8bdb-a5f4ec46d971', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Estimated value of bag and contents: £______', '[]'::jsonb, ARRAY['350']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The camera cost four hundred new, but "Altogether, including the bag and the jacket, I''d say about three hundred and fifty pounds."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d3be8047-a656-465c-b3c2-b02d08dae6ec', 'c5014007-3e63-4c27-bf23-f30440f0c5fa', 'note_completion', 'Preferred contact method: ______', '[]'::jsonb, ARRAY['text', 'text message', 'texts']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Email and phone are rejected: "So a text message would be best."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('20d4fab5-218b-4e55-82e4-c98cb23336be', 'ecdf9470-e30a-4574-95bc-b55a37cbd26c', 2, NULL, '/audio/mock/mock-academic-1-part-2.mp3', '/mock-images/mock-academic-1-plan.svg', 'Questions 11-20. For Questions 11-14, choose the correct letter, A, B or C. For Questions 15-20, label the plan: choose the correct letter, A-H, for each place.', '{"image_caption":"Plan of Greenhill City Farm for Questions 15-20","title":"Part 2 — Welcome talk at Greenhill City Farm"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('20d4fab5-218b-4e55-82e4-c98cb23336be', 'ROSA: Hello everyone, and welcome to Greenhill City Farm. My name''s Rosa and I''m one of the education officers here. Before you go off and explore, I''d like to tell you a little about the farm and show you where everything is on the plan you were given at reception.
+ROSA: First, a bit of history. A lot of visitors assume that the farm was built on the site of the old brick factory, because the chimney you can see from the car park belonged to it. In fact, the factory stood on the land just next door, which is now housing. This site was the town''s rubbish tip until the nineteen seventies. When it closed, a group of local parents cleared the ground, brought in topsoil, and opened the farm with just two goats and a few chickens in nineteen seventy-eight.
+ROSA: We''re a charity, so people often ask how we pay for everything. We do get donations from visitors, and we''re very grateful for them, but they only make up a small part of our budget. The café helps too, and it''s getting busier every year. But by far the largest share of our income comes from school visits. We host around twelve thousand children a year, and the fees schools pay keep the farm running.
+ROSA: Now, a few rules. Dogs are welcome on the farm, as long as they''re kept on a lead at all times and they don''t go into the animal barns. You''re also very welcome to take photographs, and we love it when people share them online. What we do ask is that you don''t give the animals any food you''ve brought with you. Even a small piece of bread can make a goat or a pig quite ill. If you''d like to feed them, you can buy bags of suitable food at reception for one pound.
+ROSA: We''ve also got some new things happening this year. Some of you may remember that we used to offer pony riding lessons. Sadly we had to stop those last year, when our insurance costs went up. We had also hoped to launch a monthly weekend market for local producers this spring, but that''s been put back until next year. What is going ahead, starting in May, is a cheese-making course, using milk from our own goats. It runs on Saturday mornings, and there are still a few places left.
+ROSA: Right, let''s look at the plan. We''re standing at reception, just inside the main entrance, at the bottom of the plan. You''ll see the café is on your left as you face into the farm, and the main path goes straight ahead, north, up to the yard in the middle of the site.
+ROSA: When you reach the yard, look to your left, that''s to the west, and you''ll find the goat pens. They''re the most popular part of the farm with children, so they can get crowded around feeding time at two o''clock.
+ROSA: Behind the goat pens, right up in the north-west corner of the site, is the orchard. We grow apples, pears and plums there, and in autumn visitors can pick their own fruit.
+ROSA: If you''d like to see the pond, head for the top right-hand corner of the farm, in the north-east. Follow the path that runs alongside the stream, and the pond is at the very end of it. Please keep young children close to you there, as the water is quite deep in places.
+ROSA: Back at the entrance, the building on your right as you come in, directly opposite the café, is the farm shop. It sells our own eggs, honey and vegetables, and it will sell the cheese too, once the course is under way.
+ROSA: The pigs are a short walk away. Go straight ahead past the yard, keep going north, and the pig sties are at the top of the main path. The sows had piglets last month, so do go and have a look.
+ROSA: And finally, the picnic area. The leaflets you may have picked up in town still show it down by the pond, but we''ve moved it because of the ducks, which kept stealing people''s sandwiches. It''s now on the east side of the yard, opposite the goat pens, so it''s nice and central, and there''s plenty of shade from the trees.
+ROSA: Toilets are next to reception and in the corner of the café. If you have any questions, just ask anyone wearing a green sweatshirt. Enjoy your visit.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('783a2f41-c4fc-4459-9e4e-4d4bcb362b08', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'multiple_choice_single', 'Before the farm opened, the site was', '[{"value":"A","label":"A. a brick factory"},{"value":"B","label":"B. a rubbish tip"},{"value":"C","label":"C. housing"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"This site was the town''s rubbish tip until the nineteen seventies." The factory "stood on the land just next door".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fa696e9c-7e33-4aad-baea-b92b3526baf5', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'multiple_choice_single', 'Most of the farm''s income comes from', '[{"value":"A","label":"A. visitors'' donations"},{"value":"B","label":"B. the café"},{"value":"C","label":"C. school visits"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"by far the largest share of our income comes from school visits."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3bcc1cfe-02e5-4f98-90d2-50cf22c4e554', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'multiple_choice_single', 'Visitors are asked not to', '[{"value":"A","label":"A. bring dogs onto the farm"},{"value":"B","label":"B. give the animals food they have brought"},{"value":"C","label":"C. take photographs of the animals"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Dogs and photographs are allowed; "What we do ask is that you don''t give the animals any food you''ve brought with you."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('da19bd8e-80df-4838-9acc-90e468c316c5', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'multiple_choice_single', 'What is new at the farm this year?', '[{"value":"A","label":"A. pony riding lessons"},{"value":"B","label":"B. a weekend market"},{"value":"C","label":"C. a cheese-making course"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Riding lessons stopped and the market has "been put back until next year." "What is going ahead, starting in May, is a cheese-making course".', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d458c387-ffec-42c7-a190-b6b04c3344b3', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'diagram_label', 'Goat pens', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"When you reach the yard, look to your left, that''s to the west, and you''ll find the goat pens."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1a092635-8fe3-47d0-948e-9e04f33a736a', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'diagram_label', 'Orchard', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Behind the goat pens, right up in the north-west corner of the site, is the orchard."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('16dcb4f1-6c68-4119-8fa1-be614b457237', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'diagram_label', 'Pond', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Follow the path that runs alongside the stream, and the pond is at the very end of it", in "the north-east."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9c399371-2f7a-41d1-81b3-26fabd66932c', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'diagram_label', 'Farm shop', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['G']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"the building on your right as you come in, directly opposite the café, is the farm shop."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0e59a1fb-1fb4-47c5-9376-3c3b6881094a', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'diagram_label', 'Pig sties', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Go straight ahead past the yard, keep going north, and the pig sties are at the top of the main path."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a177a3bb-d2ea-4843-821a-78c715272616', '20d4fab5-218b-4e55-82e4-c98cb23336be', 'diagram_label', 'Picnic area', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Old leaflets show it by the pond, but "It''s now on the east side of the yard, opposite the goat pens".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'ecdf9470-e30a-4574-95bc-b55a37cbd26c', 3, NULL, '/audio/mock/mock-academic-1-part-3.mp3', NULL, 'Questions 21-30. For Questions 21-24, choose the correct letter, A, B or C. For Questions 25-26, choose TWO letters, A-E. For Questions 27-30, what do the students decide to do about each location? Choose the correct letter, A-F.', '{"title":"Part 3 — Tutorial on a project about urban noise"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'MASON: Come in, Amy, Joel. Have a seat. So, you wanted to talk about how the noise project is going.
+AMY: Yes, thanks, Dr Mason. We''ve finished most of the fieldwork, and we wanted to check a few things before we start writing up.
+MASON: Good. Remind me first why you chose noise. It''s not one of the topics on the list I gave out.
+JOEL: Well, I''d read a council report on noise complaints, and I mentioned it to Amy. But honestly, that came later. It was really Amy''s flat that started it.
+AMY: That''s right. My flat''s on a busy road near the ring road, and I wasn''t sleeping well. I started wondering whether the noise levels were actually as high as they felt, and that turned into the project.
+MASON: Personal experience is a perfectly good starting point. And how did the recording go?
+JOEL: We''d planned to record for a full week at each site. In the end we cut it to three days.
+MASON: Was that the batteries? That''s usually the problem.
+JOEL: We thought it would be, but they were fine. And residents didn''t object to the microphones at all, which surprised us. The real issue was that a week of recordings produced so much data that it would have taken months to analyse.
+MASON: That''s a sensible decision. Three days, including a weekend day, should still give you a reasonable sample. Now, you also measured how annoyed people were by noise. How did you do that?
+AMY: We asked people at each site to describe how much the noise bothered them, and we put their answers into categories afterwards.
+MASON: I see. The number of people sounds fine, but I''m less happy with the questions. If everyone answers in their own words, it''s very hard to compare one site with another. There''s a standard annoyance scale used in most of the published studies, with eleven points from not at all to extremely. I''d strongly recommend you use that for the remaining interviews.
+AMY: Okay, we can do that.
+MASON: And what''s come out so far? Anything unexpected?
+JOEL: We expected the park to be quiet, and it was, so no surprise there. Night noise was a bit higher at weekends, which again we''d predicted. The thing that really surprised us was that people living on quiet streets made more complaints than people on the main roads.
+AMY: We think it might be because they''re not used to noise, so any sudden sound stands out.
+MASON: That''s an interesting finding, and it fits some of the literature. Make sure you discuss it. Any problems with the equipment?
+AMY: A couple. The main one was wind. On exposed sites, the wind hitting the microphone pushed the readings up, so we had to buy foam covers for them.
+JOEL: And halfway through, we discovered the meters needed recalibrating. Two of them were giving readings about three decibels too high.
+MASON: Did you lose much data?
+JOEL: Only a day''s worth. We were worried at the start that a meter might be stolen, but nothing like that happened. And the memory cards were never a problem. They hold far more than we needed.
+MASON: Good. Now, let''s go through the sites. Which ones are you unsure about?
+AMY: The railway bridge, first. The readings there are huge whenever a freight train goes past, and we''re not sure they''re accurate.
+MASON: The council has a permanent monitor near that bridge, doesn''t it? I''d check your figures against the council data before you decide anything.
+AMY: Okay, we''ll do that. Then there''s the shopping centre. We thought about adding a second microphone inside, but the management have now said we can''t record there at all.
+JOEL: So we''ll just have to drop it from the study. It''s a pity, but we have enough other sites.
+MASON: Fine. What about the university library?
+JOEL: It''s the quietest place we measured, by a long way. We were going to leave it out, because it isn''t residential.
+MASON: Actually, that''s exactly why it''s useful. You could use it as your control site, so you have a baseline to compare everything else with.
+JOEL: Oh, good idea. We''ll do that.
+AMY: And the last one is the hospital. We only recorded there during the day, but most complaints from patients are about noise at night, from ambulances and deliveries.
+MASON: Then you need to record there again at night. Otherwise your data won''t match the complaints you''re analysing.
+AMY: Right. Finally, the report. We were thinking about what to include beyond the basic results.
+JOEL: I''d like to include photos of all the sites.
+MASON: I''d avoid that. People''s houses and faces would be in them, and you''d need everyone''s permission.
+JOEL: Fair enough. What about a map, with the noise levels shown in colour?
+MASON: Yes, a map would work well. It shows the pattern at a glance.
+AMY: We also talked about comparing our results with another city, but that seems too big.
+MASON: It is, for a project of this size. And you''ve already got interviews with residents in your methods section, so they''re covered. What I''d really like to see at the end is a set of recommendations for the council. That gives the project a practical purpose.
+AMY: Great. So a map and recommendations.
+MASON: Exactly. Send me a draft in two weeks, and we''ll talk again then.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b4ddcefb-00aa-4e64-8461-862218aa6f6d', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'multiple_choice_single', 'The students chose noise as their topic mainly because of', '[{"value":"A","label":"A. a council report on complaints"},{"value":"B","label":"B. Amy''s experience at home"},{"value":"C","label":"C. a list of topics from their tutor"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The report "came later. It was really Amy''s flat that started it."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c016a862-bfd2-4ee0-9bc5-947964a4ee72', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'multiple_choice_single', 'Why did the students shorten the recording period at each site?', '[{"value":"A","label":"A. The batteries did not last long enough."},{"value":"B","label":"B. Residents objected to the microphones."},{"value":"C","label":"C. There would have been too much data to analyse."}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The real issue was that a week of recordings produced so much data that it would have taken months to analyse."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5994de5d-9825-4c5b-bb8e-216f9118e685', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'multiple_choice_single', 'Dr Mason advises the students to', '[{"value":"A","label":"A. interview more people at each site"},{"value":"B","label":"B. use a standard scale for measuring annoyance"},{"value":"C","label":"C. stop asking people about annoyance"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"There''s a standard annoyance scale used in most of the published studies" and "I''d strongly recommend you use that for the remaining interviews."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fe489f1d-a6b5-4542-9afb-f52432905047', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'multiple_choice_single', 'What surprised the students most?', '[{"value":"A","label":"A. The park was quieter than expected."},{"value":"B","label":"B. Night noise was higher at weekends."},{"value":"C","label":"C. Residents of quiet streets complained more."}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The thing that really surprised us was that people living on quiet streets made more complaints than people on the main roads."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1cc1bbf0-e5a2-475a-a725-24786208b9f2', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'multiple_choice_multiple', 'Which TWO problems did the students have with the equipment? Choose TWO letters.', '[{"value":"A","label":"A. wind affected the readings"},{"value":"B","label":"B. a sound meter was stolen"},{"value":"C","label":"C. some meters needed recalibrating"},{"value":"D","label":"D. the memory cards filled up"},{"value":"E","label":"E. rain damaged a microphone"}]'::jsonb, ARRAY['A', 'C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The main one was wind" and "we discovered the meters needed recalibrating." Nothing was stolen and "the memory cards were never a problem."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e9b82248-51c8-4533-ac93-5ed0087529c6', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'multiple_choice_multiple', 'Which TWO things will the students add to their report? Choose TWO letters.', '[{"value":"A","label":"A. photographs of each site"},{"value":"B","label":"B. a colour map of noise levels"},{"value":"C","label":"C. interviews with residents"},{"value":"D","label":"D. a comparison with another city"},{"value":"E","label":"E. recommendations for the council"}]'::jsonb, ARRAY['B', 'E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Photos are rejected, but "a map would work well", and "What I''d really like to see at the end is a set of recommendations for the council."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('64dd6fc3-1607-430b-ab43-28a94e2c2d97', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'matching_features', 'The railway bridge', '[{"value":"A","label":"A. remove it from the study"},{"value":"B","label":"B. record there again at night"},{"value":"C","label":"C. add a second microphone"},{"value":"D","label":"D. compare readings with council data"},{"value":"E","label":"E. use it as a control site"},{"value":"F","label":"F. interview more residents"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"I''d check your figures against the council data before you decide anything."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6f9d53e9-b89c-4a67-adb6-15b575ddd6d1', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'matching_features', 'The shopping centre', '[{"value":"A","label":"A. remove it from the study"},{"value":"B","label":"B. record there again at night"},{"value":"C","label":"C. add a second microphone"},{"value":"D","label":"D. compare readings with council data"},{"value":"E","label":"E. use it as a control site"},{"value":"F","label":"F. interview more residents"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'A second microphone was considered, but "we''ll just have to drop it from the study."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('85d367d2-0472-4c23-b450-c685b8f9de46', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'matching_features', 'The university library', '[{"value":"A","label":"A. remove it from the study"},{"value":"B","label":"B. record there again at night"},{"value":"C","label":"C. add a second microphone"},{"value":"D","label":"D. compare readings with council data"},{"value":"E","label":"E. use it as a control site"},{"value":"F","label":"F. interview more residents"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"You could use it as your control site, so you have a baseline to compare everything else with."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('67e8a3ec-56ed-43c2-a094-0e5fd2aac1d7', 'b1d0475a-11b4-4de6-bc92-d2dfe42c94de', 'matching_features', 'The hospital', '[{"value":"A","label":"A. remove it from the study"},{"value":"B","label":"B. record there again at night"},{"value":"C","label":"C. add a second microphone"},{"value":"D","label":"D. compare readings with council data"},{"value":"E","label":"E. use it as a control site"},{"value":"F","label":"F. interview more residents"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Then you need to record there again at night."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'ecdf9470-e30a-4574-95bc-b55a37cbd26c', 4, NULL, '/audio/mock/mock-academic-1-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: a history of paper"}'::jsonb, 3)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'LECTURER: Good morning. Today we''re continuing our series on technologies that changed the way information is stored, and our subject is paper. It''s so common that we rarely think about it, but its history stretches over nearly two thousand years and several continents.
+LECTURER: Let''s begin in China. Before paper, Chinese scribes wrote on two main surfaces. One was silk, which was light and pleasant to write on but far too expensive for everyday use. The other was strips of bamboo, tied together with cord. Bamboo was cheap, but it was very heavy. There''s a famous story of an emperor who had to read through more than a hundred kilograms of bamboo documents every day.
+LECTURER: The invention of paper is traditionally credited to a court official named Cai Lun, who presented it to the emperor in the year one hundred and five. In fact, archaeologists have found fragments of paper that are older than that, so Cai Lun probably improved an existing process rather than inventing it. What we do know is the recipe he''s said to have used: tree bark, hemp, old rags and fishing nets. These were soaked, then beaten into a pulp, and the pulp was spread across a screen made of cloth stretched on a frame. As the water drained away, the fibres matted together into a sheet, which was then dried in the sun.
+LECTURER: For several centuries, the Chinese kept the method largely to themselves. It spread to Korea and Japan, but not to the west. That changed in the year seven hundred and fifty-one, after a battle between Chinese and Arab armies in Central Asia. Among the Chinese prisoners taken in the battle were men who knew how to make paper, and it was through these prisoners that papermaking reached the city of Samarkand. Now, some historians question this story, and the knowledge may well have travelled along trade routes too, but it''s the version most sources give.
+LECTURER: From Samarkand, paper spread to Baghdad, where a paper mill was established at the end of the eighth century. Here it had an important administrative use. Government records had previously been kept on parchment, which is made from animal skin. The problem with parchment was that ink could be scraped off it and the document rewritten, so it was easy to forge. Writing on paper couldn''t be removed without leaving obvious damage, so paper replaced parchment for official records.
+LECTURER: Paper reached Europe through Spain and Italy. By the late thirteenth century, the town of Fabriano in Italy had become a major centre, and the papermakers there introduced two important innovations. First, instead of beating the rags by hand, they used hammers driven by water wheels, which were far faster. Second, they began to press a design into each sheet while it was still wet. These designs, which we call watermarks, identified the maker, and they''re still used today, on banknotes for example.
+LECTURER: The arrival of printing in the fifteenth century made demand for paper rise enormously. And this created a problem, because European paper was made almost entirely from rags, mainly linen and cotton. By the eighteenth century there was a serious shortage of rags. Papermakers advertised for them in newspapers, and in some places it was even made illegal to bury the dead in cotton or linen, so that the cloth could be saved for paper.
+LECTURER: The solution came from an unexpected source. In the early eighteenth century, a French scientist noticed that wasps build their nests by chewing wood into a kind of paper. He suggested that humans could do the same, but it took more than a century for anyone to make it work on a commercial scale. In the eighteen forties, inventors in Germany and Canada independently developed machines that ground wood into pulp, and paper made from wood gradually replaced rag paper.
+LECTURER: Wood pulp made paper cheap enough for mass newspapers and paperback books, but it came with a hidden cost. The chemicals used to process the pulp left the paper containing acid, and over time this acid breaks down the fibres. That''s why so many books from the late nineteenth century are now yellow and brittle, while some much older books printed on rag paper are still in excellent condition. Libraries spend large sums today trying to slow this process down.
+LECTURER: Since the nineteen eighties, most book paper has been made acid-free, which should mean that today''s books will last far longer. Next week we''ll look at the printing press itself, and at how it changed not just books but the very idea of authorship.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4e022c72-f087-401e-9020-8794ab4045a2', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Before paper, Chinese scribes used silk (expensive) or strips of ______ (heavy)', '[]'::jsonb, ARRAY['bamboo']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"The other was strips of bamboo" and "Bamboo was cheap, but it was very heavy."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('40ca5d16-a216-47e5-b61b-fc1b1e2fff75', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Cai Lun''s recipe: tree bark, hemp, old rags and fishing ______', '[]'::jsonb, ARRAY['nets', 'net']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"tree bark, hemp, old rags and fishing nets."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e5e8b745-0476-4b0d-a933-d550f43173a0', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Pulp spread across a cloth ______ on a frame', '[]'::jsonb, ARRAY['screen']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"the pulp was spread across a screen made of cloth stretched on a frame."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b8d8edbb-3c8f-442e-947a-e629e8ad6827', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', '751: papermaking reached Samarkand, probably through ______ taken in a battle', '[]'::jsonb, ARRAY['prisoners']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"it was through these prisoners that papermaking reached the city of Samarkand."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('dfb43269-b87b-4137-bee2-c51ab20d88d2', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Baghdad: paper replaced ______ for official records, as it was harder to forge', '[]'::jsonb, ARRAY['parchment']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Ink on parchment could be scraped off, "so paper replaced parchment for official records."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('178a97a1-7c5b-4b6e-a6c7-a2c012221cd8', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Fabriano: rags beaten by ______ driven by water wheels', '[]'::jsonb, ARRAY['hammers']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"they used hammers driven by water wheels, which were far faster."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('876c87e5-26c6-4202-94a3-f65299118da5', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Fabriano: ______ pressed into wet sheets to identify the maker', '[]'::jsonb, ARRAY['watermarks', 'watermark']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"These designs, which we call watermarks, identified the maker".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b1944082-d6e5-4e84-b510-6dad7d767d7a', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', '18th century: serious shortage of ______', '[]'::jsonb, ARRAY['rags']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"By the eighteenth century there was a serious shortage of rags."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('03564a5e-509e-400e-afc0-4ff563eed30f', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Idea of using wood came from watching ______ build nests', '[]'::jsonb, ARRAY['wasps']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"a French scientist noticed that wasps build their nests by chewing wood into a kind of paper."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2bbfee25-1540-4d35-bef2-545c84ff9c86', 'b540ef12-7c99-4dfb-8c1a-e3a8603b9320', 'note_completion', 'Wood-pulp paper contains ______, so it turns yellow and brittle', '[]'::jsonb, ARRAY['acid']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"The chemicals used to process the pulp left the paper containing acid".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('9bac3da7-8149-4e86-ba40-60231021da64', 'df616ac8-34ad-4c73-9f54-1498929233c2', 'reading', 3600, 40, NULL, 1)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', '9bac3da7-8149-4e86-ba40-60231021da64', 1, 'For an animal that shares homes with hundreds of millions of people, the domestic cat has been remarkably reluctant to reveal its origins. Dogs, cattle and sheep were transformed by domestication into animals that look and behave very differently from their wild ancestors. Cats, by contrast, have changed so little that experts still struggle to tell a domestic cat from a wildcat by its skeleton alone. For much of the twentieth century this made the history of the cat a matter of guesswork. Over the past two decades, however, advances in genetics and archaeology have begun to fill in the story.
+
+The first step was to identify the ancestor. Wildcats are found across Europe, Africa and Asia, and they are divided into several subspecies. In 2007 a team led by the geneticist Carlos Driscoll compared the DNA of nearly a thousand cats, both domestic and wild, from around the world. Every domestic cat in the sample, from the pedigree Siamese to the ordinary farm cat, could be traced back to a single subspecies, Felis silvestris lybica, the wildcat of the Near East and North Africa. The European wildcat, which still survives in parts of Scotland and Germany, made no contribution at all.
+
+The genetic evidence pointed to a region, and archaeology suggested a time. For many years the earliest evidence of cats living alongside humans came from ancient Egypt, where they were painted on tomb walls and, in their millions, mummified as offerings to the goddess Bastet. It was widely assumed that the Egyptians had been the first to tame the cat, perhaps around four thousand years ago. In 2004, however, archaeologists excavating a village on the island of Cyprus found the skeleton of a cat buried close to that of a human, in a grave dated to around 9,500 years ago. Since there are no native wildcats on Cyprus, the animal, or its ancestors, must have been carried there by boat. This discovery pushed the relationship between cats and people back more than five thousand years before the Egyptian evidence.
+
+The date is significant because it coincides with the beginnings of farming in the region known as the Fertile Crescent. Once people began to grow and store grain, their villages attracted mice and rats in large numbers, and the rodents in turn attracted wildcats. Most researchers now believe that domestication was not something humans deliberately set out to achieve. Instead, cats domesticated themselves. The bolder individuals, those that tolerated human presence, could exploit a rich and reliable source of food, and over many generations natural selection favoured animals that were calmer around people. Farmers, for their part, had little reason to drive away an animal that kept down the pests eating their harvest.
+
+This process explains one of the cat''s most distinctive features: its independence. Most domestic animals were selected by humans for specific purposes, such as pulling ploughs, producing milk or guarding flocks, and were bred under close control. Cats, which already did the one job people wanted, were largely left to breed as they pleased. Even today, the great majority of cats choose their own mates, and only a small proportion belong to recognised breeds. Most of the breeds we know were developed within the past 150 years, beginning with the cat shows held in Victorian England.
+
+Genetics has also revealed how cats spread across the world. A study published in 2017 analysed DNA from the remains of more than 200 cats found at archaeological sites spanning 9,000 years. It identified two main waves of expansion. The first carried cats from the Near East into Europe along with early farmers. The second, which began much later, spread cats from Egypt, and these animals travelled along trade routes by sea. Cats were valued on ships for controlling rats, and the remains of Egyptian-type cats have been found at a Viking port on the Baltic coast, dated to between the eighth and the eleventh centuries.
+
+The same study produced a further surprise. Researchers were able to track a genetic variant responsible for the blotched tabby coat, in which the familiar stripes are replaced by swirling patches. This pattern, now extremely common, did not appear until the Middle Ages, which suggests that people only began choosing cats for their appearance comparatively recently. For thousands of years, it seems, what mattered was not how a cat looked but how well it hunted.
+
+Some biologists argue that the cat is still only partly domesticated. Unlike dogs, which depend almost entirely on humans, many cats can survive perfectly well without them, and feral populations live successfully on every continent except Antarctica. Domestic cats also interbreed readily with wildcats, which has created a serious conservation problem in Scotland, where very few genetically pure wildcats remain. Yet the cat has made one notable adjustment to life with humans. Adult wildcats rarely miaow to one another; the sound is mainly used by kittens to call their mothers. Domestic cats, by contrast, miaow frequently at their owners, and studies suggest that they adjust the sound to each household, producing calls that their own owners can interpret but strangers often cannot. Whether this counts as domestication or as clever manipulation is, perhaps, a matter of opinion.', NULL, NULL, 'You should spend about 20 minutes on Questions 1-13, which are based on Reading Passage 1 below.', '{"title":"Passage 1 — How the cat came in from the wild"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('989e277c-60b1-433b-9198-0cc660d84276', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'It is easy to distinguish the skeleton of a domestic cat from that of a wildcat.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"experts still struggle to tell a domestic cat from a wildcat by its skeleton alone."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('aeb1ffec-31eb-495e-a75e-70a358a97c94', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'Driscoll''s study included cats from several parts of the world.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The team compared nearly a thousand cats "from around the world."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('90eeba7c-1984-490c-a63f-ce0cdcd59fd3', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'The European wildcat is an ancestor of some modern domestic cats.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The European wildcat, which still survives in parts of Scotland and Germany, made no contribution at all."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f6325c1b-4b83-4fc4-8835-8e1587cfe914', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'The cat found on Cyprus was buried with valuable objects.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The passage says only that it was "buried close to that of a human"; nothing is said about objects in the grave.', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('572c4aab-92ce-4fc4-9c1a-725ec6ea2f46', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'Cyprus has its own native population of wildcats.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"there are no native wildcats on Cyprus", so the cat "must have been carried there by boat."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f1a59535-305e-4508-9316-ab72f3ff2d0e', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'Cats were more common than dogs in early farming villages.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The passage explains that grain "attracted mice and rats" and then wildcats, but never compares the numbers of cats and dogs.', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('62ea50a3-8e24-4373-828d-671e60d306c3', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'true_false_notgiven', 'Most modern cat breeds are less than two hundred years old.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Most of the breeds we know were developed within the past 150 years".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('684cceba-cc1f-4e3e-a4d1-5f779a73fe20', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'note_completion', 'The 2017 study — first wave: cats moved from the Near East into Europe with early ______', '[]'::jsonb, ARRAY['farmers']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"The first carried cats from the Near East into Europe along with early farmers."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('cb733153-d60f-4ba8-9772-1ae914e2b410', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'note_completion', 'Second wave: cats from Egypt travelled along trade routes by ______', '[]'::jsonb, ARRAY['sea']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"these animals travelled along trade routes by sea."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('784fe617-420d-4931-8528-73c2ec924c8a', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'note_completion', 'Cats were kept on ships because they controlled ______', '[]'::jsonb, ARRAY['rats']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Cats were valued on ships for controlling rats".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a5b66a44-f10f-4e27-bd60-b1aa544ec0b2', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'note_completion', 'Egyptian-type cat remains were found at a Viking ______ on the Baltic', '[]'::jsonb, ARRAY['port']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'remains "have been found at a Viking port on the Baltic coast".', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2f1af27f-5d82-4be3-8ef6-4a537587a6a8', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'note_completion', 'The blotched tabby coat first appeared in the ______ Ages', '[]'::jsonb, ARRAY['Middle']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"This pattern, now extremely common, did not appear until the Middle Ages".', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('44c16f62-0830-440e-a5c0-af2606fecd45', '76c3d5b1-9b3c-4eb1-ac45-c5623537e3cd', 'note_completion', 'Domestic cats miaow mainly to communicate with their ______', '[]'::jsonb, ARRAY['owners']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Domestic cats, by contrast, miaow frequently at their owners".', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('aacd8043-d309-4498-8ed8-7f78c9a850b4', '9bac3da7-8149-4e86-ba40-60231021da64', 2, 'A. In 2009, after an absence of some four hundred years, beavers were officially returned to the wild in Britain. Eleven animals from Norway were released into Knapdale Forest in western Scotland as part of a five-year trial. By then, however, they were not the only beavers in the country. Escaped or illegally released animals had already been living for years on the River Tay, further east, and their numbers were growing rapidly. Similar stories can be told across Europe. In 1900 the Eurasian beaver, hunted for its fur, its meat and its scent glands, had been reduced to perhaps 1,200 animals in a handful of isolated populations. Today, thanks to legal protection and more than two hundred reintroduction projects, there are well over a million.
+
+B. What makes the beaver unusual among returning species is the scale of its effect on the landscape. Few animals other than humans reshape their surroundings so thoroughly. Beavers fell trees with their teeth, and on smaller streams they use the timber, along with mud and stones, to build dams. The dams create ponds deep enough for the animals to build lodges with underwater entrances, which protect them from predators. A single family may build a series of dams along a stream, turning a narrow, fast-flowing channel into a chain of pools, wetlands and slow-moving side channels. Ecologists describe such animals as ecosystem engineers. The term reflects the fact that their influence on other species comes less from what they eat than from the physical changes they make to the places where those species live. A beaver pond may persist for decades after its builders have moved on, gradually filling with sediment and turning into a meadow.
+
+C. The consequences for wildlife can be striking. In a study at an enclosed site in Devon, in south-west England, researchers led by Professor Richard Brazier found that the area of open water increased from a single small pond to thirteen ponds within five years of beavers arriving. Over the same period the number of clumps of frog spawn rose from ten to more than five hundred. Because the dead trees left standing in the water are ideal for insects, and because the insects attract bats and birds, the benefits extend well beyond aquatic species. Fish, which some anglers feared would be blocked by the dams, generally appear to cope well; a review by the ecologist Robert Needham concluded that most species can pass over or around dams, particularly during high water.
+
+D. Perhaps the most important benefits, from a human point of view, concern water. Beaver dams hold water back in the landscape and release it gradually. Brazier''s team measured the flow of water leaving the Devon site during storms and found that peak flows were, on average, about thirty per cent lower than those entering it. Communities downstream that suffer from flooding stand to gain, and in several English villages beavers have been released with this in mind. The ponds also act as filters: soil and agricultural chemicals washed off fields settle out behind the dams, so that the water leaving a beaver site is noticeably cleaner. In dry summers, the same stored water keeps streams flowing that might otherwise run dry.
+
+E. Not everyone welcomes the beaver''s return. Farmers in the Tay valley report that beavers have dug burrows into the banks that protect fields from flooding, causing them to collapse, and that dams have flooded valuable farmland. Beavers also fell trees in gardens and orchards, and their habit of blocking drainage pipes and culverts can cause problems for roads and railways. In Scotland, where beavers became a protected species in 2019, licences were issued in the first year allowing more than eighty animals to be shot, a decision that conservation groups strongly criticised. Critics argue that moving problem animals to new areas would be better than killing them; supporters of the policy reply that suitable sites are limited.
+
+F. Much of the debate turns on how such conflicts should be managed. Experience in Bavaria, in southern Germany, where beavers have been back for half a century, suggests that most problems can be solved with relatively simple measures. Wire mesh wrapped around valuable trees prevents them from being felled, and flow devices, which are essentially pipes passed through a dam, can keep the water behind it at an acceptable level without destroying the dam itself. Gerhard Schwab, who has managed beavers in Bavaria for more than thirty years, believes that the crucial factor is not the technology but having a trained adviser who can visit a farm quickly when a problem arises. Where landowners feel ignored, he says, tolerance soon disappears.
+
+G. A further option is to give the beaver space. Most conflicts occur within twenty metres of a riverbank, and some ecologists have proposed that strips of land along rivers be taken out of farming altogether, with farmers paid to let them return to wetland. Such strips would reduce conflict while providing many of the benefits described above. Whether governments will be willing to pay for them remains to be seen. What is clear is that the beaver is back to stay, and that Britain''s rivers, for better or worse, will look rather different as a result.', NULL, NULL, 'You should spend about 20 minutes on Questions 14-26, which are based on Reading Passage 2 below.', '{"title":"Passage 2 — The return of the beaver"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5428ae63-de73-4e45-a168-44a1f436e8ea', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_headings', 'Paragraph B — choose the most suitable heading.', '[{"value":"i","label":"i. A practical solution that depends on people"},{"value":"ii","label":"ii. Recovery from the edge of extinction"},{"value":"iii","label":"iii. How one animal remakes a river"},{"value":"iv","label":"iv. Making room along the riverbanks"},{"value":"v","label":"v. Gains for communities downstream"},{"value":"vi","label":"vi. The high financial cost of releases"},{"value":"vii","label":"vii. Damage and a disputed response"},{"value":"viii","label":"viii. A surge in other forms of life"},{"value":"ix","label":"ix. Why fish numbers have fallen"}]'::jsonb, ARRAY['iii']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Beavers turn "a narrow, fast-flowing channel into a chain of pools, wetlands and slow-moving side channels."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('335d208e-8d8e-4c63-804a-6a9740574804', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_headings', 'Paragraph C — choose the most suitable heading.', '[{"value":"i","label":"i. A practical solution that depends on people"},{"value":"ii","label":"ii. Recovery from the edge of extinction"},{"value":"iii","label":"iii. How one animal remakes a river"},{"value":"iv","label":"iv. Making room along the riverbanks"},{"value":"v","label":"v. Gains for communities downstream"},{"value":"vi","label":"vi. The high financial cost of releases"},{"value":"vii","label":"vii. Damage and a disputed response"},{"value":"viii","label":"viii. A surge in other forms of life"},{"value":"ix","label":"ix. Why fish numbers have fallen"}]'::jsonb, ARRAY['viii']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Frog spawn "rose from ten to more than five hundred", and "the benefits extend well beyond aquatic species."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fded5a54-acc1-471d-926d-49a516167f92', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_headings', 'Paragraph D — choose the most suitable heading.', '[{"value":"i","label":"i. A practical solution that depends on people"},{"value":"ii","label":"ii. Recovery from the edge of extinction"},{"value":"iii","label":"iii. How one animal remakes a river"},{"value":"iv","label":"iv. Making room along the riverbanks"},{"value":"v","label":"v. Gains for communities downstream"},{"value":"vi","label":"vi. The high financial cost of releases"},{"value":"vii","label":"vii. Damage and a disputed response"},{"value":"viii","label":"viii. A surge in other forms of life"},{"value":"ix","label":"ix. Why fish numbers have fallen"}]'::jsonb, ARRAY['v']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Communities downstream that suffer from flooding stand to gain".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b5c9ef35-a458-4669-909d-68a7d9ce67fb', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_headings', 'Paragraph E — choose the most suitable heading.', '[{"value":"i","label":"i. A practical solution that depends on people"},{"value":"ii","label":"ii. Recovery from the edge of extinction"},{"value":"iii","label":"iii. How one animal remakes a river"},{"value":"iv","label":"iv. Making room along the riverbanks"},{"value":"v","label":"v. Gains for communities downstream"},{"value":"vi","label":"vi. The high financial cost of releases"},{"value":"vii","label":"vii. Damage and a disputed response"},{"value":"viii","label":"viii. A surge in other forms of life"},{"value":"ix","label":"ix. Why fish numbers have fallen"}]'::jsonb, ARRAY['vii']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Farmers report collapsed banks and flooded land, and licences to shoot animals were "a decision that conservation groups strongly criticised."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0fe769e8-21a8-4115-b6e3-598a4a52d6f8', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_headings', 'Paragraph F — choose the most suitable heading.', '[{"value":"i","label":"i. A practical solution that depends on people"},{"value":"ii","label":"ii. Recovery from the edge of extinction"},{"value":"iii","label":"iii. How one animal remakes a river"},{"value":"iv","label":"iv. Making room along the riverbanks"},{"value":"v","label":"v. Gains for communities downstream"},{"value":"vi","label":"vi. The high financial cost of releases"},{"value":"vii","label":"vii. Damage and a disputed response"},{"value":"viii","label":"viii. A surge in other forms of life"},{"value":"ix","label":"ix. Why fish numbers have fallen"}]'::jsonb, ARRAY['i']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Simple measures work, but "the crucial factor is not the technology but having a trained adviser who can visit a farm quickly".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('29db0ee6-5432-4762-bfee-2e095953ccfd', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_headings', 'Paragraph G — choose the most suitable heading.', '[{"value":"i","label":"i. A practical solution that depends on people"},{"value":"ii","label":"ii. Recovery from the edge of extinction"},{"value":"iii","label":"iii. How one animal remakes a river"},{"value":"iv","label":"iv. Making room along the riverbanks"},{"value":"v","label":"v. Gains for communities downstream"},{"value":"vi","label":"vi. The high financial cost of releases"},{"value":"vii","label":"vii. Damage and a disputed response"},{"value":"viii","label":"viii. A surge in other forms of life"},{"value":"ix","label":"ix. Why fish numbers have fallen"}]'::jsonb, ARRAY['iv']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"A further option is to give the beaver space", using "strips of land along rivers".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('db16d5fa-0a2f-405e-ac09-37db4aa0a096', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_features', 'Beaver dams reduce the peak flow of water during storms.', '[{"value":"A","label":"A. Richard Brazier"},{"value":"B","label":"B. Robert Needham"},{"value":"C","label":"C. Gerhard Schwab"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Brazier''s team" found peak flows "about thirty per cent lower than those entering it."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('678299c2-a993-4123-8680-7086ead38770', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_features', 'Most fish are able to get past beaver dams.', '[{"value":"A","label":"A. Richard Brazier"},{"value":"B","label":"B. Robert Needham"},{"value":"C","label":"C. Gerhard Schwab"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"a review by the ecologist Robert Needham concluded that most species can pass over or around dams".', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5826419d-9f37-4a5d-9abb-50136eb80f34', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_features', 'Landowners need fast, personal support when problems occur.', '[{"value":"A","label":"A. Richard Brazier"},{"value":"B","label":"B. Robert Needham"},{"value":"C","label":"C. Gerhard Schwab"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Schwab believes the key is "having a trained adviser who can visit a farm quickly when a problem arises."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a9c5853c-287a-4685-aa45-82ebfb300856', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'matching_features', 'The arrival of beavers greatly increased the number of frogs at one site.', '[{"value":"A","label":"A. Richard Brazier"},{"value":"B","label":"B. Robert Needham"},{"value":"C","label":"C. Gerhard Schwab"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'In the study "led by Professor Richard Brazier", "the number of clumps of frog spawn rose from ten to more than five hundred."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('dbc19660-0edb-443f-b5a3-cd2eabe54d93', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'summary_completion', 'Summary: Beaver ponds clean the water, because soil and ______ washed off fields settle behind the dams.', '[]'::jsonb, ARRAY['agricultural chemicals', 'chemicals']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"soil and agricultural chemicals washed off fields settle out behind the dams".', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0565dc23-c3eb-4c7b-b882-2d9b98918246', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'summary_completion', 'Summary: In dry summers, water stored by the dams keeps ______ flowing.', '[]'::jsonb, ARRAY['streams']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"the same stored water keeps streams flowing that might otherwise run dry."', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9abe5e15-006a-4421-8223-b711bcc8ddcf', 'aacd8043-d309-4498-8ed8-7f78c9a850b4', 'summary_completion', 'Summary: Some ecologists suggest paying farmers to let riverside strips return to ______.', '[]'::jsonb, ARRAY['wetland']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"with farmers paid to let them return to wetland."', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', '9bac3da7-8149-4e86-ba40-60231021da64', 3, 'Ask anyone who works in an office how they spend their day and the answer is likely to involve doing several things at once: answering emails during meetings, listening to a podcast while writing a report, glancing at a phone between paragraphs. Job advertisements routinely ask for candidates who can multitask, as though it were a skill like typing or speaking a foreign language. Yet among the psychologists who study attention, there is a broad consensus that, for most tasks that require thought, multitasking in the strict sense barely exists. What we call multitasking is usually something else: switching rapidly from one task to another, and paying a price each time we do.
+
+The evidence for this goes back further than one might expect. In the 1930s the American psychologist John Ridley Stroop showed that people take longer to name the colour of ink in which a word is printed when the word itself names a different colour; reading, which is automatic for literate adults, interferes with the slower task of naming. Research in the 1990s measured what are now called switch costs. When participants alternated between two simple tasks, such as classifying numbers as odd or even and classifying letters as vowels or consonants, they were consistently slower and made more errors than when they performed either task in a block on its own. The cost of each switch was small, often only a fraction of a second, but it accumulated, and it increased with the complexity of the tasks.
+
+The explanation most researchers favour is that the brain has a limited capacity for what is sometimes called executive control: the processes that select a goal, retrieve the rules for achieving it, and keep irrelevant information out. These processes cannot easily serve two demanding goals at once. When we switch, the rules for the old task must be put aside and those for the new task loaded, and traces of the previous task tend to linger. The organisational psychologist Sophie Leroy has called this lingering "attention residue", and her experiments suggest that people who move to a new task before finishing the previous one perform the new task noticeably worse.
+
+There are genuine exceptions. Activities that have become automatic through long practice, such as walking, can be combined with others with little loss. An experienced driver can hold a conversation on an empty motorway. The difficulty arises when both activities make demands on the same mental resources, or when an automatic task suddenly requires attention, as happens when traffic ahead stops without warning. Studies in driving simulators have found that drivers talking on a telephone, even a hands-free one, are slower to brake than drivers who are silent. Interestingly, talking to a passenger has a smaller effect, apparently because passengers can see the road and tend to stop talking when conditions become difficult.
+
+One of the most surprising findings concerns the people who multitask most. In a widely reported study published in 2009, researchers at Stanford University compared students who reported heavy use of several media at once, such as messaging while watching video, with students who seldom did so. The researchers expected the heavy multitaskers to be better at switching between tasks. They were in fact worse, and they were also more easily distracted by irrelevant information. The study could not show which came first: whether multitasking weakens attention, or whether people who are already easily distracted are drawn to multitasking. Later studies have produced mixed results, and the effect may be smaller than first thought, but none has found that heavy multitaskers perform better.
+
+Why, then, is multitasking so popular? Part of the answer may be that it feels productive. In one study, students who watched television while studying reported feeling more satisfied with their session, even though they had learned less. Switching tasks also provides frequent small rewards, such as the arrival of a new message, which the brain finds hard to resist. And people are poor judges of their own abilities: those who rate themselves as good multitaskers tend, if anything, to perform below average when tested.
+
+None of this means that workplaces should ban email or that students should study in silence. Some background noise appears to have little effect on simple tasks, and music without lyrics may even help some people concentrate. The point is that attention is a limited resource, and that the costs of dividing it are largely invisible to the person doing the dividing. Practical advice from researchers tends to be modest: deal with messages at set times rather than as they arrive, finish one piece of work before starting the next where possible, and keep phones out of sight during tasks that require concentration. Even a phone that is switched off, one study found, can reduce performance on a memory test if it is lying on the desk.
+
+Perhaps the most useful change is one of language. If we described what we do not as multitasking but as task switching, we might be less inclined to boast about it, and more inclined to ask whether each switch is really worth its cost.', NULL, NULL, 'You should spend about 20 minutes on Questions 27-40, which are based on Reading Passage 3 below.', '{"title":"Passage 3 — The myth of multitasking"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4c22e14e-73dd-4d0b-825c-426bb55a4c51', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'multiple_choice_single', 'In the first paragraph, the writer suggests that what people call multitasking', '[{"value":"A","label":"A. is a skill employers are right to value"},{"value":"B","label":"B. is usually rapid switching between tasks"},{"value":"C","label":"C. is becoming less common in offices"},{"value":"D","label":"D. is easier for people who type well"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"What we call multitasking is usually something else: switching rapidly from one task to another".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('dfc1984e-9288-4ddc-9fa7-092aad35164f', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'multiple_choice_single', 'Research on switch costs in the 1990s found that', '[{"value":"A","label":"A. the costs disappeared with practice"},{"value":"B","label":"B. each switch wasted several seconds"},{"value":"C","label":"C. the costs rose as tasks became more complex"},{"value":"D","label":"D. letters were harder to classify than numbers"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The cost "accumulated, and it increased with the complexity of the tasks."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('66dd020b-19b9-44bf-ad4d-aa6ea3d981bb', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'multiple_choice_single', 'Sophie Leroy''s experiments suggest that', '[{"value":"A","label":"A. leaving a task unfinished harms performance on the next one"},{"value":"B","label":"B. people forget the rules of a task very quickly"},{"value":"C","label":"C. executive control improves with training"},{"value":"D","label":"D. switching tasks is less costly for experts"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"people who move to a new task before finishing the previous one perform the new task noticeably worse."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a0d25326-3537-4e85-808b-1c90280b756a', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'multiple_choice_single', 'According to the writer, talking to a passenger affects driving less than using a phone because passengers', '[{"value":"A","label":"A. speak more quietly"},{"value":"B","label":"B. usually talk about the journey"},{"value":"C","label":"C. can see when the road conditions change"},{"value":"D","label":"D. are often experienced drivers themselves"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"passengers can see the road and tend to stop talking when conditions become difficult."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b340c3f1-49cb-4591-9bc3-5823c00ea32d', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'multiple_choice_single', 'What does the writer say about the 2009 Stanford study?', '[{"value":"A","label":"A. It proved that multitasking damages attention."},{"value":"B","label":"B. It could not establish cause and effect."},{"value":"C","label":"C. Its results have been confirmed by every later study."},{"value":"D","label":"D. It found heavy multitaskers switched tasks faster."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The study could not show which came first".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('74629dc2-f587-4c9f-a3cb-3d14b139a0a1', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'yes_no_notgiven', 'Employers are right to treat multitasking as a skill like speaking a foreign language.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NO']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Adverts ask for it "as though it were a skill like typing or speaking a foreign language", but the writer says multitasking "barely exists."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3f492765-bb23-4389-a277-e63da87acd27', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'yes_no_notgiven', 'People are generally unaware of the cost of dividing their attention.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['YES']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"the costs of dividing it are largely invisible to the person doing the dividing."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f5ad6e1c-a977-42f9-a9c6-f4e88267e19f', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'yes_no_notgiven', 'Students who study in front of the television tend to overestimate their progress.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['YES']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'They "reported feeling more satisfied with their session, even though they had learned less."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bd4abab0-9db3-4c35-be04-e1ff204a133b', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'yes_no_notgiven', 'Heavy multitaskers are usually less successful in their careers.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The passage discusses attention tests, not careers; it only says "none has found that heavy multitaskers perform better."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7a38da6d-fcb8-4629-a188-b5693f47d851', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'yes_no_notgiven', 'Workplaces should stop employees from using email.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NO']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"None of this means that workplaces should ban email".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2cd1840b-3efe-456d-8fad-8c918310e527', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'sentence_completion', 'In Stroop''s experiment, ______ slowed down the naming of colours because it is automatic.', '[]'::jsonb, ARRAY['reading']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"reading, which is automatic for literate adults, interferes with the slower task of naming."', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('740803ad-e549-4b03-9673-08d5c6a1e8c4', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'sentence_completion', 'Long-practised activities such as ______ can be combined with other tasks.', '[]'::jsonb, ARRAY['walking']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Activities that have become automatic through long practice, such as walking, can be combined with others".', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ef90ef18-92fc-4ab2-998a-26ddfe2a6de8', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'sentence_completion', 'People who believe they are good multitaskers often score below ______.', '[]'::jsonb, ARRAY['average']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'They "tend, if anything, to perform below average when tested."', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('60857d67-03db-4266-904c-27a1ddbb9d92', '2ed2f36c-12ec-4f91-8ae5-1fa0360d410b', 'sentence_completion', 'A switched-off phone on the desk can lower scores on a ______ test.', '[]'::jsonb, ARRAY['memory']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'It "can reduce performance on a memory test if it is lying on the desk."', 13)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('63f31dbf-ed6c-45da-8047-2cec4bd25d54', 'df616ac8-34ad-4c73-9f54-1498929233c2', 'writing', 3600, 2, NULL, 2)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('07b7e693-ef38-4af2-9afe-bc9a693f1779', '63f31dbf-ed6c-45da-8047-2cec4bd25d54', 1, 'The bar chart below shows the average number of hours per week that people in four age groups spent on four leisure activities in one country in 2023.
+
+Summarise the information by selecting and reporting the main features, and make comparisons where relevant.', NULL, '/mock-images/mock-academic-1-task1.svg', 'You should spend about 20 minutes on this task. Write at least 150 words.', '{"image_caption":"Average hours per week spent on four leisure activities, by age group, 2023","title":"Task 1"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('62ccfcaf-0719-47ec-a585-3c744c5bf328', '07b7e693-ef38-4af2-9afe-bc9a693f1779', 'short_answer', 'Task 1 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('a948a3d7-0bd9-455d-ae8d-f05b4acf052e', '63f31dbf-ed6c-45da-8047-2cec4bd25d54', 2, 'Some people believe that city authorities should spend money on improving public transport rather than on building new roads. Others argue that new roads are essential for a growing city.
+
+Discuss both these views and give your own opinion.
+
+Give reasons for your answer and include any relevant examples from your own knowledge or experience.', NULL, NULL, 'You should spend about 40 minutes on this task. Write at least 250 words.', '{"title":"Task 2"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('369296b1-2baa-40e7-91e8-562481137d78', 'a948a3d7-0bd9-455d-ae8d-f05b4acf052e', 'short_answer', 'Task 2 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('fa9f5e79-7456-456c-b554-66b52818bffb', 'df616ac8-34ad-4c73-9f54-1498929233c2', 'speaking', 840, 12, NULL, 3)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('a2b002f3-09db-49d4-a408-a40d8795d0d2', 'fa9f5e79-7456-456c-b554-66b52818bffb', 1, NULL, NULL, NULL, 'The examiner asks about yourself, your home, work or studies and other familiar topics. 4-5 minutes.', '{"title":"Part 1 — Introduction and familiar topics"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f832c079-97ad-4497-a6e2-b21be43779fa', 'a2b002f3-09db-49d4-a408-a40d8795d0d2', 'short_answer', 'Let''s talk about where you live. Do you live in a house or a flat?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('aff60588-4c7e-4025-bff4-38c56ca7a292', 'a2b002f3-09db-49d4-a408-a40d8795d0d2', 'short_answer', 'What do you like most about the area where you live?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ae3afd57-8aca-4d9d-a8ae-1a61d827da62', 'a2b002f3-09db-49d4-a408-a40d8795d0d2', 'short_answer', 'Would you like to move somewhere else in the future? Why?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('657f3c23-f3f6-46e3-b55c-2d0cda783484', 'a2b002f3-09db-49d4-a408-a40d8795d0d2', 'short_answer', 'Now let''s talk about the weather. What kind of weather do you enjoy most?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c68eff70-c36e-480f-bd2c-a95a2fd751e4', 'a2b002f3-09db-49d4-a408-a40d8795d0d2', 'short_answer', 'Does the weather ever affect your mood?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3918cc54-e5d5-4598-97a2-3edd7a4315cd', 'a2b002f3-09db-49d4-a408-a40d8795d0d2', 'short_answer', 'Has the weather in your country changed since you were a child?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('dbd4ba47-827d-4b24-9a85-7cc7919e2a9c', 'fa9f5e79-7456-456c-b554-66b52818bffb', 2, 'Describe a skill that took you a long time to learn.
+
+You should say:
+  •  what the skill was
+  •  when and why you started learning it
+  •  what made it difficult to learn
+
+and explain how you feel about this skill now.', NULL, NULL, 'You have one minute to prepare. You may make notes. Then talk for one to two minutes. The examiner will tell you when to stop.', '{"title":"Part 2 — Individual long turn"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c44d8a07-5157-44fb-bddb-7382df5d1f4e', 'dbd4ba47-827d-4b24-9a85-7cc7919e2a9c', 'short_answer', 'Long turn response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('05aa72fc-f00c-4fc8-9f11-6941fb4108d8', 'fa9f5e79-7456-456c-b554-66b52818bffb', 3, NULL, NULL, NULL, 'The examiner asks further questions connected to the topic in Part 2. 4-5 minutes.', '{"title":"Part 3 — Two-way discussion"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('cde7b8e1-75bb-4035-9f94-cbfc7e36f825', '05aa72fc-f00c-4fc8-9f11-6941fb4108d8', 'short_answer', 'Why do some people give up when they are learning a new skill?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1b1937d5-699c-4b59-8b0d-139602ec61a6', '05aa72fc-f00c-4fc8-9f11-6941fb4108d8', 'short_answer', 'Is it better to learn a skill from a teacher or by yourself, for example online?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6a161304-a236-4d0f-8ead-6917f3bc17d9', '05aa72fc-f00c-4fc8-9f11-6941fb4108d8', 'short_answer', 'Which skills do you think schools should spend more time teaching?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f7844d2f-50bd-4178-9954-64a2f427e97b', '05aa72fc-f00c-4fc8-9f11-6941fb4108d8', 'short_answer', 'Do you think older people find it harder to learn new skills than young people?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('65b3f313-ad9a-42e1-b557-9e8bbe550dcb', '05aa72fc-f00c-4fc8-9f11-6941fb4108d8', 'short_answer', 'How might technology change the skills people need for work in the future?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+-- IELTS Academic Mock Exam 2 (mock-academic-2)
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('1b3356a9-8c13-4cb8-8788-50df52bca7a7', 'mock-academic-2', 'IELTS Academic Mock Exam 2', 'A second full timed IELTS Academic mock exam at a challenging level, covering all four sections.', 'academic', 'computer', true, true, 'challenge', 'mock', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('c3b343be-78f8-4d4a-b67b-45cf6eb2828c', '1b3356a9-8c13-4cb8-8788-50df52bca7a7', 'listening', 1800, 40, NULL, 0)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('23b52357-1f61-41bd-b852-dcbf2667cabc', 'c3b343be-78f8-4d4a-b67b-45cf6eb2828c', 1, NULL, '/audio/mock/mock-academic-2-part-1.mp3', NULL, 'Questions 1-10. Complete the booking form (Questions 1-6) and the table of arrangements (Questions 7-10). Write ONE WORD AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Booking a hall for an anniversary party"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('23b52357-1f61-41bd-b852-dcbf2667cabc', 'OWEN: Good morning, Hollins Hall, Owen speaking. How can I help?
+PRIYA: Hello. I''m organising a party for my parents'' fortieth wedding anniversary, and a friend said your hall might be suitable. I''d like to make a provisional booking, if that''s possible.
+OWEN: Of course. Let me open a booking form. Could I have your name first?
+PRIYA: It''s Priya Ravindran.
+OWEN: And how do you spell your surname?
+PRIYA: R-A-V-I-N-D-R-A-N.
+OWEN: R-A-V-I-N-D-R-A-N. Thanks. And what date were you thinking of?
+PRIYA: Their actual anniversary is on the tenth of May, so I was hoping for Saturday the tenth.
+OWEN: Let me have a look. I''m afraid the tenth has already gone. There''s a wedding in both rooms that day. The following Saturday, the seventeenth, is free, though.
+PRIYA: The seventeenth. That should be fine, actually. Several relatives are flying in from abroad, and the extra week will help them. Let''s say the seventeenth.
+OWEN: Lovely. And how many guests are you expecting?
+PRIYA: Well, my first list had about seventy people, but then my mother added all her cousins, so we sent out ninety invitations. So far eighty-five have said yes, and I don''t think anyone else will reply now. So eighty-five.
+OWEN: Eighty-five. That affects which room you can have. Our Oak Room is lovely, with a wooden floor and a view of the river, but it only holds sixty people seated. With eighty-five you''d need the Garden Room, which takes up to a hundred and twenty.
+PRIYA: The Garden Room. Does that have access outside?
+OWEN: Yes, there are glass doors that open onto the lawn, so guests can go out in the evening if the weather''s good.
+PRIYA: That sounds perfect. What''s the cost?
+OWEN: For a Saturday evening, from six until midnight, the Garden Room is six hundred and fifty pounds. To secure the date we ask for a deposit of two hundred pounds, which is deducted from the final bill.
+PRIYA: Two hundred. And when do you need that?
+OWEN: Within fourteen days of today. If we don''t receive it by then, the provisional booking is cancelled and the date goes back on the system. The balance is due a month before the event.
+PRIYA: Fourteen days. That''s fine. I''ll pay it this week. Now, about food. Do you provide catering, or do we need to bring in our own?
+OWEN: We have our own caterers, and we don''t allow outside catering, I''m afraid, for insurance reasons. There are two main options: a cold buffet, or a hot buffet, which is more popular for evening events.
+PRIYA: The hot buffet, I think. My father always says sandwiches aren''t a proper meal. Is there a choice of dishes?
+OWEN: There are three main dishes: usually one meat, one fish, and a vegan option. The vegan option is suitable for vegetarians too, of course.
+PRIYA: Good, because quite a few of our relatives don''t eat meat. And music? We''ve booked a DJ.
+OWEN: That''s fine, but because of our licence and the houses nearby, all music must stop at eleven p.m. People sometimes ask for half past eleven, but we can''t make any exceptions.
+PRIYA: Eleven. Okay, I''ll let the DJ know. What about parking? Some of the older guests can''t walk very far.
+OWEN: Our own car park is small, only about fifteen spaces, and it fills up quickly. But the church car park behind the hall is free in the evenings, and it has around sixty spaces. It''s a two-minute walk.
+PRIYA: The church car park. I''ll put that on the invitations. And can we decorate the room?
+OWEN: Yes, you can come in from four o''clock to set up. Balloons and banners are fine, and flowers, of course. The only thing we don''t permit is candles, even small ones in jars, because of the fire regulations.
+PRIYA: Oh, that''s a shame. My sister was planning to put candles on every table.
+OWEN: A lot of people use battery-powered lights instead. They look very similar.
+PRIYA: Good idea. I''ll tell her. Is there anything else I should know?
+OWEN: Only that the hall must be cleared by midnight, so ask your DJ to pack up quickly. I''ll email you a confirmation now with all the details.
+PRIYA: Thank you, Owen. You''ve been very helpful.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2aa920b0-44b4-4132-9f8f-e2102d66e644', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'note_completion', 'Name: Priya ______', '[]'::jsonb, ARRAY['Ravindran']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'She spells it: "R-A-V-I-N-D-R-A-N."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('924f4440-5648-4e61-9d32-a0dfaadf7471', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'note_completion', 'Date of party: Saturday ______ May', '[]'::jsonb, ARRAY['17th', '17', 'seventeenth']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"the tenth has already gone", so "Let''s say the seventeenth."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e2d3d27c-8d21-4931-96a4-127395acd895', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'note_completion', 'Number of guests: ______', '[]'::jsonb, ARRAY['85', 'eighty-five']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Seventy were planned and ninety invited, but "So far eighty-five have said yes".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3e8f20ee-5602-48cf-9ea4-b8e5b1c3ea80', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'note_completion', 'Room: the ______ Room', '[]'::jsonb, ARRAY['Garden']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The Oak Room "only holds sixty people seated", so "you''d need the Garden Room".', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a9e724d4-b2ee-4fc3-967e-791872845e0f', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'note_completion', 'Deposit: £______', '[]'::jsonb, ARRAY['200']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"we ask for a deposit of two hundred pounds".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0c383645-4256-4af1-be32-89f70f499bf4', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'note_completion', 'Deposit must be paid within ______ days', '[]'::jsonb, ARRAY['14', 'fourteen']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"Within fourteen days of today."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6ee0633c-830a-42c1-937e-9da628905672', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'table_completion', 'Food — hot buffet: one meat, one fish and one ______ dish', '[]'::jsonb, ARRAY['vegan']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"usually one meat, one fish, and a vegan option."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b198e9e1-5ddd-4dfa-829a-c890dc5f95d4', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'table_completion', 'Music — must stop at ______ p.m.', '[]'::jsonb, ARRAY['11', 'eleven']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"all music must stop at eleven p.m." Half past eleven is refused.', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('12c9dd27-bf0b-4341-828b-063a90e9f21e', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'table_completion', 'Parking — free in the ______ car park behind the hall', '[]'::jsonb, ARRAY['church']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The hall''s own car park is small, "But the church car park behind the hall is free in the evenings".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9d80848a-120d-4243-afc4-7ad5b00acf97', '23b52357-1f61-41bd-b852-dcbf2667cabc', 'table_completion', 'Decorations — ______ are not permitted', '[]'::jsonb, ARRAY['candles']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"The only thing we don''t permit is candles".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('95160ccd-94a9-4c73-8530-6b100d06fbce', 'c3b343be-78f8-4d4a-b67b-45cf6eb2828c', 2, NULL, '/audio/mock/mock-academic-2-part-2.mp3', NULL, 'Questions 11-20. For Questions 11-13, choose the correct letter, A, B or C. For Questions 14-15, choose TWO letters, A-E. For Questions 16-20, what task will each team do? Choose the correct letter, A-G.', '{"title":"Part 2 — Briefing for music festival volunteers"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('95160ccd-94a9-4c73-8530-6b100d06fbce', 'GRACE: Good evening, everyone, and thank you all for coming to this briefing. My name''s Grace Whitlock and I''m the volunteer coordinator for the Meadowbank Music Festival. Some of you have volunteered with us before, but for many of you this is your first year, so I''ll go through the basics and then explain what each team will be doing.
+GRACE: A little background first. A lot of people assume the festival started as a student concert, probably because two of the founders were students at the time. In fact, the very first event, in nineteen ninety-four, was a one-day charity concert to raise money for the town''s hospital, which was threatened with closure. The hospital survived, and the concert grew into the three-day festival we have today, with around twenty thousand visitors.
+GRACE: This year we''re staying on the same site, at Meadowbank Farm, so if you''ve been before you''ll know your way around. We did discuss letting the music run later on Saturday night, but the neighbours objected, so it will still finish at eleven. The biggest change this year is that we''ve banned single-use cups. Every drink will be served in a reusable cup, which visitors pay a two-pound deposit on, and they get the money back when they return it. That''s going to mean a lot more work for some of you, as you''ll hear.
+GRACE: Now, what you get in return. Every volunteer gets a festival T-shirt, which you must wear on shift so that visitors can recognise you. Everyone also gets free meals in the crew canteen while they''re working. And if you complete three full shifts, you''ll receive a free ticket for next year''s festival. That''s our way of saying thank you.
+GRACE: There are a couple of things you need to bring. Please don''t forget photo ID, because you''ll need it to collect your wristband, and without a wristband you can''t get on site. And bring waterproof clothing. It''s been dry all week, but the forecast is uncertain, and you''ll be outside for hours. You don''t need to bring food, as I''ve said, and if you''re working after dark we''ll give you a torch. You don''t need a mobile phone either, because supervisors carry radios.
+GRACE: A few rules. Visitors will ask you all sorts of questions about the programme, who''s playing where and when, and please do answer them. That''s a big part of the job. If you want to swap a shift with another volunteer, that''s fine too, as long as you tell the volunteer office. But visitors sometimes try to give volunteers money, especially if you''ve helped them out, and you mustn''t accept tips under any circumstances. And if a journalist approaches you, which does happen, please don''t speak to them. Send them to the press office instead.
+GRACE: Right, the teams. You''ll find your team colour on the letter we sent you.
+GRACE: The Green team, as you might guess, is mainly about the environment. In previous years you''ve been picking up litter, but this year, with the new cups, your main job will be collecting cups for reuse, from the bins and from the field, and taking them back to the washing station.
+GRACE: The Blue team used to look after the car parks, and some of you have been asking me about that. But we''ve moved the Blue team this year. You''ll be running the information tent by the main entrance, giving out maps and handling lost property.
+GRACE: The car parks are now the responsibility of the Orange team. It''s a busy job on Friday afternoon, when most people arrive, but much quieter after that.
+GRACE: The Purple team will be assisting disabled visitors. That includes running the viewing platform beside the main stage and helping people get to and from the accessible car park. You''ll have had some extra training for this already.
+GRACE: And finally the Yellow team. In the past, Yellow team volunteers checked tickets at the gates, but that''s now done by professional security staff. So this year you''ll be helping at the campsite, showing people where to pitch their tents and making sure the fire lanes stay clear.
+GRACE: That''s everything for now. Your supervisors will meet you at your team points in ten minutes. Thank you again, and enjoy the festival.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3571e362-0047-4b45-8993-62f266d452b4', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'multiple_choice_single', 'The festival was first held as', '[{"value":"A","label":"A. a charity concert for a hospital"},{"value":"B","label":"B. a student concert"},{"value":"C","label":"C. a three-day event on a farm"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"the very first event, in nineteen ninety-four, was a one-day charity concert to raise money for the town''s hospital".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e35de7e4-0b6e-4843-8b62-dd067c4f211e', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'multiple_choice_single', 'What is the most significant change this year?', '[{"value":"A","label":"A. The festival has moved to a new site."},{"value":"B","label":"B. Single-use cups are no longer allowed."},{"value":"C","label":"C. The music will finish later on Saturday."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The site is the same and the late finish was rejected; "The biggest change this year is that we''ve banned single-use cups."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('df3d0f1b-39bd-47a5-af07-a6663e1583b3', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'multiple_choice_single', 'Volunteers who complete three shifts will receive', '[{"value":"A","label":"A. a festival T-shirt"},{"value":"B","label":"B. free meals"},{"value":"C","label":"C. a ticket for next year"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'T-shirts and meals are for everyone; "if you complete three full shifts, you''ll receive a free ticket for next year''s festival."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('43bdff76-de2a-4c41-ac3f-19d44af6f4ee', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'multiple_choice_multiple', 'Which TWO things must volunteers bring? Choose TWO letters.', '[{"value":"A","label":"A. photo ID"},{"value":"B","label":"B. waterproof clothing"},{"value":"C","label":"C. their own food"},{"value":"D","label":"D. a torch"},{"value":"E","label":"E. a mobile phone"}]'::jsonb, ARRAY['A', 'B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Please don''t forget photo ID" and "bring waterproof clothing." Food and torches are provided, and "You don''t need a mobile phone".', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('efe2ea20-e037-482b-955a-134273ecb0b5', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'multiple_choice_multiple', 'Which TWO things are volunteers told NOT to do? Choose TWO letters.', '[{"value":"A","label":"A. answer questions about the programme"},{"value":"B","label":"B. accept tips from visitors"},{"value":"C","label":"C. speak to journalists"},{"value":"D","label":"D. swap shifts with other volunteers"},{"value":"E","label":"E. wear their T-shirt off duty"}]'::jsonb, ARRAY['B', 'C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"you mustn''t accept tips under any circumstances" and if a journalist approaches, "please don''t speak to them."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('86d227d1-cf38-4497-831f-fa087fa44fd3', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'matching_features', 'Green team', '[{"value":"A","label":"A. checking tickets at the gates"},{"value":"B","label":"B. collecting cups for reuse"},{"value":"C","label":"C. running the information tent"},{"value":"D","label":"D. managing the car parks"},{"value":"E","label":"E. helping at the campsite"},{"value":"F","label":"F. assisting disabled visitors"},{"value":"G","label":"G. selling programmes"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"your main job will be collecting cups for reuse".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('337eadfc-60ed-4e76-9a44-48916672fc34', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'matching_features', 'Blue team', '[{"value":"A","label":"A. checking tickets at the gates"},{"value":"B","label":"B. collecting cups for reuse"},{"value":"C","label":"C. running the information tent"},{"value":"D","label":"D. managing the car parks"},{"value":"E","label":"E. helping at the campsite"},{"value":"F","label":"F. assisting disabled visitors"},{"value":"G","label":"G. selling programmes"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'They "used to look after the car parks", but now "You''ll be running the information tent by the main entrance".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d8863489-5d77-46e7-9713-85e25d98f324', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'matching_features', 'Orange team', '[{"value":"A","label":"A. checking tickets at the gates"},{"value":"B","label":"B. collecting cups for reuse"},{"value":"C","label":"C. running the information tent"},{"value":"D","label":"D. managing the car parks"},{"value":"E","label":"E. helping at the campsite"},{"value":"F","label":"F. assisting disabled visitors"},{"value":"G","label":"G. selling programmes"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The car parks are now the responsibility of the Orange team."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('439f4129-a2af-437f-9a12-5f7a2db3afa4', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'matching_features', 'Purple team', '[{"value":"A","label":"A. checking tickets at the gates"},{"value":"B","label":"B. collecting cups for reuse"},{"value":"C","label":"C. running the information tent"},{"value":"D","label":"D. managing the car parks"},{"value":"E","label":"E. helping at the campsite"},{"value":"F","label":"F. assisting disabled visitors"},{"value":"G","label":"G. selling programmes"}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The Purple team will be assisting disabled visitors."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c5867429-ecc7-49df-a8b8-a0595dec4134', '95160ccd-94a9-4c73-8530-6b100d06fbce', 'matching_features', 'Yellow team', '[{"value":"A","label":"A. checking tickets at the gates"},{"value":"B","label":"B. collecting cups for reuse"},{"value":"C","label":"C. running the information tent"},{"value":"D","label":"D. managing the car parks"},{"value":"E","label":"E. helping at the campsite"},{"value":"F","label":"F. assisting disabled visitors"},{"value":"G","label":"G. selling programmes"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Ticket checks are "now done by professional security staff. So this year you''ll be helping at the campsite".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('0086904f-7627-4e0f-be16-99cdc2ff34e3', 'c3b343be-78f8-4d4a-b67b-45cf6eb2828c', 3, NULL, '/audio/mock/mock-academic-2-part-3.mp3', NULL, 'Questions 21-30. For Questions 21-25, choose the correct letter, A, B or C. For Questions 26-30, complete the flow-chart. Write ONE WORD ONLY for each answer.', '{"title":"Part 3 — Tutorial on a study of bilingual children"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('0086904f-7627-4e0f-be16-99cdc2ff34e3', 'OKAFOR: Hello, Lucy, Sam. Come in. So, this is our second meeting about your project on bilingual children. How are things going?
+LUCY: Quite well, thanks. We''ve finished testing at the school, so we''ve got most of the data now.
+OKAFOR: Good. Before we go into that, remind me how the project came about. I know Sam speaks two languages at home.
+SAM: I do, and people assume that''s why we chose it. But actually, it was Lucy''s old primary school that got us started.
+LUCY: Yes, the head teacher there contacted the department. About a third of their pupils speak another language at home, and some parents had asked whether that might hold their children back. The school wanted someone to look into it, and we volunteered.
+OKAFOR: That''s a nice practical origin. Now, I''ve read your literature review. It''s thorough, and the length is fine. The studies you''ve used are mostly recent, too, which is good. My main concern is that nearly all of them are from North America. There''s been a lot of research in Europe and Asia, and bilingualism in Canada is quite a different situation from bilingualism here.
+SAM: We noticed that, but we weren''t sure where to find the others.
+OKAFOR: I''ll send you a couple of review articles that will point you in the right direction. So, the results. What did you expect to find?
+LUCY: Our hypothesis was that the bilingual children would be better at switching between tasks, because they''re used to switching between languages.
+OKAFOR: And were they?
+LUCY: Not exactly. They weren''t any faster than the monolingual children, which was a bit disappointing. But they did make noticeably fewer errors on the switching task.
+SAM: So it seems they''re more accurate rather than quicker.
+OKAFOR: That''s actually consistent with quite a lot of recent work, so I wouldn''t be disappointed. Now, the sample. You tested forty-two children altogether?
+SAM: Yes. We know that''s quite small.
+OKAFOR: For an undergraduate project, forty-two is perfectly respectable. What worries me more is the age range. You''ve got children from five to eleven in the same group, and a five-year-old and an eleven-year-old are very different on tasks like these. I''d discuss that carefully as a limitation, or even split them into younger and older groups.
+LUCY: We could do that. We''ve got roughly equal numbers in each half.
+OKAFOR: Good. Talk me through the procedure, because I want to make sure the method section is clear.
+SAM: Okay. First, before any testing, parents filled in a questionnaire about which languages were used at home and how often. That''s how we classified the children.
+OKAFOR: Did most parents return it?
+SAM: Almost all of them, yes. Then we tested each child individually. We were originally given a classroom to work in, but it was next to the music room, and it was far too noisy, so the school let us use the library instead.
+OKAFOR: Sensible.
+LUCY: The first task was a vocabulary test. We showed the children pictures and asked them to name what they could see. We''d thought about using written words, but the younger children can''t read well enough.
+SAM: Then came the main task, the card sorting. The children sort cards first by colour, and then we change the rule and they have to sort them by shape. That''s the switch we measure.
+OKAFOR: And at the end?
+LUCY: At the end each child chose a sticker as a reward. We''d wanted to give them sweets, but the school doesn''t allow them.
+OKAFOR: Fine. That''s all very clear. One last thing: who are you going to share the results with first?
+SAM: We''d thought about writing something for parents.
+LUCY: The school has a newsletter, so that could come later. But the head teacher asked if we''d present the findings to the teachers first, at a staff meeting, so they can decide what to tell parents.
+OKAFOR: I think that''s the right order. Teachers will have the best sense of how to explain it. Well, you''re in good shape. Send me the revised literature review by the end of the month.
+LUCY: We will. Thanks, Dr Okafor.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('94f06f03-ee85-469a-8b7f-6367895539dd', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'multiple_choice_single', 'How did the project begin?', '[{"value":"A","label":"A. Sam wanted to study his own experience."},{"value":"B","label":"B. A school asked for the research."},{"value":"C","label":"C. Dr Okafor suggested the topic."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"it was Lucy''s old primary school that got us started" and "The school wanted someone to look into it".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1fab7eb0-1bd1-47de-b518-3754e8f162b0', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'multiple_choice_single', 'Dr Okafor''s main criticism of the literature review is that it', '[{"value":"A","label":"A. is too long"},{"value":"B","label":"B. relies on old studies"},{"value":"C","label":"C. focuses on one region"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"My main concern is that nearly all of them are from North America."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0bfc331d-65fb-48d8-8406-ec8e2e049b34', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'multiple_choice_single', 'Compared with monolingual children, the bilingual children', '[{"value":"A","label":"A. switched tasks more quickly"},{"value":"B","label":"B. made fewer mistakes"},{"value":"C","label":"C. performed in the same way"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"They weren''t any faster" but "they did make noticeably fewer errors on the switching task."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3534e702-94b0-489e-b104-dcae1b26da3f', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'multiple_choice_single', 'What does Dr Okafor think is the main weakness of the study?', '[{"value":"A","label":"A. the small number of children"},{"value":"B","label":"B. the wide range of ages"},{"value":"C","label":"C. the difficulty of the tasks"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"forty-two is perfectly respectable. What worries me more is the age range."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c74d1cb9-eea6-43cb-a807-4098dce0e2ea', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'multiple_choice_single', 'The students will present their results first to', '[{"value":"A","label":"A. parents"},{"value":"B","label":"B. the school''s teachers"},{"value":"C","label":"C. the children"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The newsletter "could come later", and the head teacher "asked if we''d present the findings to the teachers first".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a9824ba0-8aa8-4344-b748-11e19b58f20f', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'flowchart_completion', 'Step 1: parents complete a ______ about languages used at home', '[]'::jsonb, ARRAY['questionnaire']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"parents filled in a questionnaire about which languages were used at home".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('084df088-fe48-4de4-b1f5-cf325b475914', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'flowchart_completion', 'Step 2: each child is tested individually in the school ______', '[]'::jsonb, ARRAY['library']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The classroom "was far too noisy, so the school let us use the library instead."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6ce29b23-4f20-4c8e-896c-98fa9904b2e6', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'flowchart_completion', 'Step 3: vocabulary test — children name what they see in ______', '[]'::jsonb, ARRAY['pictures']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"We showed the children pictures and asked them to name what they could see."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f03ec020-6360-4eb8-9663-84cfea05702d', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'flowchart_completion', 'Step 4: card sorting — first by colour, then by ______', '[]'::jsonb, ARRAY['shape']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"The children sort cards first by colour" and then "sort them by shape."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('47a303dc-ecc3-4ab2-9b09-56d1f10c28a1', '0086904f-7627-4e0f-be16-99cdc2ff34e3', 'flowchart_completion', 'Step 5: each child chooses a ______ as a reward', '[]'::jsonb, ARRAY['sticker']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"each child chose a sticker as a reward." Sweets are not allowed.', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('dbc09045-63f8-4215-a79e-b3cac220e765', 'c3b343be-78f8-4d4a-b67b-45cf6eb2828c', 4, NULL, '/audio/mock/mock-academic-2-part-4.mp3', NULL, 'Questions 31-40. Complete the sentences (Questions 31-35) and the notes (Questions 36-40). Write ONE WORD AND/OR A NUMBER for each answer.', '{"title":"Part 4 — Lecture: the migration of the monarch butterfly"}'::jsonb, 3)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('dbc09045-63f8-4215-a79e-b3cac220e765', 'LECTURER: This afternoon I want to talk about one of the most remarkable journeys in the animal world: the autumn migration of the monarch butterfly in North America. Every year, millions of these orange and black butterflies fly from Canada and the northern United States to a small area of mountain forest in central Mexico, a journey of up to four thousand kilometres.
+LECTURER: What makes this migration so extraordinary is not just the distance but the fact that no individual butterfly makes the round trip. A monarch that hatches in summer normally lives for only a few weeks. But the generation that emerges in late summer is different. These butterflies delay reproduction, and they can live for up to eight months. It''s this long-lived generation that flies south. In spring, they begin the journey north, but they breed on the way and die, and it takes three or four generations to get back to Canada. So the butterflies that arrive in Mexico each autumn have never been there before. Their great-grandparents were the last to make the trip.
+LECTURER: How, then, do they find their way? For a long time it was assumed that they used landmarks, such as mountain ranges and coastlines. But experiments have shown that the main tool is the sun. Monarchs have what''s called a time-compensated sun compass. Because the sun moves across the sky during the day, a butterfly needs to know the time in order to use it for direction, and it does this with a body clock located, surprisingly, in its antennae. When researchers painted the antennae of migrating monarchs with black paint, blocking the light, the butterflies lost their sense of direction.
+LECTURER: On cloudy days, when the sun isn''t visible, monarchs appear to rely on a second system: they can sense the Earth''s magnetic field. This was shown in flight simulators, in which butterflies changed direction when the magnetic field was reversed. However, this magnetic compass only works when the butterflies are exposed to a particular kind of ultraviolet light, which is why it''s thought to act as a backup rather than the main system.
+LECTURER: Once they arrive in Mexico, the monarchs gather in huge clusters on the trunks and branches of oyamel fir trees, at altitudes of around three thousand metres. A single hectare of forest can hold tens of millions of butterflies. The conditions there are ideal: cool enough that the butterflies use very little energy, but not so cold that they freeze. The trees act like a blanket and protect them from rain and frost.
+LECTURER: Let''s turn now to the threats. The number of monarchs reaching Mexico has fallen dramatically since the nineteen nineties. Scientists measure the population not by counting butterflies, which would be impossible, but by measuring the area of forest they cover. In the winter of nineteen ninety-six, the colonies covered about eighteen hectares. In recent years, it''s often been under three.
+LECTURER: The causes are debated, but several factors are clear. The most important is probably the loss of milkweed, the only plant on which monarch caterpillars can feed. Milkweed used to grow widely among crops in the American Midwest, but the use of herbicides on farmland has removed much of it. Logging in the Mexican forests has also been a problem, although protection has improved since a reserve was established there. And climate change brings more extreme weather. A single severe storm in two thousand and two killed an estimated eighty per cent of the butterflies in two of the largest colonies.
+LECTURER: So what''s being done? One of the most effective measures has been encouraging people to plant milkweed in gardens, schools and along roadsides. In Mexico, local communities are paid to protect the forest rather than cut it down, and tourism brings in money too, as visitors come to see the colonies in winter. And thousands of volunteers help scientists by attaching tiny tags to the butterflies'' wings, which allows their routes to be traced when they''re found again.
+LECTURER: In the next session, we''ll compare the monarch with other insect migrations, including the painted lady butterfly, which crosses the Sahara.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2f752ff0-e404-4f85-a080-e0031e5be7b5', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'sentence_completion', 'The generation that flies south can live for up to ______ months.', '[]'::jsonb, ARRAY['eight', '8']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"they can live for up to eight months."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('de9b1ebd-6edc-4f13-a8e4-92f083d1f3a7', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'sentence_completion', 'The return journey to Canada takes three or four ______.', '[]'::jsonb, ARRAY['generations']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"it takes three or four generations to get back to Canada."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('89a12d5b-56e5-473a-9cab-9100adb668f1', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'sentence_completion', 'Rather than landmarks, monarchs mainly navigate by the ______.', '[]'::jsonb, ARRAY['sun']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Landmarks were assumed, "But experiments have shown that the main tool is the sun."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e1162165-dbdc-45b7-9a53-445597ea7057', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'sentence_completion', 'The butterfly''s body clock is located in its ______.', '[]'::jsonb, ARRAY['antennae']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"a body clock located, surprisingly, in its antennae."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('dea78e64-e47b-46b1-8284-03e1092057b4', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'sentence_completion', 'The magnetic compass works only when the butterflies are exposed to ultraviolet ______.', '[]'::jsonb, ARRAY['light']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'It "only works when the butterflies are exposed to a particular kind of ultraviolet light".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0c8a8c66-c7d4-4a64-a3fa-ddb83140f756', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'note_completion', 'Winter in Mexico: clusters on oyamel ______ trees', '[]'::jsonb, ARRAY['fir']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"the monarchs gather in huge clusters on the trunks and branches of oyamel fir trees".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e3b96412-eb92-40a2-9234-e89c5f55ec70', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'note_completion', 'Population measured by the area of ______ covered', '[]'::jsonb, ARRAY['forest']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Scientists measure "the area of forest they cover."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('734765b2-e496-47dd-bc2b-0de02a853583', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'note_completion', 'Main cause of decline: loss of ______, the caterpillars'' only food', '[]'::jsonb, ARRAY['milkweed']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"The most important is probably the loss of milkweed".', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e4de8df6-f6f6-47a5-93bb-a0974fdfd657', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'note_completion', '2002: a severe ______ killed about 80% of two colonies', '[]'::jsonb, ARRAY['storm']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"A single severe storm in two thousand and two killed an estimated eighty per cent".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bdebb4fb-9bd9-48c1-8cb1-0d4e8e7ecd1c', 'dbc09045-63f8-4215-a79e-b3cac220e765', 'note_completion', 'Volunteers attach ______ to wings so routes can be traced', '[]'::jsonb, ARRAY['tags']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'volunteers help "by attaching tiny tags to the butterflies'' wings".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('70336979-e370-4ac5-b77f-5c6655453999', '1b3356a9-8c13-4cb8-8788-50df52bca7a7', 'reading', 3600, 40, NULL, 1)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('de5bb2f3-c18a-43a4-a17f-88119abd43c8', '70336979-e370-4ac5-b77f-5c6655453999', 1, 'A. In the spring of 1900, a group of sponge divers sheltering from a storm off the small Greek island of Antikythera discovered the wreck of a Roman-era cargo ship at a depth of around forty-five metres. Over the following year, in one of the first major underwater archaeological operations, divers working without modern equipment brought up bronze and marble statues, glassware, pottery and coins. One of the divers died and two were paralysed by decompression sickness, a condition that was then poorly understood. Among the finds was a lump of corroded bronze and wood about the size of a shoebox, which attracted little attention at first. Several months later, as the wood dried and shrank, the lump split apart, and a museum curator noticed a gearwheel embedded inside it.
+
+B. The object, now known as the Antikythera mechanism, has been called the world''s oldest analogue computer. It survives in eighty-two fragments, the largest of which is about eighteen centimetres across, and it originally contained at least thirty interlocking bronze gearwheels, some with teeth only a millimetre and a half long. Nothing of comparable complexity is known from anywhere in the world for more than a thousand years afterwards. Its age is still debated. Coins found on the wreck suggest that the ship sank in the first half of the first century BC, but some scholars, on the basis of the inscriptions and astronomical calculations, believe the mechanism itself may have been made several decades earlier. Either way, it was probably already old, and perhaps much repaired, when it went down with the ship.
+
+C. For half a century, the mechanism defeated attempts to understand it. The gears were fused together by corrosion, and most of the inscriptions were too worn to read. The first serious study was made by the British historian of science Derek de Solla Price, who in the 1950s and 1970s used X-rays to look inside the fragments and proposed that the device was a calendar computer, used to calculate the positions of the sun and moon. Price''s reconstruction was a remarkable achievement, but it contained errors, and he was unable to see many of the smaller gears. Michael Wright, a curator at the Science Museum in London, later spent years building working models and corrected several of Price''s assumptions, particularly about the gears at the front of the device.
+
+D. The breakthrough came in 2005, when an international team known as the Antikythera Mechanism Research Project brought an eight-tonne X-ray scanner to the National Archaeological Museum in Athens. Using a technique called computed tomography, which builds up three-dimensional images from many X-ray slices, the team was able to count the teeth on individual gears and to read more than 3,000 characters of text, many of them hidden inside the fragments, that had not been seen for two thousand years. A second technique, which photographs the surface under light from many different angles, revealed faint inscriptions on the outer plates.
+
+E. What emerged was a device of extraordinary sophistication. Turning a handle on the side moved a set of pointers on the front dial, which showed the positions of the sun and moon against the zodiac and the date in the Egyptian calendar of 365 days. A small rotating ball, half silver and half black, showed the phase of the moon. Most ingeniously, a pair of gears, one mounted slightly off-centre on the other and connected by a pin in a slot, made the moon''s pointer speed up and slow down, reproducing the variation in the moon''s speed across the sky that the astronomer Hipparchus had described. On the back, two spiral dials predicted eclipses and tracked the four-year cycle of athletic games, including the Olympics.
+
+F. Several questions remain unanswered. The text on the front plate refers to the planets, and most researchers believe that the device also showed the positions of the five planets known in antiquity. However, almost none of the gears for this part survives, so any reconstruction of it is necessarily speculative. In 2021 a team at University College London published a model that reproduced the planetary display using gear trains consistent with the surviving inscriptions, but they acknowledged that it was only one of several possible solutions. Nor is it clear who made the mechanism, or for whom. The names of the months on the back dial are those used in Corinth and its colonies, which has led some to suggest a connection with Syracuse, the city of Archimedes, although he died more than a century before the ship sank.
+
+G. Perhaps the most puzzling question is why nothing like it survives. It seems unlikely that such a refined device was the first of its kind; the precision of its gears suggests a tradition of instrument-making that had developed over generations. Ancient writers, including Cicero, mention bronze spheres that showed the movements of the heavens, but these descriptions were long dismissed as exaggerations. Cicero even credited one such sphere to Archimedes himself. The likeliest explanation is simply that bronze was valuable, and that any such instruments that remained on land were eventually melted down and reused. The Antikythera mechanism survived only because it was lost at sea.', NULL, NULL, 'You should spend about 20 minutes on Questions 1-13, which are based on Reading Passage 1 below.', '{"title":"Passage 1 — The Antikythera mechanism"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c3d8802e-eec9-465e-87a3-6fa5ee35cef0', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'matching_information', 'Which paragraph contains an explanation of why so few similar objects have been found?', '[{"value":"A","label":"Paragraph A"},{"value":"B","label":"Paragraph B"},{"value":"C","label":"Paragraph C"},{"value":"D","label":"Paragraph D"},{"value":"E","label":"Paragraph E"},{"value":"F","label":"Paragraph F"},{"value":"G","label":"Paragraph G"}]'::jsonb, ARRAY['G']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"bronze was valuable, and that any such instruments that remained on land were eventually melted down and reused."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ae3e9fc3-5b31-4b53-b566-fee6317821b3', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'matching_information', 'Which paragraph contains a reference to the dangers faced by those who recovered the finds?', '[{"value":"A","label":"Paragraph A"},{"value":"B","label":"Paragraph B"},{"value":"C","label":"Paragraph C"},{"value":"D","label":"Paragraph D"},{"value":"E","label":"Paragraph E"},{"value":"F","label":"Paragraph F"},{"value":"G","label":"Paragraph G"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"One of the divers died and two were paralysed by decompression sickness".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3ab01bf3-70df-4689-afc9-19e2ac939da1', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'matching_information', 'Which paragraph contains a description of how the device imitated the changing speed of the moon?', '[{"value":"A","label":"Paragraph A"},{"value":"B","label":"Paragraph B"},{"value":"C","label":"Paragraph C"},{"value":"D","label":"Paragraph D"},{"value":"E","label":"Paragraph E"},{"value":"F","label":"Paragraph F"},{"value":"G","label":"Paragraph G"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'A pin-and-slot gear pair "made the moon''s pointer speed up and slow down".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b3dff2d9-1c9c-4976-9a88-879196287681', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'matching_information', 'Which paragraph contains a mention of a researcher correcting an earlier interpretation?', '[{"value":"A","label":"Paragraph A"},{"value":"B","label":"Paragraph B"},{"value":"C","label":"Paragraph C"},{"value":"D","label":"Paragraph D"},{"value":"E","label":"Paragraph E"},{"value":"F","label":"Paragraph F"},{"value":"G","label":"Paragraph G"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Michael Wright "corrected several of Price''s assumptions".', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fb74cd37-cc5f-4e89-bfc6-10a32ebcc2d4', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'matching_information', 'Which paragraph contains the amount of text revealed by modern imaging?', '[{"value":"A","label":"Paragraph A"},{"value":"B","label":"Paragraph B"},{"value":"C","label":"Paragraph C"},{"value":"D","label":"Paragraph D"},{"value":"E","label":"Paragraph E"},{"value":"F","label":"Paragraph F"},{"value":"G","label":"Paragraph G"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The team could "read more than 3,000 characters of text".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e44e4b2c-59e0-4fb6-a96e-45b48f64dab7', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'true_false_notgiven', 'The importance of the mechanism was recognised as soon as it was brought to the surface.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The lump "attracted little attention at first."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('655bbeb6-0281-4958-8142-4bd734d28ba7', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'true_false_notgiven', 'Coins recovered from the wreck help to date the sinking of the ship.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Coins found on the wreck suggest that the ship sank in the first half of the first century BC".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('99da3daa-180e-44bb-bc77-494e06fa8bdb', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'true_false_notgiven', 'Price''s reconstruction of the mechanism was free of mistakes.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Price''s reconstruction was a remarkable achievement, but it contained errors".', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a4f03238-d27b-4109-a7b4-3e6248342b36', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'true_false_notgiven', 'The scanner used in 2005 had been built specially for the project.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The passage says the team "brought an eight-tonne X-ray scanner" to Athens, but not whether it was built for the project.', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1dec12b5-b771-4deb-b80c-cf48f2e01440', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'short_answer', 'What did the user turn to operate the mechanism?', '[]'::jsonb, ARRAY['a handle', 'handle']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"Turning a handle on the side moved a set of pointers on the front dial".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('36cfc327-1bf7-4aaa-b695-0d3f37943c22', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'short_answer', 'What part of the device showed the phase of the moon?', '[]'::jsonb, ARRAY['a rotating ball', 'ball', 'rotating ball']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"A small rotating ball, half silver and half black, showed the phase of the moon."', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f8dc7aad-aadf-44fd-ac29-f5e1558bdeee', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'short_answer', 'Apart from athletic games, what did the spiral dials on the back predict?', '[]'::jsonb, ARRAY['eclipses']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"two spiral dials predicted eclipses".', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0e43c612-47c2-444a-96f9-7cf72a737c2a', 'de5bb2f3-c18a-43a4-a17f-88119abd43c8', 'short_answer', 'Which material''s value probably explains the loss of similar instruments?', '[]'::jsonb, ARRAY['bronze']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"The likeliest explanation is simply that bronze was valuable".', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('8ac344a1-ba4f-4309-b1a0-8bd9220747a4', '70336979-e370-4ac5-b77f-5c6655453999', 2, 'Of all the raw materials consumed by modern civilisation, none is used in greater quantities than sand. Water aside, it is the most widely extracted natural resource on the planet, and the volume taken each year, estimated by the United Nations Environment Programme at around fifty billion tonnes, would be enough to build a wall twenty-seven metres high and twenty-seven metres wide around the equator. Most of it disappears into concrete, of which sand and gravel make up roughly three-quarters by weight, but it is also used in glass, in the silicon chips of electronic devices, in land reclamation, and in the fluids used to extract oil and gas from rock. For a substance that seems so abundant, it may come as a surprise that sand is now being described as a resource under threat.
+
+The paradox is easily explained. Not all sand is equally useful. The vast deserts of the Sahara and the Arabian peninsula contain enormous quantities, but desert sand is of little value to builders. Its grains have been rounded by thousands of years of wind erosion, so that they are smooth and almost spherical, and they do not lock together to form strong concrete. The angular grains that construction needs are found mainly in rivers, lakes, beaches and the sea floor, where water rather than wind has shaped them. It is these sources that are being exploited, and in many places they are being removed faster than natural processes can replace them. Rivers deliver new sediment only slowly, and dams, of which there are now tens of thousands on the world''s major rivers, trap much of it before it can reach the sea.
+
+The consequences of over-extraction are increasingly visible. When sand is dredged from a riverbed, the river deepens and flows faster, eroding its banks and undermining bridges; in Taiwan in 2000, the collapse of a bridge was blamed in part on sand mining. Lowering the riverbed can also lower the surrounding water table, so that wells run dry and farmland suffers. In the Mekong Delta in Vietnam, which produces around half of the country''s rice, large-scale dredging upstream has contributed to the sinking and shrinking of the delta, allowing salt water from the sea to reach further inland and damage crops. On coastlines, the removal of beach sand leaves shores exposed to storms, and several small islands in Indonesia are reported to have disappeared altogether after their sand was taken to supply construction projects abroad.
+
+Demand is driven above all by urbanisation. China alone used more cement in the three years from 2011 to 2013 than the United States did in the entire twentieth century, and the expansion of cities across Asia and Africa shows no sign of slowing. Singapore, which has increased its land area by around a quarter since independence through reclamation from the sea, has been one of the world''s largest importers of sand, and several neighbouring countries have restricted or banned exports to it. Concrete is not the only driver. The artificial islands built off the coast of Dubai required hundreds of millions of tonnes of sand, much of it dredged from the floor of the Gulf, because the desert sand close at hand was unsuitable. Where demand is high and regulation weak, the trade has also attracted organised crime. In India, illegal sand mining is widespread, and journalists and officials who have tried to investigate it have been threatened and, in some cases, killed.
+
+Part of the difficulty is that sand is so cheap. Because it is heavy and low in value, it is usually extracted as close as possible to where it will be used, and the costs of damage to rivers and coasts are rarely included in its price. Monitoring is also extremely limited. Few governments know how much sand is being extracted within their borders, and the international trade is poorly recorded. Without reliable figures, it is impossible to know where extraction is sustainable and where it is not, and difficult for governments to set limits that can be enforced. A 2019 report by the UN Environment Programme argued that sand should be recognised as a strategic resource, and that its extraction should be properly measured and planned.
+
+There are alternatives, although none is a complete solution. Crushed rock can replace natural sand in concrete, and is already widely used in some countries, though it requires energy to produce. Concrete from demolished buildings can be ground down and reused, and researchers have experimented with adding ash from power stations and even crushed glass. Engineers have also tried to make desert sand usable, for example by mixing it with other materials, but so far with limited success. Each of these substitutes brings costs of its own, and none is yet available in the quantities that the construction industry consumes. In the longer term, perhaps the most effective approach is to use less: to design buildings that need less concrete, and to make them last longer.
+
+Sand, in short, is a resource that has been taken for granted precisely because it seemed limitless. The challenge now is to treat it as what it is: a finite material, renewed only slowly, on which the modern world quite literally rests.', NULL, NULL, 'You should spend about 20 minutes on Questions 14-26, which are based on Reading Passage 2 below.', '{"title":"Passage 2 — The sand beneath everything"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('369c8090-c0d3-42bc-b364-d63c75e999b7', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'table_completion', 'Desert sand — grains rounded by ______ erosion', '[]'::jsonb, ARRAY['wind']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Its grains have been rounded by thousands of years of wind erosion".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('65494abc-32b7-4ece-a5b9-7622e47d523d', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'table_completion', 'Construction sand — found in rivers, lakes, beaches and the sea ______', '[]'::jsonb, ARRAY['floor']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"found mainly in rivers, lakes, beaches and the sea floor".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0de169d3-46ba-4fba-a56f-6794e57abfe3', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'table_completion', 'Rivers — much new sediment trapped by ______', '[]'::jsonb, ARRAY['dams']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"dams, of which there are now tens of thousands on the world''s major rivers, trap much of it".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('747d6f23-68ee-48d4-858a-9968a4caa213', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'table_completion', 'Mekong Delta — ______ water now reaches further inland', '[]'::jsonb, ARRAY['salt']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'dredging is "allowing salt water from the sea to reach further inland and damage crops."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9473938e-a3fb-4a8a-ad51-e1eed23b1321', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'table_completion', 'Indonesia — several small ______ have reportedly vanished', '[]'::jsonb, ARRAY['islands']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"several small islands in Indonesia are reported to have disappeared altogether".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e52df9c6-c95c-4c8d-850a-d3eb5876b08f', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'multiple_choice_multiple', 'Which TWO effects of dredging sand from rivers are mentioned in the passage? Choose TWO letters.', '[{"value":"A","label":"A. erosion of the riverbanks"},{"value":"B","label":"B. a fall in the water table"},{"value":"C","label":"C. a decline in fish populations"},{"value":"D","label":"D. more frequent flooding of towns"},{"value":"E","label":"E. a shallower river channel"}]'::jsonb, ARRAY['A', 'B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The river "deepens and flows faster, eroding its banks", and dredging "can also lower the surrounding water table".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b56fbd97-c907-4ead-9397-3db37710c430', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'multiple_choice_multiple', 'Which TWO statements about alternatives to natural sand are made in the passage? Choose TWO letters.', '[{"value":"A","label":"A. Crushed rock is already in wide use in some countries."},{"value":"B","label":"B. Recycled concrete cannot be reused a second time."},{"value":"C","label":"C. Treated desert sand is now common in construction."},{"value":"D","label":"D. Crushed glass has been tried as an ingredient."},{"value":"E","label":"E. Crushed rock can be produced without energy."}]'::jsonb, ARRAY['A', 'D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Crushed rock "is already widely used in some countries", and researchers have experimented with "even crushed glass."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('242f9c89-68fd-4a6a-af15-86a0bb43356f', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'matching_sentence_endings', 'Desert sand is of little use to builders', '[{"value":"A","label":"A. because its grains are too smooth to bind together."},{"value":"B","label":"B. because the faster-flowing river erodes the banks."},{"value":"C","label":"C. because it is heavy and has little value."},{"value":"D","label":"D. that extraction should be measured and planned."},{"value":"E","label":"E. to reduce the amount of concrete that buildings require."},{"value":"F","label":"F. to a country that has expanded its territory into the sea."},{"value":"G","label":"G. because dams release sediment too quickly."},{"value":"H","label":"H. that desert sand should replace river sand."}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Its grains "are smooth and almost spherical, and they do not lock together to form strong concrete."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8a68450b-a769-44c0-aee7-813fb520a0f0', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'matching_sentence_endings', 'Dredging a riverbed can undermine bridges', '[{"value":"A","label":"A. because its grains are too smooth to bind together."},{"value":"B","label":"B. because the faster-flowing river erodes the banks."},{"value":"C","label":"C. because it is heavy and has little value."},{"value":"D","label":"D. that extraction should be measured and planned."},{"value":"E","label":"E. to reduce the amount of concrete that buildings require."},{"value":"F","label":"F. to a country that has expanded its territory into the sea."},{"value":"G","label":"G. because dams release sediment too quickly."},{"value":"H","label":"H. that desert sand should replace river sand."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"the river deepens and flows faster, eroding its banks and undermining bridges".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bd2ee1ed-4012-45d0-995c-f942d832627e', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'matching_sentence_endings', 'Several neighbouring countries have restricted sand exports', '[{"value":"A","label":"A. because its grains are too smooth to bind together."},{"value":"B","label":"B. because the faster-flowing river erodes the banks."},{"value":"C","label":"C. because it is heavy and has little value."},{"value":"D","label":"D. that extraction should be measured and planned."},{"value":"E","label":"E. to reduce the amount of concrete that buildings require."},{"value":"F","label":"F. to a country that has expanded its territory into the sea."},{"value":"G","label":"G. because dams release sediment too quickly."},{"value":"H","label":"H. that desert sand should replace river sand."}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Singapore "has increased its land area by around a quarter" through "reclamation from the sea".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4c63ab74-713c-4c94-b0ae-7aef5ee58370', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'matching_sentence_endings', 'Sand is normally extracted close to where it will be used', '[{"value":"A","label":"A. because its grains are too smooth to bind together."},{"value":"B","label":"B. because the faster-flowing river erodes the banks."},{"value":"C","label":"C. because it is heavy and has little value."},{"value":"D","label":"D. that extraction should be measured and planned."},{"value":"E","label":"E. to reduce the amount of concrete that buildings require."},{"value":"F","label":"F. to a country that has expanded its territory into the sea."},{"value":"G","label":"G. because dams release sediment too quickly."},{"value":"H","label":"H. that desert sand should replace river sand."}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Because it is heavy and low in value, it is usually extracted as close as possible to where it will be used".', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d619c7e9-a034-45f2-adf8-a709ff2a6835', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'matching_sentence_endings', 'A 2019 UN report argued', '[{"value":"A","label":"A. because its grains are too smooth to bind together."},{"value":"B","label":"B. because the faster-flowing river erodes the banks."},{"value":"C","label":"C. because it is heavy and has little value."},{"value":"D","label":"D. that extraction should be measured and planned."},{"value":"E","label":"E. to reduce the amount of concrete that buildings require."},{"value":"F","label":"F. to a country that has expanded its territory into the sea."},{"value":"G","label":"G. because dams release sediment too quickly."},{"value":"H","label":"H. that desert sand should replace river sand."}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"its extraction should be properly measured and planned."', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('20bd2b00-c644-4087-85ae-9e282d6590c1', '8ac344a1-ba4f-4309-b1a0-8bd9220747a4', 'matching_sentence_endings', 'In the long term, the best approach may be', '[{"value":"A","label":"A. because its grains are too smooth to bind together."},{"value":"B","label":"B. because the faster-flowing river erodes the banks."},{"value":"C","label":"C. because it is heavy and has little value."},{"value":"D","label":"D. that extraction should be measured and planned."},{"value":"E","label":"E. to reduce the amount of concrete that buildings require."},{"value":"F","label":"F. to a country that has expanded its territory into the sea."},{"value":"G","label":"G. because dams release sediment too quickly."},{"value":"H","label":"H. that desert sand should replace river sand."}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"to design buildings that need less concrete, and to make them last longer."', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('d0e35d06-12f8-412a-bb63-4e96075b55da', '70336979-e370-4ac5-b77f-5c6655453999', 3, 'In 1906 the statistician Francis Galton visited a livestock fair in Plymouth, in the south-west of England, where visitors were paying a small fee to guess the weight of an ox once it had been slaughtered and dressed. Galton, who had a low opinion of the intelligence of ordinary people, collected the 787 legible tickets afterwards, expecting to demonstrate how poor the guesses were. Instead he found that the middle value of all the estimates was 1,207 pounds, within one per cent of the true weight of 1,198 pounds. Galton published the result in the journal Nature, and conceded that it reflected better on the trustworthiness of democratic judgment than he might have expected.
+
+The phenomenon Galton stumbled upon has since become known as the wisdom of crowds, after a popular book of that name by the journalist James Surowiecki, published in 2004. Its logic is essentially statistical. Each individual estimate contains some truth and some error. If the errors are random, some guesses will be too high and others too low, and when they are combined, the errors tend to cancel out, leaving the truth behind. The more estimates there are, the more reliable the average becomes. The principle has been demonstrated many times: crowds of students guessing the number of sweets in a jar, or the temperature of a room, routinely outperform all but a handful of their members. Galton''s ox was a case in point: although few of the visitors were experts, their individual errors, high and low, largely balanced one another.
+
+Crucially, however, the effect depends on certain conditions, and Surowiecki identified several of them. The members of the crowd must have some relevant knowledge, however slight; a crowd asked about something of which it knows nothing will produce an average that is no better than a random number. Their opinions must also be diverse, drawing on different information and perspectives. Most important of all, they must be independent. If people are influenced by one another, their errors are no longer random but correlated, and instead of cancelling out, they accumulate.
+
+The fragility of independence was demonstrated in an experiment conducted in Zurich in 2011. Participants were asked factual questions, such as the population density of Switzerland or the number of murders in the country in a given year, and were rewarded for accurate answers. Some participants answered in isolation; others were shown, after each round, the estimates given by the rest of their group. Social information, it turned out, made the crowd worse. The range of answers narrowed, as people adjusted their estimates towards those of others, but the average did not move closer to the truth. More troubling still, the participants who had seen others'' answers became more confident in their estimates, even though these were no more accurate. The researchers described a combination of reduced diversity and increased confidence that left groups more certain and less correct.
+
+This finding has uncomfortable implications for organisations. Committees and boards are often assumed to make better decisions than individuals, because they pool the knowledge of several people. Yet in a typical meeting, members do not form their views independently. The most senior or most confident person often speaks first, and others, consciously or not, adjust their views accordingly. The psychologist Daniel Kahneman, among others, has recommended a simple remedy: before any discussion, each member should write down his or her own judgment. The discussion that follows can then draw on genuinely independent opinions, rather than a chorus of echoes.
+
+Markets have sometimes been presented as the purest expression of crowd wisdom, since prices aggregate the beliefs of large numbers of buyers and sellers. Prediction markets, in which participants buy and sell contracts that pay out if a particular event occurs, have produced forecasts of elections and sales figures that compare well with those of experts. But financial history also contains many examples of crowds going badly wrong. In speculative bubbles, from the tulip mania of seventeenth-century Holland to the internet boom of the late 1990s, rising prices attract buyers precisely because others are buying, and the independence on which collective judgment depends breaks down entirely.
+
+The internet has created new opportunities for harnessing crowds, and new risks. Online reviews and ratings are, in principle, a means of aggregating the experiences of thousands of customers. In practice, a study of a news website in 2013 found that giving a comment a single artificial positive vote at random made it significantly more likely to receive further positive votes from later readers, and the effect was still visible months later. Early opinions, in other words, can shape later ones, and an apparently independent crowd may in fact be following a small number of initial voices. Some platforms have responded by hiding existing scores until a user has submitted a rating of their own.
+
+None of this means that crowds cannot be trusted. It means that their wisdom is not a natural property of groups but a product of the way in which their judgments are gathered. A crowd of independent, moderately informed people can be remarkably accurate. A crowd whose members are watching one another is merely a larger version of the individual, and sometimes a less reliable one.', NULL, NULL, 'You should spend about 20 minutes on Questions 27-40, which are based on Reading Passage 3 below.', '{"title":"Passage 3 — The wisdom and folly of crowds"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a0d0f8b3-0739-4b6b-b2ec-92ea2687f072', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'yes_no_notgiven', 'Galton expected the visitors'' guesses to be inaccurate.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['YES']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'He collected the tickets "expecting to demonstrate how poor the guesses were."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('104814ec-0e66-41b3-9175-da02b91efdf3', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'yes_no_notgiven', 'A crowd with no knowledge of a subject can still produce an accurate average.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NO']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Such a crowd "will produce an average that is no better than a random number."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5229dadb-2a95-4f5f-9f25-864bcfb3f605', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'yes_no_notgiven', 'In the Zurich experiment, seeing others'' estimates improved the accuracy of the group average.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NO']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Social information, it turned out, made the crowd worse."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5798141a-73f4-4a30-8790-1295e4de4bb6', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'yes_no_notgiven', 'Independence matters more than diversity for the accuracy of a crowd.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['YES']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Opinions must be diverse, but "Most important of all, they must be independent."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e9a1aeb4-1a83-4a57-88d8-9c9dab432bde', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'yes_no_notgiven', 'The tulip mania was caused by a genuine shortage of tulips.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The tulip mania is named only as one of several "speculative bubbles"; its cause is not discussed.', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9035ba96-0c0d-474b-be90-2ad17bc1a4a0', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'multiple_choice_single', 'What happened to the Zurich participants who saw the other group members'' estimates?', '[{"value":"A","label":"A. Their answers moved closer to the true values."},{"value":"B","label":"B. They became more confident without becoming more accurate."},{"value":"C","label":"C. They gave a wider range of answers."},{"value":"D","label":"D. They refused to change their original estimates."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'They "became more confident in their estimates, even though these were no more accurate."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e40dfa57-0fe3-4de2-b368-ac67231bfb46', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'multiple_choice_single', 'Kahneman''s remedy for poor decisions in meetings is to', '[{"value":"A","label":"A. let the most senior member speak last"},{"value":"B","label":"B. hold smaller meetings with fewer members"},{"value":"C","label":"C. ask everyone to record a view before discussion"},{"value":"D","label":"D. replace discussion with an anonymous vote"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"before any discussion, each member should write down his or her own judgment."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8433ae32-c1a7-4253-96a4-422ee81757db', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'multiple_choice_single', 'The writer mentions the internet boom of the late 1990s as an example of', '[{"value":"A","label":"A. an accurate forecast made by a prediction market"},{"value":"B","label":"B. independent judgment breaking down in a market"},{"value":"C","label":"C. experts outperforming the crowd"},{"value":"D","label":"D. a market with too few buyers"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'In bubbles, "rising prices attract buyers precisely because others are buying, and the independence on which collective judgment depends breaks down entirely."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f76ce704-1dd3-4459-b82f-60f411fc6157', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'multiple_choice_single', 'The 2013 study of a news website showed that', '[{"value":"A","label":"A. an early positive vote influenced later readers"},{"value":"B","label":"B. most readers ignored votes on comments"},{"value":"C","label":"C. artificial votes were quickly detected"},{"value":"D","label":"D. the effect of a single vote disappeared within days"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'A single artificial vote "made it significantly more likely to receive further positive votes from later readers".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d162ab74-35bb-4b36-903b-1795c152a8f2', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'summary_completion', 'Summary: A crowd''s average can be accurate because, if individual errors are ______, they tend to cancel out.', '[{"value":"A","label":"A. correlated"},{"value":"B","label":"B. last"},{"value":"C","label":"C. gathered"},{"value":"D","label":"D. random"},{"value":"E","label":"E. identical"},{"value":"F","label":"F. first"},{"value":"G","label":"G. diverse"},{"value":"H","label":"H. confident"},{"value":"I","label":"I. expert"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"If the errors are random", some guesses are too high and others too low, and "the errors tend to cancel out".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a6c30b79-e6de-4541-9850-863aa78c7d2f', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'summary_completion', 'Summary: When people influence one another, their errors become ______ and accumulate.', '[{"value":"A","label":"A. correlated"},{"value":"B","label":"B. last"},{"value":"C","label":"C. gathered"},{"value":"D","label":"D. random"},{"value":"E","label":"E. identical"},{"value":"F","label":"F. first"},{"value":"G","label":"G. diverse"},{"value":"H","label":"H. confident"},{"value":"I","label":"I. expert"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"their errors are no longer random but correlated, and instead of cancelling out, they accumulate."', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('45c6a888-bb20-430c-bfb8-6c56e5e16794', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'summary_completion', 'Summary: The opinions in a crowd also need to be ______, drawing on different perspectives.', '[{"value":"A","label":"A. correlated"},{"value":"B","label":"B. last"},{"value":"C","label":"C. gathered"},{"value":"D","label":"D. random"},{"value":"E","label":"E. identical"},{"value":"F","label":"F. first"},{"value":"G","label":"G. diverse"},{"value":"H","label":"H. confident"},{"value":"I","label":"I. expert"}]'::jsonb, ARRAY['G']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Their opinions must also be diverse, drawing on different information and perspectives."', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7d5021fc-7ba2-4da2-bd79-af5e31132168', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'summary_completion', 'Summary: In meetings, the most senior person often speaks ______, and others adjust their views.', '[{"value":"A","label":"A. correlated"},{"value":"B","label":"B. last"},{"value":"C","label":"C. gathered"},{"value":"D","label":"D. random"},{"value":"E","label":"E. identical"},{"value":"F","label":"F. first"},{"value":"G","label":"G. diverse"},{"value":"H","label":"H. confident"},{"value":"I","label":"I. expert"}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The most senior or most confident person often speaks first".', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3123c0c2-dc20-4074-85be-90af58da4348', 'd0e35d06-12f8-412a-bb63-4e96075b55da', 'summary_completion', 'Summary: The writer concludes that crowd wisdom depends on how judgments are ______.', '[{"value":"A","label":"A. correlated"},{"value":"B","label":"B. last"},{"value":"C","label":"C. gathered"},{"value":"D","label":"D. random"},{"value":"E","label":"E. identical"},{"value":"F","label":"F. first"},{"value":"G","label":"G. diverse"},{"value":"H","label":"H. confident"},{"value":"I","label":"I. expert"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'It is "a product of the way in which their judgments are gathered."', 13)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('ed33f352-dec5-42e6-a416-7b0baf55ad5d', '1b3356a9-8c13-4cb8-8788-50df52bca7a7', 'writing', 3600, 2, NULL, 2)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('67b73dec-e095-4390-9e58-e1fccd63ac88', 'ed33f352-dec5-42e6-a416-7b0baf55ad5d', 1, 'The maps below show the centre of the town of Larkfield in 2000 and as it is today.
+
+Summarise the information by selecting and reporting the main features, and make comparisons where relevant.', NULL, '/mock-images/mock-academic-2-task1.svg', 'You should spend about 20 minutes on this task. Write at least 150 words.', '{"image_caption":"The centre of Larkfield in 2000 and today","title":"Task 1"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d7285beb-07fc-4755-a0fb-1ba2b13b80b4', '67b73dec-e095-4390-9e58-e1fccd63ac88', 'short_answer', 'Task 1 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('98fa13ed-3f56-4251-9c3f-d5fb2a61efad', 'ed33f352-dec5-42e6-a416-7b0baf55ad5d', 2, 'Some people argue that universities should make all of their courses available online free of charge, so that anyone can study regardless of income or location.
+
+To what extent do you agree or disagree?
+
+Give reasons for your answer and include any relevant examples from your own knowledge or experience.', NULL, NULL, 'You should spend about 40 minutes on this task. Write at least 250 words.', '{"title":"Task 2"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fbcf7c06-11db-4a10-8c6d-af750654f64b', '98fa13ed-3f56-4251-9c3f-d5fb2a61efad', 'short_answer', 'Task 2 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('ce773ef0-25fa-4787-92b7-669fac10ce7a', '1b3356a9-8c13-4cb8-8788-50df52bca7a7', 'speaking', 840, 12, NULL, 3)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('4eac0093-2edf-401b-8014-1609c9eca5a8', 'ce773ef0-25fa-4787-92b7-669fac10ce7a', 1, NULL, NULL, NULL, 'The examiner asks about yourself, your home, work or studies and other familiar topics. 4-5 minutes.', '{"title":"Part 1 — Introduction and familiar topics"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a8a07ebc-ea53-47a8-9ce6-090eec03411c', '4eac0093-2edf-401b-8014-1609c9eca5a8', 'short_answer', 'Let''s talk about music. What kind of music do you listen to?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4e890138-2572-4fb1-a9c3-07f0a4f29a5c', '4eac0093-2edf-401b-8014-1609c9eca5a8', 'short_answer', 'When do you usually listen to music?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bff34e88-a026-4e6c-83e0-8c8296ebe39a', '4eac0093-2edf-401b-8014-1609c9eca5a8', 'short_answer', 'Did you learn to play a musical instrument when you were younger?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('971cf5da-a362-4383-b626-3be124b384c4', '4eac0093-2edf-401b-8014-1609c9eca5a8', 'short_answer', 'Now let''s talk about handwriting. Do you write by hand much these days?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('25b802a4-1ffa-4d0a-8933-adb444d165ea', '4eac0093-2edf-401b-8014-1609c9eca5a8', 'short_answer', 'Do you think handwriting is still important for children to learn?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('720db267-bcd5-434d-b15e-885a47a7a60a', '4eac0093-2edf-401b-8014-1609c9eca5a8', 'short_answer', 'What can a person''s handwriting tell you about them?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('b380893e-f9de-40a7-aa61-3e3f78488c43', 'ce773ef0-25fa-4787-92b7-669fac10ce7a', 2, 'Describe a time when you changed your opinion about something.
+
+You should say:
+  •  what your original opinion was
+  •  what made you change your mind
+  •  how long it took you to change it
+
+and explain how you felt after changing your opinion.', NULL, NULL, 'You have one minute to prepare. You may make notes. Then talk for one to two minutes. The examiner will tell you when to stop.', '{"title":"Part 2 — Individual long turn"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('facb291a-cb54-4f05-b7b3-66edb593c762', 'b380893e-f9de-40a7-aa61-3e3f78488c43', 'short_answer', 'Long turn response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('465d2736-5b3d-4441-8dd1-1b6517f82a3a', 'ce773ef0-25fa-4787-92b7-669fac10ce7a', 3, NULL, NULL, NULL, 'The examiner asks further questions connected to the topic in Part 2. 4-5 minutes.', '{"title":"Part 3 — Two-way discussion"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('eb28f941-0c37-4ede-8093-e3ba9615107c', '465d2736-5b3d-4441-8dd1-1b6517f82a3a', 'short_answer', 'Why do some people find it difficult to change their opinions?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('45759777-b5a7-48e0-bfd3-fe117883c0db', '465d2736-5b3d-4441-8dd1-1b6517f82a3a', 'short_answer', 'How much are people''s opinions influenced by the media they use?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('81cf31d6-032b-4a62-9f6b-f7c3daa42fd4', '465d2736-5b3d-4441-8dd1-1b6517f82a3a', 'short_answer', 'Is it a sign of weakness or strength when a politician changes their mind?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('32d3d7b1-eff0-42db-9dd0-4605ba114f01', '465d2736-5b3d-4441-8dd1-1b6517f82a3a', 'short_answer', 'Should children be taught at school how to evaluate different points of view?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7e20a7b6-e4fe-4de4-94de-8a39fe7d3823', '465d2736-5b3d-4441-8dd1-1b6517f82a3a', 'short_answer', 'Do you think people''s views are becoming more divided than in the past? Why?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+-- IELTS General Training Mock Exam 1 (mock-general-1)
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('0dd16a08-36cf-41a1-b65b-1a0f9e5ceaa5', 'mock-general-1', 'IELTS General Training Mock Exam 1', 'A full, timed IELTS General Training mock exam: Listening, Reading, Writing and Speaking.', 'general_training', 'computer', true, true, 'standard', 'mock', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('4a1e501c-0e24-4f44-9c21-b6bcedbb41ff', '0dd16a08-36cf-41a1-b65b-1a0f9e5ceaa5', 'listening', 1800, 40, NULL, 0)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('0febb33c-87dd-4f3e-9300-a368fe7a1889', '4a1e501c-0e24-4f44-9c21-b6bcedbb41ff', 1, NULL, '/audio/mock/mock-general-1-part-1.mp3', NULL, 'Questions 1-10. Complete the form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Renting a self-storage unit"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('0febb33c-87dd-4f3e-9300-a368fe7a1889', 'ANNA: Good afternoon, Keepsafe Storage, Anna speaking. How can I help you?
+MARK: Hi there. I''m looking for a storage unit for a few months while some building work is done on my house. A friend said you might have space.
+ANNA: We certainly do. I''ll fill in an enquiry form as we go, if that''s all right. Can I start by taking your name?
+MARK: Yes, it''s Mark Tremlett.
+ANNA: Could you spell the surname for me, please?
+MARK: Sure. It''s T-R-E-M-L-E-T-T.
+ANNA: So two Ts at the end. Thank you, Mr Tremlett. And what''s your address?
+MARK: It''s 52 Fenwick Road. That''s in Ashford.
+ANNA: Sorry, did you say 52 or 62?
+MARK: 52. Five, two.
+ANNA: Got it. And what kind of building work are you having done? I only ask because it helps me estimate how much space you''ll need.
+MARK: We''re having a new kitchen fitted, and the builders also want to take down the wall between the kitchen and the dining room, so basically the whole ground floor has to be empty.
+ANNA: I see. That''s quite a big job. How long do you think you''ll need the unit for?
+MARK: The builders say ten weeks, but everyone tells me that building work always takes longer than planned, so I''d say three months to be safe.
+ANNA: Very sensible. Our minimum rental period is one month, and after that you can stay as long as you like, so three months is no problem at all. Now, what will you be storing?
+MARK: Let me think. A dining table and six chairs, a sofa, two bookcases, and quite a lot of boxes, maybe twenty-five or so. Oh, and a washing machine. The fridge is staying in the garage, so that doesn''t need to come.
+ANNA: Right. For that amount of furniture I''d suggest our medium unit, which is about the size of a single garage. The small unit is more like a large cupboard, so the table and the sofa wouldn''t fit, and the large one would really be more than you need.
+MARK: OK. What does the medium one cost?
+ANNA: The medium unit is ninety-five pounds a month. But at the moment we have an offer for new customers. If you book for three months or more, the first month is half price.
+MARK: Oh, that''s good. So the first month would be about forty-seven pounds?
+ANNA: Forty-seven pounds fifty, to be exact, and then the normal ninety-five pounds a month after that.
+MARK: Great. And can I get to the unit whenever I want? I might need to get things out while the work is going on.
+ANNA: The site is open from six in the morning until ten at night, every day of the week, including holidays. You get your own code for the main gate, and you bring your own padlock for the unit. If you don''t have one, we sell them at reception for eight pounds.
+MARK: I''ve got a good one at home that I can use. Do I need insurance?
+ANNA: Yes, all goods have to be insured. If your home insurance doesn''t cover items in storage, we offer cover at three pounds a week for goods worth up to five thousand pounds.
+MARK: I''ll check with my home insurance company first, then. What about getting everything there? I don''t have a van, and my car''s far too small.
+ANNA: We can help with that. We have a van that customers can borrow free of charge on the day they move in. The only thing is that you need to bring your driving licence with you when you collect it. We can''t let the van go without seeing it, I''m afraid.
+MARK: That''s no problem. That saves me a lot of money. I''d like to move in on Saturday the fourteenth, if possible.
+ANNA: Saturday the fourteenth, let me look. I''m sorry, the van''s already booked that day. Could you do Sunday the fifteenth instead?
+MARK: Yes, Sunday''s actually better. My brother can help me on Sunday.
+ANNA: Lovely, I''ll put you down for the fifteenth. Is there anything you''ll be storing that we should know about? We don''t allow anything that could catch fire, such as paint or gas bottles, and no food of any kind.
+MARK: There might be a few tins of paint in the garage, but I''ll leave those with a neighbour.
+ANNA: Thank you. And finally, could I ask how you heard about us? We like to know which of our advertising works.
+MARK: It wasn''t an advert, actually. My sister rented a unit here last year when she moved flat, and she recommended you.
+ANNA: That''s really nice to hear. I''ll email you a confirmation this afternoon with the gate code and a map of the site. Is there anything else I can help with?
+MARK: No, I think that''s everything. Thanks very much, Anna.
+ANNA: You''re welcome, Mr Tremlett. We''ll see you on the fifteenth. Goodbye.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('db04e908-dce2-4af1-a396-3a81db4b5173', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Customer name: Mark ______', '[]'::jsonb, ARRAY['Tremlett']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The caller spells his surname: "It''s T-R-E-M-L-E-T-T."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e377ef93-333a-4eb4-a5c0-f413511f38db', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Address: ______ Fenwick Road, Ashford', '[]'::jsonb, ARRAY['52']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Mark says "It''s 52 Fenwick Road" and then confirms "52. Five, two."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('356e2f40-e5cc-4034-a44a-e7a7ed02c699', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Reason for storage: a new ______ is being fitted', '[]'::jsonb, ARRAY['kitchen']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Mark explains "We''re having a new kitchen fitted".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ab4b20f6-6f07-46bb-8d1f-ce47fe16e003', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Rental period needed: ______ months', '[]'::jsonb, ARRAY['3', 'three']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The builders say ten weeks, but Mark says "I''d say three months to be safe."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('27dfec14-16ef-4d84-9225-3795771db664', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Items include furniture, about 25 boxes and a ______ machine', '[]'::jsonb, ARRAY['washing']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Mark adds "Oh, and a washing machine", while the fridge "is staying in the garage".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('311b1bc9-edef-48f2-a221-c9429e2f895b', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Unit size: ______ (about the size of a garage)', '[]'::jsonb, ARRAY['medium']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Anna suggests "our medium unit, which is about the size of a single garage."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('98a38e07-201c-4a02-8ba4-4aee30afa38f', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Cost of first month: £______', '[]'::jsonb, ARRAY['47.50']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'With the offer, the first month is "Forty-seven pounds fifty, to be exact"; £95 is the normal monthly price.', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('846f7cba-d913-4ebd-9eaf-0e4bb1022c1e', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'To borrow the free van, bring your ______', '[]'::jsonb, ARRAY['driving licence', 'licence', 'driving license', 'license']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Anna says "you need to bring your driving licence with you when you collect it."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4578a6bb-bafc-4a0d-ba22-66c3699fcd7a', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Move-in date: Sunday ______', '[]'::jsonb, ARRAY['15th', '15', 'fifteenth']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The van is booked on the fourteenth, so Anna asks "Could you do Sunday the fifteenth instead?" and Mark agrees.', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2870e42c-5028-4402-b52a-2348c0af8ce7', '0febb33c-87dd-4f3e-9300-a368fe7a1889', 'note_completion', 'Heard about the company from his ______', '[]'::jsonb, ARRAY['sister']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Mark says "It wasn''t an advert, actually. My sister rented a unit here last year".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('727d35a0-d0ac-418b-a38d-5859f73c819e', '4a1e501c-0e24-4f44-9c21-b6bcedbb41ff', 2, NULL, '/audio/mock/mock-general-1-part-2.mp3', '/mock-images/mock-general-1-plan.svg', 'Questions 11-14: choose the correct letter, A, B or C. Questions 15-20: label the plan. Choose the correct letter, A-H, for each place.', '{"image_caption":"Plan of Greenhaven City Farm for Questions 15-20","title":"Part 2 — New volunteers at Greenhaven City Farm"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('727d35a0-d0ac-418b-a38d-5859f73c819e', 'SPEAKER: Good morning, everyone, and welcome to Greenhaven City Farm. My name is Jo Pearce, and I look after our volunteer programme. Thank you all for giving up your Saturday morning. I''m going to tell you a little about the farm and what we expect from volunteers, and then I''ll explain where everything is, using the plan you''ve been given.
+SPEAKER: First, a bit of history. A lot of visitors assume that the council set the farm up, and the council does give us a small grant these days, but in fact Greenhaven was started in 1987 by a group of parents who wanted their children to see where food comes from. The land had been a railway yard, and it took them three years to clear it before the first animals arrived.
+SPEAKER: Now, on your first day there is one thing every volunteer must do before going near the animals, and that is watch our short safety video. It''s only fifteen minutes long, and you can watch it in the visitor centre after this talk. You''ll be given a name badge as well, but you can pick that up at any time during the morning.
+SPEAKER: People often ask me where we need the most help. You might think it''s feeding the animals, but our staff actually manage that themselves every morning and evening. We have plenty of help with school groups during the week, too, because many of our regular volunteers are retired teachers. Where we''re really short of people is at our weekend events, the lambing open days in spring and the harvest fair in the autumn, when we can have two thousand visitors in a single day.
+SPEAKER: A word about the animals themselves. You''re welcome to go into the pens with a member of staff, and you can pick up the chickens if they let you, which they usually don''t. But please don''t feed any of the animals from your hands. Our goats in particular have learned that fingers sometimes come with food, and they can give you a nasty nip.
+SPEAKER: Right, let''s look at the plan. You''ll see the main entrance at the bottom, on the south side, and the visitor centre just to the left of it as you come in. From the entrance, the main path goes straight up the middle of the farm to the north.
+SPEAKER: Immediately on your right as you come through the entrance, you''ll find the café. It''s run by volunteers too, and all the eggs and most of the vegetables they use come from the farm.
+SPEAKER: If you walk up the main path, you''ll come to a crossroads in the centre of the farm. Turn left there and follow that path all the way to the end, and you''ll reach the goat barn. It''s the last building on that side, so you can''t miss it.
+SPEAKER: The vegetable gardens are on the other side of the main path. If you''re walking north from the entrance, they''re on your right, just before you reach the crossroads. Don''t confuse them with the small building on the left, opposite them, which is the old stable. It''s closed at the moment because the roof needs repairing.
+SPEAKER: Go straight over the crossroads and carry on north, and the path bends round to the left. Just after the bend you''ll see the tool shed, in the north-west corner of the farm. That''s where you''ll collect gloves, spades and wheelbarrows, and please return everything there at the end of the day. Right at the top of the main path, at the very north end, is the pig sty, but the pigs are a bit shy with new people, so leave them alone for your first few weeks.
+SPEAKER: If you turn right at the crossroads instead, the path takes you past the pond. Keep going past the pond to the end of the path, on the east side, and that''s the composting area. It''s where all the manure and garden waste goes, so you''ll probably smell it before you see it.
+SPEAKER: And finally, the classroom. That''s the newest building on the farm, and it''s where school groups have their lessons when the weather is bad. It''s in the north-east corner, just above the pond. You get to it by a small path that leads off from the pond on its north side.
+SPEAKER: OK, I think that''s everything for now. If you''d like to make your way to the visitor centre for the safety video, I''ll join you there in a few minutes and answer any questions.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9a2ab5e8-1a1e-4f55-ae96-d6abf7576bb9', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'multiple_choice_single', 'Greenhaven City Farm was originally set up by', '[{"value":"A","label":"A. the local council"},{"value":"B","label":"B. a group of parents"},{"value":"C","label":"C. a railway company"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Jo says "Greenhaven was started in 1987 by a group of parents"; the council only gives "a small grant these days".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('625b4a8d-764e-41d6-98c1-9a11e4c49b77', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'multiple_choice_single', 'What must every volunteer do before working with the animals?', '[{"value":"A","label":"A. collect a name badge"},{"value":"B","label":"B. watch a safety video"},{"value":"C","label":"C. speak to a member of staff"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Every volunteer must "watch our short safety video"; the badge can be picked up "at any time during the morning."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ab077c1b-50bc-4778-a0f3-193bb9e9b2a7', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'multiple_choice_single', 'The farm most needs extra volunteers', '[{"value":"A","label":"A. to feed the animals"},{"value":"B","label":"B. to help with school groups"},{"value":"C","label":"C. at weekend events"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Jo says "Where we''re really short of people is at our weekend events".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ca9d52f7-2224-4881-82ca-986454c03488', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'multiple_choice_single', 'Volunteers are asked not to', '[{"value":"A","label":"A. feed animals from their hands"},{"value":"B","label":"B. pick up the chickens"},{"value":"C","label":"C. enter the pens"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Jo says "please don''t feed any of the animals from your hands."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6d611bd8-0c90-425a-9ca5-540265f1b384', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'diagram_label', 'Goat barn', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'At the crossroads "Turn left there and follow that path all the way to the end, and you''ll reach the goat barn."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('af60c558-59f0-4fb3-895b-6afedc428886', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'diagram_label', 'Vegetable gardens', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['H']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Walking north, the gardens are "on your right, just before you reach the crossroads."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('28d675a9-96f5-4abb-b5f4-fab03508e3a1', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'diagram_label', 'Café', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Jo says "Immediately on your right as you come through the entrance, you''ll find the café."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('94fc84a4-4f32-4624-899b-5f58258fa814', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'diagram_label', 'Tool shed', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'After the bend "you''ll see the tool shed, in the north-west corner of the farm."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('556ff67e-1b68-45dd-8de3-652842c9503d', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'diagram_label', 'Composting area', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['G']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Turning right, "Keep going past the pond to the end of the path, on the east side, and that''s the composting area."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('efd1fcbf-afaf-4134-907f-65451702b1e4', '727d35a0-d0ac-418b-a38d-5859f73c819e', 'diagram_label', 'Classroom', '[{"value":"A","label":"A"},{"value":"B","label":"B"},{"value":"C","label":"C"},{"value":"D","label":"D"},{"value":"E","label":"E"},{"value":"F","label":"F"},{"value":"G","label":"G"},{"value":"H","label":"H"}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The classroom is "in the north-east corner, just above the pond."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('315992f4-f8cd-4098-86c7-c35b909a1836', '4a1e501c-0e24-4f44-9c21-b6bcedbb41ff', 3, NULL, '/audio/mock/mock-general-1-part-3.mp3', NULL, 'Questions 21-24: choose the correct letter, A, B or C. Questions 25-26: choose TWO letters, A-E, for each question. Questions 27-30: what do the students decide to do with each part of their research? Choose from the list A-F.', '{"title":"Part 3 — Discussing a project on second-hand clothes shopping"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('315992f4-f8cd-4098-86c7-c35b909a1836', 'TUTOR: Come in, Priya, Tom. Have a seat. So, this is your project on second-hand clothes shopping among students. How''s it going?
+PRIYA: Quite well, I think. We''ve finished collecting data and we''ve started writing up, but there are a few things we wanted to check with you.
+TUTOR: Fine. Remind me how you chose the topic. I know you started with something different.
+TOM: Yes, originally we were going to look at fast food, but there''s already so much research on that. Then Priya noticed that the charity shops near campus were always full of students, and we realised nobody had really asked why.
+PRIYA: We''d assumed it was all about saving money, but when we did a few trial interviews, people kept talking about the environment instead. That''s what made us want to study it properly.
+TUTOR: Good, a real question. And who did you survey in the end?
+TOM: We wanted to include students from all three universities in the city, but the other two wouldn''t let us send emails to their students, so we only surveyed our own. We got four hundred and six responses.
+TUTOR: That''s still a good number. What would you say was your most important finding?
+PRIYA: Well, we expected that students who shop second-hand would buy fewer clothes overall. But actually it was the opposite. They bought more items than anyone else, because each item is so cheap.
+TOM: Which was a bit disappointing from the environmental point of view, but interesting.
+TUTOR: That''s worth discussing in your conclusion. Now, what did you want to ask me?
+TOM: The main thing is the literature review. We''re not sure how many sources we need.
+TUTOR: It''s less about the number and more about how recent they are. This market has changed enormously because of resale apps, so anything more than about ten years old should only be there for background.
+PRIYA: That''s helpful. We have quite a few older articles.
+TUTOR: Keep one or two of the classic studies, but build the review around recent work. Now, you said you had problems with the questionnaire. What happened?
+PRIYA: Two things, really. First, it was much too long. A lot of people gave up halfway through, so many of the later questions have very few answers. And second, some of the questions were badly worded. We asked people how often they shop second-hand, but we didn''t say whether we meant online or in shops, so the answers are hard to interpret.
+TUTOR: Those are common problems, and it''s good that you''ve noticed them. You weren''t sent the wrong version by mistake or anything like that?
+TOM: No, that part went fine, and the response rate was good. It''s just the length and the wording.
+TUTOR: And if you did the project again, what would you change?
+TOM: I''d definitely test the questionnaire on a small group before sending it out. We skipped that because we were short of time.
+PRIYA: And I''d interview the shop staff as well as students. The volunteers at the charity shops know a huge amount about who buys what. We''d also run the survey earlier in the year, because we sent it out during exams.
+TUTOR: Both good points. Right, let''s go through the parts of your research and decide what goes where. Start with the questionnaire.
+TOM: Despite the problems, I think the questionnaire has to be the main evidence. It''s the only source with enough people to show patterns.
+TUTOR: I agree. Just be honest about its weaknesses. What about the trial interviews you did at the start?
+PRIYA: They were only five short conversations, so I don''t think they belong in the main report. But they explain why we changed our question, so we thought we''d move them to an appendix.
+TUTOR: That''s exactly right. Next, the price survey, where you compared prices in the shops.
+TOM: We visited eight shops and recorded the price of the same items in each one. There are so many numbers that it''s very hard to read as a table.
+PRIYA: So we''re going to present it as a chart instead. A bar chart, probably.
+TUTOR: Good. And the online observation, where you looked at the resale apps?
+TOM: Honestly, we''re not sure about that one. We only looked at two apps for one week, and we don''t know whether it''s enough to be useful.
+PRIYA: We''d like to hear what you think before we decide.
+TUTOR: All right. Send it to me and I''ll give you my opinion by Friday. Don''t leave it out yet. Now, when''s your deadline?
+PRIYA: The twentieth of next month.
+TUTOR: Then send me a full draft two weeks before that. You''re doing well, both of you.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('70ae224c-69f3-4dc2-b45d-07c2b1671794', '315992f4-f8cd-4098-86c7-c35b909a1836', 'multiple_choice_single', 'The students decided to study second-hand clothes shopping because', '[{"value":"A","label":"A. there was little research on fast food"},{"value":"B","label":"B. they noticed many students in charity shops"},{"value":"C","label":"C. their tutor suggested the topic"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Tom says "Priya noticed that the charity shops near campus were always full of students, and we realised nobody had really asked why."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ce73d8b1-c1ef-40f9-bf7a-f69044f3b7c0', '315992f4-f8cd-4098-86c7-c35b909a1836', 'multiple_choice_single', 'Why did the students survey only one university?', '[{"value":"A","label":"A. The other universities refused permission."},{"value":"B","label":"B. They did not have enough time."},{"value":"C","label":"C. Their tutor advised it."}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Tom says "the other two wouldn''t let us send emails to their students, so we only surveyed our own."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2aafe1e7-9331-4398-ad96-93b401d3632a', '315992f4-f8cd-4098-86c7-c35b909a1836', 'multiple_choice_single', 'What surprised the students about second-hand shoppers?', '[{"value":"A","label":"A. They cared little about the environment."},{"value":"B","label":"B. They bought more clothes than other students."},{"value":"C","label":"C. They mostly shopped online."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Priya says "They bought more items than anyone else, because each item is so cheap."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8dac1694-7344-4792-a351-9c9859952610', '315992f4-f8cd-4098-86c7-c35b909a1836', 'multiple_choice_single', 'The tutor says the sources in the literature review should mainly be', '[{"value":"A","label":"A. recent"},{"value":"B","label":"B. numerous"},{"value":"C","label":"C. well known"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The tutor says "It''s less about the number and more about how recent they are", and to "build the review around recent work."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('472e4785-3361-4a8d-862b-106b9f53b90a', '315992f4-f8cd-4098-86c7-c35b909a1836', 'multiple_choice_multiple', 'Which TWO problems did the students have with their questionnaire?', '[{"value":"A","label":"A. It was too long."},{"value":"B","label":"B. It was sent to the wrong people."},{"value":"C","label":"C. Some questions were unclear."},{"value":"D","label":"D. Too few people replied."},{"value":"E","label":"E. It was in the wrong format."}]'::jsonb, ARRAY['A', 'C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Priya says "it was much too long" and "some of the questions were badly worded"; Tom confirms "the response rate was good."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5c61ee0d-99d3-4d56-81b0-5fe1e4e2f700', '315992f4-f8cd-4098-86c7-c35b909a1836', 'multiple_choice_multiple', 'Which TWO changes would the students make if they did the project again?', '[{"value":"A","label":"A. test the questionnaire first"},{"value":"B","label":"B. survey more universities"},{"value":"C","label":"C. interview shop staff"},{"value":"D","label":"D. shorten the literature review"},{"value":"E","label":"E. use fewer shops"}]'::jsonb, ARRAY['A', 'C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Tom would "test the questionnaire on a small group before sending it out", and Priya would "interview the shop staff as well as students."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d79fb03b-624f-4cd4-abd1-257de45624e3', '315992f4-f8cd-4098-86c7-c35b909a1836', 'matching_features', 'the questionnaire', '[{"value":"A","label":"A. use it as the main evidence"},{"value":"B","label":"B. repeat it with more people"},{"value":"C","label":"C. leave it out of the report"},{"value":"D","label":"D. move it to an appendix"},{"value":"E","label":"E. ask the tutor for advice"},{"value":"F","label":"F. present it as a chart"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Tom says "I think the questionnaire has to be the main evidence."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4edbcf28-c74c-4d93-bc11-353bebbb800e', '315992f4-f8cd-4098-86c7-c35b909a1836', 'matching_features', 'the trial interviews', '[{"value":"A","label":"A. use it as the main evidence"},{"value":"B","label":"B. repeat it with more people"},{"value":"C","label":"C. leave it out of the report"},{"value":"D","label":"D. move it to an appendix"},{"value":"E","label":"E. ask the tutor for advice"},{"value":"F","label":"F. present it as a chart"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Priya says "we thought we''d move them to an appendix", and the tutor agrees.', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2b8f366a-4f8f-4968-8c44-552754689e19', '315992f4-f8cd-4098-86c7-c35b909a1836', 'matching_features', 'the price survey', '[{"value":"A","label":"A. use it as the main evidence"},{"value":"B","label":"B. repeat it with more people"},{"value":"C","label":"C. leave it out of the report"},{"value":"D","label":"D. move it to an appendix"},{"value":"E","label":"E. ask the tutor for advice"},{"value":"F","label":"F. present it as a chart"}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Priya says "we''re going to present it as a chart instead."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('47fadcfb-6dce-45e3-8294-a4ddc489fa40', '315992f4-f8cd-4098-86c7-c35b909a1836', 'matching_features', 'the online observation', '[{"value":"A","label":"A. use it as the main evidence"},{"value":"B","label":"B. repeat it with more people"},{"value":"C","label":"C. leave it out of the report"},{"value":"D","label":"D. move it to an appendix"},{"value":"E","label":"E. ask the tutor for advice"},{"value":"F","label":"F. present it as a chart"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Priya says "We''d like to hear what you think before we decide", and the tutor adds "Don''t leave it out yet."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('04f8e5c8-a884-45ca-8323-942819c212ff', '4a1e501c-0e24-4f44-9c21-b6bcedbb41ff', 4, NULL, '/audio/mock/mock-general-1-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: mangrove forests"}'::jsonb, 3)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('04f8e5c8-a884-45ca-8323-942819c212ff', 'LECTURER: Good morning. In today''s lecture I''m going to talk about mangrove forests, which grow along tropical and subtropical coastlines, where the land meets the sea. They''re one of the most productive ecosystems on the planet, and also one of the most threatened.
+LECTURER: Let''s start with what a mangrove actually is. The word doesn''t refer to a single species. It describes around seventy different kinds of trees and shrubs that have one thing in common: they can survive in salt water. For most plants, salt is a poison. Mangroves deal with it in different ways. Some species stop most of the salt at their roots, while others take it in and then get rid of it through their leaves. If you lick the leaf of certain mangroves, you can actually taste the salt crystals on the surface, though I wouldn''t particularly recommend it.
+LECTURER: The second problem mangroves face is the mud they grow in. Coastal mud contains very little oxygen, and roots need oxygen just as leaves do. So many mangroves have developed special roots that grow upwards out of the mud, like small pencils pointing at the sky. These act rather like snorkels, allowing the tree to breathe when the tide is out. Other species have tall, curved roots that hold the trunk above the water, which is why mangrove forests can look as if they are standing on stilts.
+LECTURER: Reproduction is also unusual. In most trees, a seed falls to the ground and then begins to grow. But many mangroves produce seedlings that start growing while they are still attached to the parent tree. When they finally drop, they can float in the sea for months, and some have been known to travel hundreds of kilometres before settling on a new shore.
+LECTURER: Why do mangroves matter? First, they protect coastlines. Their dense roots slow down waves and hold the soil in place, which reduces erosion. After the Indian Ocean tsunami in 2004, several studies found that villages behind healthy mangrove forests often suffered less damage than those where the forests had been cleared, although researchers are careful to say mangroves cannot stop the very largest waves.
+LECTURER: Second, they are nurseries for fish. The tangle of roots underwater gives young fish shelter from larger predators, and many species that are later caught far out at sea spend the first part of their lives among mangroves. In some regions, the majority of the fish caught commercially depend on mangroves at some stage. So when the forests disappear, fishing communities often feel the effects quite quickly.
+LECTURER: Third, and this is what has attracted most attention recently, mangroves store enormous amounts of carbon. Not mainly in the trees themselves, but in the soil beneath them. Because the mud has so little oxygen, dead leaves and roots decay extremely slowly, so the carbon builds up over thousands of years. Hectare for hectare, mangrove soils can hold several times more carbon than a tropical rainforest.
+LECTURER: Unfortunately, the world has lost a large proportion of its mangroves over the last half century. The biggest single cause has been the conversion of coastal land into ponds for farming shrimp, which are sold mainly to wealthy countries. Mangroves have also been cleared for rice fields, for tourist resorts and for the expansion of cities, and in some places the trees have simply been cut for firewood.
+LECTURER: The good news is that the rate of loss has slowed considerably, and there are many restoration projects. But early attempts often failed. Organisations planted millions of seedlings on mudflats where mangroves had never grown, and most of them died. We now know that the most important factor is getting the water right. If the tides can reach an area in the natural way, mangroves will often return by themselves, because the seedlings are carried in by the sea. In those cases, the best thing people can do is remove old walls and channels and then simply wait.
+LECTURER: Successful projects also tend to involve local communities from the start. Where people who live nearby benefit directly, for example through better fishing or through payments for the carbon the forest stores, they have a reason to protect the trees in the long term.
+LECTURER: Next week we''ll look at another coastal ecosystem, seagrass meadows, and compare the way they store carbon.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('20dc8a10-e0dc-481d-bb6f-6db495f71725', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Mangroves: about 70 species that can survive in ______ water', '[]'::jsonb, ARRAY['salt', 'salty']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The lecturer says mangroves "can survive in salt water."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('581e9b18-54c7-484f-bcf0-f1f9d0fd87c5', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Some species remove salt through their ______', '[]'::jsonb, ARRAY['leaves']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Some species take salt in "and then get rid of it through their leaves."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c0689fc5-2dfd-490f-b828-edb4a838b879', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Coastal mud contains very little ______', '[]'::jsonb, ARRAY['oxygen']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The lecturer says "Coastal mud contains very little oxygen".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('abded730-0202-4ed9-8cdd-7fe11fe8e00d', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Upward-growing roots work like ______, letting the tree breathe', '[]'::jsonb, ARRAY['snorkels', 'snorkel']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The roots "act rather like snorkels, allowing the tree to breathe when the tide is out."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c4cbb723-df0b-4b0b-adba-fc6e2f997433', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Seedlings can ______ in the sea for months', '[]'::jsonb, ARRAY['float']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'When seedlings drop "they can float in the sea for months".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e8c5b3c6-d053-4901-aaea-491b68158a22', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Dense roots slow waves and reduce ______', '[]'::jsonb, ARRAY['erosion']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The roots "slow down waves and hold the soil in place, which reduces erosion."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('14ff527f-63fc-4f6a-bb71-4cd4b5e6a1d2', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Roots give young fish shelter from ______', '[]'::jsonb, ARRAY['predators']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The roots give "young fish shelter from larger predators".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e500869f-f409-4136-acd7-f3f24715a3f4', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Most carbon is stored in the ______, not the trees', '[]'::jsonb, ARRAY['soil']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Carbon is stored "Not mainly in the trees themselves, but in the soil beneath them."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('27c430cf-588f-44b8-8f3a-1c4821c12369', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Main cause of loss: ponds for farming ______', '[]'::jsonb, ARRAY['shrimp', 'shrimps']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The lecturer says "The biggest single cause has been the conversion of coastal land into ponds for farming shrimp".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6deb6204-195c-4fe0-b41f-d78bddd0ff48', '04f8e5c8-a884-45ca-8323-942819c212ff', 'note_completion', 'Restoration: the key factor is getting the ______ right', '[]'::jsonb, ARRAY['water']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The lecturer says "the most important factor is getting the water right."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('63d8e36a-e522-414a-9804-bec200642181', '0dd16a08-36cf-41a1-b65b-1a0f9e5ceaa5', 'reading', 3600, 40, NULL, 1)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('6c919b02-5691-436b-983f-0f93770101d5', '63d8e36a-e522-414a-9804-bec200642181', 1, 'HILLCREST FARMERS'' MARKET — NEW ARRANGEMENTS FROM APRIL
+
+The market will move from the school car park to Victoria Square from Saturday 5 April. It will continue to run every Saturday from 8 am to 1 pm, and a new evening market will be held on the first Thursday of each month from 4 pm to 8 pm.
+
+All stallholders must be based within 40 miles of Hillcrest and must sell only food they have grown, raised or made themselves. Visitors who would like to know where a product comes from are welcome to ask any stallholder.
+
+Parking in Victoria Square itself is not permitted on market days. Free parking is available at the Station Road car park, a five-minute walk away, until 2 pm. Cyclists can use the new bike racks beside the fountain.
+
+Dogs on short leads are welcome in the square, but they are not allowed in the covered food hall at the north end. Water bowls are provided at the information tent.
+
+Most stalls now accept card payments, although a few smaller stalls still take cash only. There is no cash machine in the square, so please bring cash with you if you need it.
+
+Shoppers are encouraged to bring their own bags. Paper bags are available for 10p each, and all the money raised goes to the Hillcrest Food Bank.', NULL, NULL, 'Questions 1-7. Read the notice below. Do the following statements agree with the information given? Write TRUE, FALSE or NOT GIVEN.', '{"title":"Section 1 — Hillcrest Farmers'' Market: new arrangements"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b068eaf6-0225-41ea-9ed4-f3cb336b1433', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'From April the market will be held in the same place as before.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The market "will move from the school car park to Victoria Square".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0318efe1-83b8-4382-a01a-30325b2e1b87', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'The evening market will take place once a month.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'It will be held "on the first Thursday of each month".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bdc31f86-77bb-4ad1-b488-4cb61488abb2', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'There will be more stalls than there were last year.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The notice says stallholders "must be based within 40 miles of Hillcrest" but gives no information about the number of stalls.', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bfbaf505-1eff-4f17-8620-ae1d5e6efba8', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'Shoppers can park near the market without paying.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Free parking is available at the Station Road car park, a five-minute walk away".', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ec22a101-bf99-4df6-a74d-f925ffc2c32e', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'Dogs may enter the covered food hall if they are on a lead.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Dogs on leads are welcome in the square, "but they are not allowed in the covered food hall".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0149f69b-3e1c-4576-bcba-75449d2326e8', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'There is a cash machine at Station Road car park.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The notice only says "There is no cash machine in the square"; it says nothing about Station Road.', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a6d09752-4dfe-4542-8644-b6c92f904e64', '6c919b02-5691-436b-983f-0f93770101d5', 'true_false_notgiven', 'Money from the sale of paper bags will be spent on market equipment.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"all the money raised goes to the Hillcrest Food Bank."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', '63d8e36a-e522-414a-9804-bec200642181', 2, 'HOME INTERNET IN THE DALTON AREA: YOUR OPTIONS
+
+A  Linkwave
+Linkwave offers the fastest speeds in the region, up to 900 Mbps, but only to homes in the town centre. Contracts last 24 months, and there is a one-off set-up fee of £40. Every customer receives a free router.
+
+B  Hometel
+Hometel is ideal for light users who mainly send emails and browse the web. Its basic package costs just £18 a month, and there is no minimum contract, so you can leave at any time with 30 days'' notice. Its customer helpline is open 24 hours a day.
+
+C  FibreNest
+FibreNest is a small, locally owned company. Its engineers will connect your home within three days of ordering, and the price is fixed for the whole of an 18-month contract. Customers who refer a friend get a month free.
+
+D  SkyBridge
+SkyBridge provides internet by satellite, so it is available even in remote villages that cable networks do not reach. The satellite dish must be bought separately for £120. Speeds can be affected during heavy rain.
+
+E  CityConnect
+CityConnect packages include a TV service with more than 80 channels. Students can get a 30% discount with a valid student card. Contracts last 12 months and can be renewed online.', NULL, NULL, 'Questions 8-14. Look at the five internet providers, A-E. For which provider is each statement true? You may use any letter more than once.', '{"title":"Section 1 — Choosing a home internet provider"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7717f646-cfb5-41c8-8cfe-31e32ab006cc', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'You can stop using this service without a long commitment.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Hometel has "no minimum contract, so you can leave at any time with 30 days'' notice."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('faf567d5-dc8f-40cb-8aae-0d093d440ae0', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'This service is suitable for people living in the countryside.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'SkyBridge "is available even in remote villages that cable networks do not reach."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('832ba1bc-8d91-4ee7-b548-765dc8c16d62', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'This provider also offers television.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'CityConnect packages "include a TV service with more than 80 channels."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1cb407ba-ee4a-4aec-92da-cd04dc169498', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'Customers are rewarded for recommending the service.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'FibreNest says "Customers who refer a friend get a month free."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3a06ccd0-fc47-460f-bfd5-9de89037851b', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'The service may be slower in bad weather.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'With SkyBridge, "Speeds can be affected during heavy rain."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('adc0727e-ac7b-454d-844f-dc42a13c1df2', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'Installation is promised within a short time.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'FibreNest engineers "will connect your home within three days of ordering".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f5fe3a6f-b418-43b4-aa71-b9fa83d044cc', '0a063b10-9c3b-43cb-91ad-8ac66e4a1c29', 'matching_information', 'A charge is made for starting the service.', '[{"value":"A","label":"A. Linkwave"},{"value":"B","label":"B. Hometel"},{"value":"C","label":"C. FibreNest"},{"value":"D","label":"D. SkyBridge"},{"value":"E","label":"E. CityConnect"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Linkwave has "a one-off set-up fee of £40."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('80eef367-1c6f-4070-9c01-7b8a678a5c7c', '63d8e36a-e522-414a-9804-bec200642181', 3, 'HARBOUR LOGISTICS — STAFF GUIDE TO EXPENSE CLAIMS
+
+Submitting a claim
+All expense claims must now be made through the online system, ExpensePoint, which you can reach from the staff intranet. Paper forms will no longer be accepted after 30 June. If you do not yet have an ExpensePoint login, ask the IT helpdesk.
+
+Time limits
+Claims must be submitted within 60 days of the date on the receipt. Older claims will be paid only in exceptional circumstances, and they must be approved by the finance director.
+
+Receipts
+Every claim must be supported by a receipt. Take a clear photograph of each receipt with your phone and upload it with the claim. Please keep the original receipt until the claim has been paid, as the finance team may ask to see it.
+
+Travel
+Staff who use their own car for work journeys can claim 45p per mile. Mileage claims must include the postcodes of the start and end of each journey. Travel between home and your usual workplace cannot be claimed. Train travel must be standard class unless the journey lasts more than three hours, in which case first class may be booked.
+
+Meals and accommodation
+When you are working away from your usual workplace for more than five hours, you may claim up to £10 for lunch. Alcohol cannot be claimed under any circumstances. Hotels must always be booked through the company''s travel desk, and not directly with the hotel, so that our discounted rates can be applied.
+
+Payment
+Once submitted, your claim will be checked by your line manager. Approved claims are paid together with your monthly salary.', NULL, NULL, 'Questions 15-21. Complete the sentences below. Write NO MORE THAN TWO WORDS from the text for each answer.', '{"title":"Section 2 — Harbour Logistics: claiming work expenses"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f4e13a02-e22e-428e-b76c-f8545a3fe503', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'After 30 June, paper ______ cannot be used for claims.', '[]'::jsonb, ARRAY['forms']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The guide says "Paper forms will no longer be accepted after 30 June."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ab840bc7-7206-477a-a176-da16b665b222', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'A claim made more than 60 days late needs the approval of the ______.', '[]'::jsonb, ARRAY['finance director']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Older claims "must be approved by the finance director."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5d5c196f-78d2-494b-9d21-3c7f565a7f0c', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'Staff should upload a ______ of every receipt.', '[]'::jsonb, ARRAY['photograph', 'photo', 'clear photograph']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Staff should "Take a clear photograph of each receipt with your phone and upload it".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('76fb3f60-9e95-492e-9f47-9a94124368da', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'For mileage, staff must give the ______ where each journey starts and ends.', '[]'::jsonb, ARRAY['postcodes']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Claims "must include the postcodes of the start and end of each journey."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('427cc43b-fe1a-430a-a6e7-08833608e794', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'First-class train tickets are allowed for journeys of over three ______.', '[]'::jsonb, ARRAY['hours']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'First class may be booked when "the journey lasts more than three hours".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bb9bc1cb-b4dd-44d3-9782-e5ebbcc26868', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'Staff can never claim the cost of ______.', '[]'::jsonb, ARRAY['alcohol']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The guide says "Alcohol cannot be claimed under any circumstances."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('51420ee1-88ce-4841-8272-1cbecad016bc', '80eef367-1c6f-4070-9c01-7b8a678a5c7c', 'sentence_completion', 'Hotel rooms must be reserved through the company''s ______.', '[]'::jsonb, ARRAY['travel desk']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"Hotels must always be booked through the company''s travel desk".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('8ffbb145-b73f-48de-8bfd-889a91e99573', '63d8e36a-e522-414a-9804-bec200642181', 4, 'THE STAFF DEVELOPMENT FUND: A GUIDE FOR EMPLOYEES
+
+A
+The Staff Development Fund pays for courses, qualifications and conferences that will help you do your current job better or prepare you for a future role within the company. It also covers the cost of books and exam fees linked to an approved course. It does not pay for hobbies or for courses unrelated to your work, however interesting they may be.
+
+B
+Any permanent employee who has completed their six-month probation period can apply, whether they work full-time or part-time. Temporary staff and contractors cannot apply to the fund, although they are welcome to attend our free in-house workshops.
+
+C
+To apply, complete the form on the intranet and ask your line manager to add a short statement explaining how the course will benefit your team. Applications without this statement of support will be returned to you, so it is worth discussing your plans with your manager early.
+
+D
+Applications are considered by a panel four times a year, in January, April, July and October. You will normally hear the outcome within two weeks of the panel meeting. Because of this timetable, you should apply at least six weeks before your course is due to begin.
+
+E
+If you leave the company within one year of finishing a course that cost more than £1,000, you may be asked to return part of the cost. The amount depends on how long you stay: someone who leaves after six months, for example, would normally repay half.
+
+F
+Within a month of completing your course, we ask you to share what you have learned with colleagues. This might mean giving a short presentation to your team, writing an article for the staff newsletter, or running a lunchtime session.', NULL, NULL, 'Questions 22-27. The text has six paragraphs, A-F. Choose the correct heading for each paragraph from the list of headings below.', '{"title":"Section 2 — Applying to the Staff Development Fund"}'::jsonb, 3)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bfee3587-911d-40a6-8808-b7f17dad8f28', '8ffbb145-b73f-48de-8bfd-889a91e99573', 'matching_headings', 'Paragraph A', '[{"value":"i","label":"i. Taking time off to study"},{"value":"ii","label":"ii. When decisions are made"},{"value":"iii","label":"iii. Who is eligible"},{"value":"iv","label":"iv. Passing on your knowledge"},{"value":"v","label":"v. What the money can be used for"},{"value":"vi","label":"vi. Choosing a course provider"},{"value":"vii","label":"vii. Paying the money back"},{"value":"viii","label":"viii. Getting your manager''s backing"}]'::jsonb, ARRAY['v']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Paragraph A explains that the fund "pays for courses, qualifications and conferences" and what it does not pay for.', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('45105f26-f20b-4230-b326-97557bfa970a', '8ffbb145-b73f-48de-8bfd-889a91e99573', 'matching_headings', 'Paragraph B', '[{"value":"i","label":"i. Taking time off to study"},{"value":"ii","label":"ii. When decisions are made"},{"value":"iii","label":"iii. Who is eligible"},{"value":"iv","label":"iv. Passing on your knowledge"},{"value":"v","label":"v. What the money can be used for"},{"value":"vi","label":"vi. Choosing a course provider"},{"value":"vii","label":"vii. Paying the money back"},{"value":"viii","label":"viii. Getting your manager''s backing"}]'::jsonb, ARRAY['iii']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Paragraph B says "Any permanent employee who has completed their six-month probation period can apply".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4dccc901-909f-4f71-b7c2-3309fceec4d4', '8ffbb145-b73f-48de-8bfd-889a91e99573', 'matching_headings', 'Paragraph C', '[{"value":"i","label":"i. Taking time off to study"},{"value":"ii","label":"ii. When decisions are made"},{"value":"iii","label":"iii. Who is eligible"},{"value":"iv","label":"iv. Passing on your knowledge"},{"value":"v","label":"v. What the money can be used for"},{"value":"vi","label":"vi. Choosing a course provider"},{"value":"vii","label":"vii. Paying the money back"},{"value":"viii","label":"viii. Getting your manager''s backing"}]'::jsonb, ARRAY['viii']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Your line manager must "add a short statement explaining how the course will benefit your team."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f0699a65-c4a6-40f2-b134-15329c7f6073', '8ffbb145-b73f-48de-8bfd-889a91e99573', 'matching_headings', 'Paragraph D', '[{"value":"i","label":"i. Taking time off to study"},{"value":"ii","label":"ii. When decisions are made"},{"value":"iii","label":"iii. Who is eligible"},{"value":"iv","label":"iv. Passing on your knowledge"},{"value":"v","label":"v. What the money can be used for"},{"value":"vi","label":"vi. Choosing a course provider"},{"value":"vii","label":"vii. Paying the money back"},{"value":"viii","label":"viii. Getting your manager''s backing"}]'::jsonb, ARRAY['ii']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Applications are considered by a panel four times a year, in January, April, July and October."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e7c3f3f9-da88-4a39-8ab2-ac7ab92c6563', '8ffbb145-b73f-48de-8bfd-889a91e99573', 'matching_headings', 'Paragraph E', '[{"value":"i","label":"i. Taking time off to study"},{"value":"ii","label":"ii. When decisions are made"},{"value":"iii","label":"iii. Who is eligible"},{"value":"iv","label":"iv. Passing on your knowledge"},{"value":"v","label":"v. What the money can be used for"},{"value":"vi","label":"vi. Choosing a course provider"},{"value":"vii","label":"vii. Paying the money back"},{"value":"viii","label":"viii. Getting your manager''s backing"}]'::jsonb, ARRAY['vii']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Staff who leave early "may be asked to return part of the cost."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7a32267a-6568-4f36-ba44-6f7684469f95', '8ffbb145-b73f-48de-8bfd-889a91e99573', 'matching_headings', 'Paragraph F', '[{"value":"i","label":"i. Taking time off to study"},{"value":"ii","label":"ii. When decisions are made"},{"value":"iii","label":"iii. Who is eligible"},{"value":"iv","label":"iv. Passing on your knowledge"},{"value":"v","label":"v. What the money can be used for"},{"value":"vi","label":"vi. Choosing a course provider"},{"value":"vii","label":"vii. Paying the money back"},{"value":"viii","label":"viii. Getting your manager''s backing"}]'::jsonb, ARRAY['iv']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"we ask you to share what you have learned with colleagues."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', '63d8e36a-e522-414a-9804-bec200642181', 5, 'THE BOX THAT CHANGED THE WORLD
+
+Look at almost anything in your home, from the phone in your pocket to the shoes by the door and the bananas in the kitchen, and there is a good chance that at some point it travelled inside a steel box. The shipping container is so ordinary that it is easy to overlook, yet few inventions have done more to shape the modern economy. Around ninety per cent of the world''s traded goods now move by sea, and most of them move in containers.
+
+Before the container, loading a ship was slow, expensive and dangerous work. Goods arrived at the docks in sacks, barrels, crates and bundles of every shape and size, and each item had to be lifted on board separately by teams of dock workers. A large cargo ship could spend a week or more in port being loaded and unloaded, and it was not unusual for the time in harbour to be longer than the voyage itself. Theft was common, injuries were frequent, and the cost of handling goods at the port could account for half of the total cost of transporting them.
+
+The man usually credited with changing this was not a sailor but a trucking businessman. Malcom McLean had built up one of the largest road haulage firms in the United States, and he was frustrated by the hours his drivers spent waiting at ports while their loads were moved, piece by piece, onto ships. His idea was simple: instead of unloading the truck, why not lift the whole trailer, or at least the box on top of it, straight onto the ship? In 1956 a converted oil tanker, the Ideal X, sailed from New Jersey to Texas carrying fifty-eight metal boxes on its deck. McLean calculated that loading it had cost less than sixteen cents a ton, compared with more than five dollars a ton for loose cargo.
+
+McLean was not the first person to put goods in boxes. Railways and some shipping lines had experimented with containers decades earlier. What made his approach different was his insistence on treating the container as part of a complete system. Ships, cranes, trucks and trains all had to be designed around the box, and the box had to be strong enough to be stacked many levels high. Equally important was the decision, after years of argument in the 1960s, to agree international standards for container sizes and for the corner fittings used to lift and lock them. Once a box loaded in Rotterdam could be lifted by a crane in Singapore and placed on a train in Chicago, the container became truly global.
+
+The effects were dramatic. Ports that could once handle a ship in a week now did so in a day or less. Insurance costs fell because goods were sealed inside the box from factory to destination, which made theft much harder. Above all, the cost of moving goods across oceans dropped so far that it stopped being a major factor in many business decisions. Some economists have argued that the container did more to increase world trade than all the trade agreements of the same period combined.
+
+Not everyone benefited. Container ships needed deep water, vast areas of flat land for stacking boxes, and good road and rail links. Many old city-centre ports, such as those in London and New York, could provide none of these, and the work moved to new terminals built miles away. Tens of thousands of dock jobs disappeared, and waterfront communities that had depended on them for generations went into decline. In many cities the empty docks lay unused for years before being redeveloped as offices, flats and museums.
+
+Cheap shipping also changed where things are made. When transport costs were high, it made sense to produce goods close to the people who would buy them. Once those costs became low, manufacturers could take advantage of lower wages or specialist suppliers on the other side of the world. A single product may now contain parts made in a dozen countries, some of which cross the ocean more than once before the finished item reaches a shop. Critics point out that this system is fragile: when one large ship blocked the Suez Canal for six days in 2021, businesses around the world felt the delays for months.
+
+Today the largest container ships can carry more than twenty-four thousand standard boxes, and the containers themselves have found surprising second lives. Because they are strong, cheap and easy to transport, retired containers have been turned into homes, shops, schools and even swimming pools. Some architects praise them as an efficient way to reuse materials; others argue that the work needed to insulate a steel box properly makes them less environmentally friendly than they first appear. Either way, the humble container shows no sign of disappearing from the world it helped to create.', NULL, NULL, 'Questions 28-31: choose the correct letter, A, B, C or D. Questions 32-36: complete the summary using ONE WORD ONLY from the passage. Questions 37-40: complete each sentence with the correct ending, A-F.', '{"title":"Section 3 — The box that changed the world"}'::jsonb, 4)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c761ccb3-52d6-4f24-87e7-248c82f004b3', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'multiple_choice_single', 'What does the writer say about shipping before containers?', '[{"value":"A","label":"A. Ships often spent longer in port than at sea."},{"value":"B","label":"B. Dock workers refused to carry dangerous goods."},{"value":"C","label":"C. Most goods were packed in barrels."},{"value":"D","label":"D. Theft from ships was unusual."}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The writer says "it was not unusual for the time in harbour to be longer than the voyage itself."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5cf97a82-833f-44cd-b010-a4c17f15ccb1', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'multiple_choice_single', 'What first led McLean to develop his idea?', '[{"value":"A","label":"A. the rising price of oil"},{"value":"B","label":"B. time wasted by his drivers at ports"},{"value":"C","label":"C. his experience as a sailor"},{"value":"D","label":"D. competition from the railways"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'McLean "was frustrated by the hours his drivers spent waiting at ports".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fa4b2177-37d9-403a-ba2a-63391792756c', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'multiple_choice_single', 'According to the fourth paragraph, what was new about McLean''s approach?', '[{"value":"A","label":"A. He was the first to use boxes for cargo."},{"value":"B","label":"B. He designed a new kind of crane."},{"value":"C","label":"C. He saw the container as part of a complete system."},{"value":"D","label":"D. He persuaded railways to carry his boxes."}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"What made his approach different was his insistence on treating the container as part of a complete system."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('549ec073-4d54-4f6b-90df-76944aeb8c94', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'multiple_choice_single', 'Why does the writer mention the Suez Canal?', '[{"value":"A","label":"A. to show how easily global supply chains can be disrupted"},{"value":"B","label":"B. to argue that ships have become too large"},{"value":"C","label":"C. to explain why goods cross the ocean more than once"},{"value":"D","label":"D. to compare old ports with new terminals"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Critics say "this system is fragile", and when a ship blocked the canal "businesses around the world felt the delays for months."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('09207103-f79c-4d36-b4b7-64c01ba0e3f4', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'summary_completion', 'Containers reduced the time ships spent in port, and ______ costs fell because goods were sealed inside the box.', '[]'::jsonb, ARRAY['insurance']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Insurance costs fell because goods were sealed inside the box from factory to destination".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('91610b8a-b769-4df5-a388-864a408a03a9', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'summary_completion', 'Sealing goods in boxes made ______ much harder.', '[]'::jsonb, ARRAY['theft']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Sealing the goods "made theft much harder."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3915e76d-d113-4458-9ac0-e19ddaced526', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'summary_completion', 'Container ships needed deep water, large areas of flat ______ and good transport links.', '[]'::jsonb, ARRAY['land']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Container ships needed "vast areas of flat land for stacking boxes".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4429af8e-0051-48fa-8b59-4b0cd5c6bce7', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'summary_completion', 'Because many old ports could not provide these, tens of thousands of dock ______ were lost.', '[]'::jsonb, ARRAY['jobs']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Tens of thousands of dock jobs disappeared".', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('41e5527b-060c-479a-a67b-1674212b3872', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'summary_completion', 'Empty docks were later redeveloped as offices, flats and ______.', '[]'::jsonb, ARRAY['museums']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The docks were "redeveloped as offices, flats and museums."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('67b05791-6294-4ddf-81e2-9f39889b0572', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'matching_sentence_endings', 'Agreeing international standards for containers', '[{"value":"A","label":"A. allowed boxes to be handled in ports around the world."},{"value":"B","label":"B. made it possible for manufacturers to use suppliers far away."},{"value":"C","label":"C. have made them popular for new buildings."},{"value":"D","label":"D. may reduce their benefits for the environment."},{"value":"E","label":"E. led to the closure of many railways."},{"value":"F","label":"F. made ships slower but safer."}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Once standards were agreed, "a box loaded in Rotterdam could be lifted by a crane in Singapore and placed on a train in Chicago".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e520870c-fd4d-4455-b628-fce7023dd239', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'matching_sentence_endings', 'The fall in transport costs', '[{"value":"A","label":"A. allowed boxes to be handled in ports around the world."},{"value":"B","label":"B. made it possible for manufacturers to use suppliers far away."},{"value":"C","label":"C. have made them popular for new buildings."},{"value":"D","label":"D. may reduce their benefits for the environment."},{"value":"E","label":"E. led to the closure of many railways."},{"value":"F","label":"F. made ships slower but safer."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Once costs became low, "manufacturers could take advantage of lower wages or specialist suppliers on the other side of the world."', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('953dbf8a-8847-4dd0-9a7b-debe7e18f6cc', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'matching_sentence_endings', 'The strength and low cost of old containers', '[{"value":"A","label":"A. allowed boxes to be handled in ports around the world."},{"value":"B","label":"B. made it possible for manufacturers to use suppliers far away."},{"value":"C","label":"C. have made them popular for new buildings."},{"value":"D","label":"D. may reduce their benefits for the environment."},{"value":"E","label":"E. led to the closure of many railways."},{"value":"F","label":"F. made ships slower but safer."}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Because they are strong, cheap and easy to transport, retired containers have been turned into homes, shops, schools and even swimming pools."', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8a6db2a4-6245-46c2-bbdd-73f6105fff62', 'a13f58c9-1a1e-4f82-accb-2b8fdf80c61f', 'matching_sentence_endings', 'The work needed to insulate a container', '[{"value":"A","label":"A. allowed boxes to be handled in ports around the world."},{"value":"B","label":"B. made it possible for manufacturers to use suppliers far away."},{"value":"C","label":"C. have made them popular for new buildings."},{"value":"D","label":"D. may reduce their benefits for the environment."},{"value":"E","label":"E. led to the closure of many railways."},{"value":"F","label":"F. made ships slower but safer."}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Some argue it "makes them less environmentally friendly than they first appear."', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('d004f5ce-8bc0-4025-bb95-b89a822de8bb', '0dd16a08-36cf-41a1-b65b-1a0f9e5ceaa5', 'writing', 3600, 2, NULL, 2)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('2aa5915b-92ab-4182-a295-c4f1bbb3c918', 'd004f5ce-8bc0-4025-bb95-b89a822de8bb', 1, 'You live in a residential area where a public footpath has been in poor condition for several months, and it has become dangerous.
+
+Write a letter to your local council. In your letter:
+  •  describe where the footpath is and what is wrong with it
+  •  explain how the problem is affecting local people
+  •  suggest what the council should do
+
+Write in a formal style.
+
+Begin your letter as follows:
+
+Dear Sir or Madam,', NULL, NULL, 'You should spend about 20 minutes on this task. Write at least 150 words. You do NOT need to write any addresses.', '{"title":"Task 1"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0f98bf59-f3d4-499c-9a6f-a64bee7f2021', '2aa5915b-92ab-4182-a295-c4f1bbb3c918', 'short_answer', 'Task 1 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('17e60670-bef6-4444-90f9-a95747aee0ec', 'd004f5ce-8bc0-4025-bb95-b89a822de8bb', 2, 'Some people believe that schools should teach children how to manage money, for example how to save and how to plan a budget. Others think this is the responsibility of parents.
+
+Discuss both these views and give your own opinion.
+
+Give reasons for your answer and include any relevant examples from your own knowledge or experience.', NULL, NULL, 'You should spend about 40 minutes on this task. Write at least 250 words.', '{"title":"Task 2"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9d6e43a7-78b2-49c1-9df4-7bafa2a6c7c4', '17e60670-bef6-4444-90f9-a95747aee0ec', 'short_answer', 'Task 2 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('64d289b5-81a7-48ee-85b1-2b8de6cff32b', '0dd16a08-36cf-41a1-b65b-1a0f9e5ceaa5', 'speaking', 840, 12, NULL, 3)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', '64d289b5-81a7-48ee-85b1-2b8de6cff32b', 1, NULL, NULL, NULL, 'The examiner asks about yourself, your home, work or studies and other familiar topics. 4-5 minutes.', '{"title":"Part 1 — Introduction and familiar topics"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1f9fb643-0a2d-4ba3-b404-d3c3047a130a', '3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', 'short_answer', 'Let''s talk about where you live. Do you live in a house or a flat?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('72375b0b-d38a-4afc-a8d9-52424ac76d0c', '3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', 'short_answer', 'What do you like most about the area you live in?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('90f673de-6f18-4748-9f98-8d9aeab1e980', '3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', 'short_answer', 'Has your area changed much in recent years?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('503b168e-76cb-403d-bca3-233c740b8b22', '3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', 'short_answer', 'Now let''s talk about music. What kind of music do you enjoy?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5f5db064-1f10-4729-9aaf-220e1b64e648', '3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', 'short_answer', 'Did you learn to play an instrument when you were a child?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ce68ec0a-8f73-4b26-aa30-82c2769bbec1', '3a511c25-14d8-4fd0-a0e2-ddeb94d8b8fc', 'short_answer', 'Do you prefer listening to music alone or with other people? Why?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('f906e645-28ce-49d9-a5c7-10e16ade7cb7', '64d289b5-81a7-48ee-85b1-2b8de6cff32b', 2, 'Describe a skill you learned as an adult.
+
+You should say:
+  •  what the skill is
+  •  when and where you learned it
+  •  how you learned it
+
+and explain how this skill has been useful to you.', NULL, NULL, 'You have one minute to prepare. You may make notes. Then talk for one to two minutes. The examiner will tell you when to stop.', '{"title":"Part 2 — Individual long turn"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4983f03a-b065-43e9-8ae6-99146edf77c1', 'f906e645-28ce-49d9-a5c7-10e16ade7cb7', 'short_answer', 'Long turn response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('4b7492e8-43e9-4118-ac6b-3f9bee4f7204', '64d289b5-81a7-48ee-85b1-2b8de6cff32b', 3, NULL, NULL, NULL, 'The examiner asks further questions connected to the topic in Part 2. 4-5 minutes.', '{"title":"Part 3 — Two-way discussion"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b01cc55b-cb56-4907-8bb4-d0d59eea1bda', '4b7492e8-43e9-4118-ac6b-3f9bee4f7204', 'short_answer', 'Is it harder for adults to learn new skills than it is for children? Why?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('aac2f661-64bc-49ae-ae9c-b34f99bdd646', '4b7492e8-43e9-4118-ac6b-3f9bee4f7204', 'short_answer', 'What skills do young people need most when they start work today?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7bf8277f-a310-42d3-9d84-442765f4e18c', '4b7492e8-43e9-4118-ac6b-3f9bee4f7204', 'short_answer', 'Should employers pay for their staff to learn new skills?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('41ef34c4-3eb3-4711-90a2-8edebf9ca12e', '4b7492e8-43e9-4118-ac6b-3f9bee4f7204', 'short_answer', 'How has the internet changed the way people learn practical skills?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3570231a-1e93-49c2-9f2f-dd2a3f574ada', '4b7492e8-43e9-4118-ac6b-3f9bee4f7204', 'short_answer', 'Do you think people will need to keep retraining throughout their lives in the future?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+-- IELTS General Training Mock Exam 2 (mock-general-2)
+insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)
+values ('2b46f0f3-5df5-4c11-a16c-67f155d4951f', 'mock-general-2', 'IELTS General Training Mock Exam 2', 'A full, timed IELTS General Training mock exam: Listening, Reading, Writing and Speaking.', 'general_training', 'computer', true, true, 'standard', 'mock', 'v1')
+on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('3a321e63-6b12-4044-85fa-6014ee053e8c', '2b46f0f3-5df5-4c11-a16c-67f155d4951f', 'listening', 1800, 40, NULL, 0)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('abd11847-94fd-4cec-9bf8-b99b27a26cae', '3a321e63-6b12-4044-85fa-6014ee053e8c', 1, NULL, '/audio/mock/mock-general-2-part-1.mp3', NULL, 'Questions 1-6: complete the form. Questions 7-10: complete the table. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.', '{"title":"Part 1 — Joining a car-sharing club"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('abd11847-94fd-4cec-9bf8-b99b27a26cae', 'CLARE: Hello, Streetcar Share, Clare speaking. How can I help?
+RAJ: Hi. I''m thinking of joining your car club, and I''d like some information, please. I sold my own car last month, and I''ve realised I still need one now and then.
+CLARE: That''s what most of our members say. I can go through the plans with you and take your details at the same time, if you like. That way you can join straight away if you decide to.
+RAJ: Great, let''s do that.
+CLARE: Could I have your name first?
+RAJ: It''s Raj Bhandari.
+CLARE: How do you spell your surname?
+RAJ: B-H-A-N-D-A-R-I.
+CLARE: Thank you. And your postcode?
+RAJ: It''s LS6 4QT.
+CLARE: LS6 4QT. Now, all members need to have held a full driving licence for at least two years. How long have you had yours?
+RAJ: Let me think. I passed my test when I was nineteen, and I''m twenty-six now, so seven years.
+CLARE: Seven years, that''s fine. We also ask about occupation, because it affects the insurance. What do you do?
+RAJ: I''m a pharmacist. I work at the hospital in the city centre.
+CLARE: Thanks. And what would you mainly use the car for? Commuting?
+RAJ: No, I cycle to work. It''d mostly be for visiting my grandmother. She lives out in the country, about forty minutes away, and there''s no train. Maybe the odd trip to the furniture shop too.
+CLARE: OK. And which of our car locations is nearest to you? There''s one on Hyde Park Road and another in the car park on Brunswick Street.
+RAJ: Brunswick Street is closer. It''s just round the corner from my flat.
+CLARE: Lovely. Now let me explain the three plans, and you can tell me which suits you best. The first is the Occasional plan. There''s no monthly fee at all, and you pay eight pounds fifty an hour when you use a car.
+RAJ: Eight fifty. That sounds reasonable.
+CLARE: It is, if you only drive a few times a year. The second plan is called Regular. With that, you pay a monthly fee of twelve pounds, and the hourly rate goes down to six pounds. And Regular members also get one free hour every Sunday, which is popular with families.
+RAJ: Every Sunday? I''d probably visit my grandmother on Sundays, so that would be useful.
+CLARE: Then the third plan is Frequent. That costs fifty-five pounds a month, and it includes ten free hours each month. After those ten hours, you pay five pounds an hour.
+RAJ: Hmm. I don''t think I''d use it that much. Is fuel included in all of these?
+CLARE: Yes, fuel and insurance are included on every plan. There''s a fuel card in each car, so if the tank gets low, you just fill it up and the club pays. The only thing we ask is that you return the car with at least a quarter of a tank.
+RAJ: That''s very easy. What happens if I''m late bringing a car back?
+CLARE: If you know you''ll be late, you can extend your booking on the app, as long as nobody else has booked the car. If you''re late without telling us, there''s a charge of fifteen pounds.
+RAJ: Fair enough. I think the Regular plan makes most sense for me, with the free hour on Sundays.
+CLARE: Good choice. There''s also a one-off joining fee, which covers checking your licence and sending out your membership card. That''s twenty-five pounds. It used to be forty, but we reduced it this year.
+RAJ: OK, twenty-five is fine. How do I get the membership card?
+CLARE: We''ll send it by post, and it should arrive within five working days. Until then, you can use the app to unlock the cars.
+RAJ: Perfect. Can I pay the joining fee now, by card?
+CLARE: Of course. I''ll just transfer you to our secure payment line. Thanks for joining, Mr Bhandari.
+RAJ: Thanks for your help, Clare.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('af2eeab4-247e-4ee3-8764-fe008a6dee0d', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'note_completion', 'Name: Raj ______', '[]'::jsonb, ARRAY['Bhandari']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Raj spells his surname: "B-H-A-N-D-A-R-I."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('17e17484-d5e7-4e76-9edc-72427d33e13e', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'note_completion', 'Postcode: ______', '[]'::jsonb, ARRAY['LS6 4QT', 'LS64QT']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Raj says "It''s LS6 4QT", and Clare repeats it.', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f45d63be-9771-4f17-8e4a-02591d91dbda', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'note_completion', 'Years with a full driving licence: ______', '[]'::jsonb, ARRAY['7', 'seven']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Raj passed at nineteen and is twenty-six, "so seven years."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f03d01a0-75da-4051-ac8c-3eb58a848fd4', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'note_completion', 'Occupation: ______', '[]'::jsonb, ARRAY['pharmacist']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Raj says "I''m a pharmacist. I work at the hospital in the city centre."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3c890646-e9e9-46b3-bf51-36fd322ee34c', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'note_completion', 'Main use: visiting his ______', '[]'::jsonb, ARRAY['grandmother', 'grandma']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'He doesn''t commute; "It''d mostly be for visiting my grandmother."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8a501b2a-0911-41a0-bb0f-49eb50901e27', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'note_completion', 'Nearest car location: ______ Street car park', '[]'::jsonb, ARRAY['Brunswick']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Raj says "Brunswick Street is closer."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3e6180bd-13ca-46d3-9b1f-ce37c3606392', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'table_completion', 'Occasional plan: no monthly fee; £______ per hour', '[]'::jsonb, ARRAY['8.50']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'Clare says "you pay eight pounds fifty an hour when you use a car."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('61fcf1f6-a237-44c6-82f2-396a73a576aa', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'table_completion', 'Regular plan: £______ per month; £6 per hour', '[]'::jsonb, ARRAY['12', 'twelve']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'With the Regular plan "you pay a monthly fee of twelve pounds, and the hourly rate goes down to six pounds."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9c27e748-b327-4aa9-877c-0d76413e2ddd', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'table_completion', 'Regular plan extra: one free hour every ______', '[]'::jsonb, ARRAY['Sunday']::text[], 2, 'lenient', true, false, '{}'::jsonb, '"Regular members also get one free hour every Sunday".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('58a81225-c5d5-4b41-ae0f-049059a84cf4', 'abd11847-94fd-4cec-9bf8-b99b27a26cae', 'table_completion', 'Frequent plan: £55 per month, including ______ free hours', '[]'::jsonb, ARRAY['10', 'ten']::text[], 2, 'lenient', true, false, '{}'::jsonb, 'The Frequent plan "costs fifty-five pounds a month, and it includes ten free hours each month."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('ba262efa-c358-4ce0-af8c-988d3fb917bb', '3a321e63-6b12-4044-85fa-6014ee053e8c', 2, NULL, '/audio/mock/mock-general-2-part-2.mp3', NULL, 'Questions 11-15: choose the correct letter, A, B or C. Questions 16-20: what can visitors find at each station? Choose from the list A-G.', '{"title":"Part 2 — A guide to the Hartmoor Valley Railway"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('ba262efa-c358-4ce0-af8c-988d3fb917bb', 'SPEAKER: Good morning, and welcome aboard the Hartmoor Valley Railway. My name''s Gareth, and I''m one of the volunteers here. Before we set off, I''d like to tell you a bit about the line and about the stations where you can get off during the day.
+SPEAKER: The railway first opened in 1872 to carry stone from the quarries at the top of the valley down to the river. Passengers were really an afterthought. The line closed in 1963, like many small railways at that time, and for almost twenty years the tracks were left to rust. Then in 1981 a group of local enthusiasts bought the line from the government for a single pound, on the condition that they would repair it at their own expense. It took them eleven years to reopen the first section.
+SPEAKER: Today the railway is run almost entirely by volunteers. We have about four hundred of them, and only six paid staff. People often imagine that our volunteers are all retired railway workers, but in fact very few of them ever worked on the railways. Most are simply people who enjoy being outdoors and working with their hands, and we have a growing number of students, too.
+SPEAKER: The locomotive pulling us today is called Lady Margaret. She was built in 1924, and she''s the oldest engine we still use. She uses about a tonne of coal on a full day, which is one of the reasons tickets cost what they do. We don''t receive any money from the government, so every ticket, and every cup of tea you buy, helps to keep the line running.
+SPEAKER: Your ticket today is a day rover, which means you can get on and off as many times as you like. Trains run in each direction every ninety minutes, so do check the timetable at each station before you wander off. The last train back leaves Kingsmead at half past four, and if you miss it, I''m afraid it''s a very long walk.
+SPEAKER: One request: please keep your head and arms inside the windows. The line goes through two narrow tunnels, and the walls are much closer than they look.
+SPEAKER: Right, the stations. We start, of course, here at Hartmoor Junction. Before you leave, it''s well worth looking into the gift shop on platform one. All the profits go to repairing carriages, and it has a very good selection of books about the area.
+SPEAKER: The first stop is Elder Bridge. There''s not much in the village itself, but the station has kept its original signal box, and inside it there''s a small museum about railway signalling. Volunteers are on hand to show you how the levers work, and children are allowed to pull them, under supervision.
+SPEAKER: After that we come to Fenley. Fenley is where our engines are repaired and maintained, and on the hour, every hour, one of our engineers takes visitors round the engine sheds. You''ll see locomotives in pieces, which is quite a sight. Unfortunately the tour isn''t suitable for children under eight, because of the machinery.
+SPEAKER: The next station is Copse Halt. It''s a tiny station in the middle of the woods, and there''s no café or shop there, but it is the starting point for a lovely walk to Hartmoor Falls, a waterfall about two kilometres from the station. The path can be muddy, so wear good shoes.
+SPEAKER: And finally, at the top of the valley, we reach Kingsmead. A lot of people expect Kingsmead to have the playground, because it''s the biggest station, but that was moved to Hartmoor Junction last year. What Kingsmead does have is our café, which is inside an old first-class carriage from the 1930s. They do excellent soup and homemade cakes, and you can watch the engine being turned round while you eat.
+SPEAKER: I should mention that the picnic area that used to be at Kingsmead is closed this summer while new toilets are built, so if you''ve brought sandwiches, there are benches on the platform at Copse Halt instead.
+SPEAKER: OK, we''ll be leaving in about two minutes. Enjoy your journey, and if you have any questions, just ask any of the volunteers in the green jackets.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('468788ac-b13a-46a4-8f9b-5040ee49b624', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'multiple_choice_single', 'The railway was first built to carry', '[{"value":"A","label":"A. passengers"},{"value":"B","label":"B. stone"},{"value":"C","label":"C. coal"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The railway "first opened in 1872 to carry stone from the quarries"; "Passengers were really an afterthought."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('402a8e94-9d66-47a6-9893-8146c43169b2', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'multiple_choice_single', 'What condition was attached to the sale of the line in 1981?', '[{"value":"A","label":"A. It had to reopen within eleven years."},{"value":"B","label":"B. The buyers had to pay for repairs."},{"value":"C","label":"C. It could only be run by volunteers."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The enthusiasts bought it "on the condition that they would repair it at their own expense."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a4b537e5-f15f-421c-94c8-17eac97c51fc', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'multiple_choice_single', 'Most of the railway''s volunteers', '[{"value":"A","label":"A. used to work on the railways"},{"value":"B","label":"B. are university students"},{"value":"C","label":"C. like outdoor practical work"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Most are simply people who enjoy being outdoors and working with their hands".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('16ccb845-84aa-4636-87e1-718dfd8203fa', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'multiple_choice_single', 'The speaker says the railway''s income comes from', '[{"value":"A","label":"A. visitors'' spending"},{"value":"B","label":"B. a government grant"},{"value":"C","label":"C. local businesses"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"We don''t receive any money from the government, so every ticket, and every cup of tea you buy, helps to keep the line running."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4d74f1bc-70be-45c5-893b-bd55449a8e86', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'multiple_choice_single', 'Passengers are warned about', '[{"value":"A","label":"A. the time of the last train"},{"value":"B","label":"B. low bridges"},{"value":"C","label":"C. crowded platforms"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Gareth says "The last train back leaves Kingsmead at half past four, and if you miss it, I''m afraid it''s a very long walk."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('871b1d4c-4d9f-4ef9-b8f7-ccda731541b0', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'matching_features', 'Hartmoor Junction', '[{"value":"A","label":"A. a picnic area"},{"value":"B","label":"B. a gift shop"},{"value":"C","label":"C. a tour of the engine sheds"},{"value":"D","label":"D. a walk to a waterfall"},{"value":"E","label":"E. a signalling museum"},{"value":"F","label":"F. a café in an old carriage"},{"value":"G","label":"G. a children''s playground"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'At Hartmoor Junction "it''s well worth looking into the gift shop on platform one."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('41e349e5-368e-49b8-ad86-821c1cdabc5d', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'matching_features', 'Elder Bridge', '[{"value":"A","label":"A. a picnic area"},{"value":"B","label":"B. a gift shop"},{"value":"C","label":"C. a tour of the engine sheds"},{"value":"D","label":"D. a walk to a waterfall"},{"value":"E","label":"E. a signalling museum"},{"value":"F","label":"F. a café in an old carriage"},{"value":"G","label":"G. a children''s playground"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Inside the signal box "there''s a small museum about railway signalling."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1361f5b2-0122-46d5-8cdb-b5b1714aa91b', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'matching_features', 'Fenley', '[{"value":"A","label":"A. a picnic area"},{"value":"B","label":"B. a gift shop"},{"value":"C","label":"C. a tour of the engine sheds"},{"value":"D","label":"D. a walk to a waterfall"},{"value":"E","label":"E. a signalling museum"},{"value":"F","label":"F. a café in an old carriage"},{"value":"G","label":"G. a children''s playground"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'At Fenley "one of our engineers takes visitors round the engine sheds."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4e162e04-2ef8-4d80-8a48-919797097e17', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'matching_features', 'Copse Halt', '[{"value":"A","label":"A. a picnic area"},{"value":"B","label":"B. a gift shop"},{"value":"C","label":"C. a tour of the engine sheds"},{"value":"D","label":"D. a walk to a waterfall"},{"value":"E","label":"E. a signalling museum"},{"value":"F","label":"F. a café in an old carriage"},{"value":"G","label":"G. a children''s playground"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Copse Halt "is the starting point for a lovely walk to Hartmoor Falls, a waterfall".', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7048c9ac-dbaa-4875-a8cf-88efff01edb6', 'ba262efa-c358-4ce0-af8c-988d3fb917bb', 'matching_features', 'Kingsmead', '[{"value":"A","label":"A. a picnic area"},{"value":"B","label":"B. a gift shop"},{"value":"C","label":"C. a tour of the engine sheds"},{"value":"D","label":"D. a walk to a waterfall"},{"value":"E","label":"E. a signalling museum"},{"value":"F","label":"F. a café in an old carriage"},{"value":"G","label":"G. a children''s playground"}]'::jsonb, ARRAY['F']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The playground moved, but Kingsmead has "our café, which is inside an old first-class carriage".', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', '3a321e63-6b12-4044-85fa-6014ee053e8c', 3, NULL, '/audio/mock/mock-general-2-part-3.mp3', NULL, 'Questions 21-24: choose the correct letter, A, B or C. Questions 25-26: choose TWO letters, A-E, for each question. Questions 27-30: complete the flow chart. Write ONE WORD ONLY for each answer.', '{"title":"Part 3 — Preparing a presentation on handwriting in schools"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'TUTOR: Hello, Maya, Ethan. So you''re presenting next week on handwriting in schools. Where have you got to?
+MAYA: We''ve done most of the reading, and we''ve agreed on the main argument, but we''re not sure how to organise it.
+TUTOR: Let''s hear the argument first, then.
+ETHAN: Basically, a lot of schools are spending less time on handwriting because children use keyboards so much. We wanted to know whether that matters. At first I thought the answer would just be that handwriting is old-fashioned, but the research is much more interesting than that.
+MAYA: Yes. The studies we found suggest that writing by hand helps children learn to read. When they form the letters themselves, they seem to recognise them more quickly.
+TUTOR: That''s the key finding in this area, I''d agree. What was the most useful source you found?
+ETHAN: There was a big review article from last year, which brought together about forty studies. The newspaper articles we found at the start were quite one-sided, and the government report was mostly about funding, so the review was much more helpful.
+TUTOR: Good. Now, I wanted to ask about the study on note-taking at university. Are you including that?
+MAYA: We are. It found that students who took notes by hand remembered the lecture better than those who typed. But we noticed that later researchers couldn''t always get the same result.
+TUTOR: That''s an important point. You should say so. Don''t present it as if it were certain. What do you think the main weakness of the research is in general?
+ETHAN: Most of the studies are very small. Some only had twenty or thirty children.
+MAYA: And they''re nearly all from just two or three countries, so we don''t know if the results apply everywhere.
+TUTOR: Fair. Now, how are you going to begin the presentation? You only have fifteen minutes.
+MAYA: I wanted to start with some statistics about how much time schools spend on handwriting now, but Ethan thinks that''s boring.
+ETHAN: I thought we could ask the audience to write a sentence by hand and then type the same sentence, and see which they remember. It gets everyone involved.
+TUTOR: I like that, though keep it short. Two minutes at most. Then give your statistics afterwards. Now, have you thought about the visual side?
+ETHAN: We''ll have slides, obviously. And we thought we''d bring some examples of children''s writing, from my younger sister''s class. The teacher said that was fine.
+MAYA: And a short video clip of a teacher talking about it. We filmed her ourselves.
+TUTOR: Good. I''d avoid too much text on the slides, though. People read instead of listening.
+MAYA: OK. And we wanted to finish by talking about what schools should actually do.
+TUTOR: That''s a sensible way to end. Now, how are you going to divide the speaking between you? Examiners like to see that both of you have contributed equally.
+ETHAN: We thought Maya would do the first half, because she found most of the research, and I''d do the second half, including the recommendations.
+TUTOR: That''s fine, but make sure the change from one speaker to the other is smooth. Practise it a few times, and time yourselves. Most groups find their first practice runs well over the limit.
+MAYA: We''ll do a full practice on Thursday evening.
+TUTOR: Fine. Let''s go over the order of the whole thing, so it''s clear. You''ll start with the activity.
+ETHAN: Yes, the writing and typing activity. Then the statistics on time spent in schools. Then we explain the main research finding, the link between handwriting and learning to read.
+MAYA: After that, we describe the note-taking study, and then we discuss the limitations of the research, the small size of the studies and so on.
+TUTOR: And then the recommendations?
+ETHAN: Yes, we''ll finish with recommendations for schools. We think the main one is that handwriting shouldn''t be dropped completely, especially in the first years of school.
+TUTOR: And after that, you''ll take questions. Leave at least three minutes for those. People always have something to say about handwriting.
+MAYA: Will do. Thanks for your help.
+TUTOR: You''re welcome. I''m looking forward to it.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4a4a73a5-2f3e-473c-be53-9da0f5f77611', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'multiple_choice_single', 'What does the research suggest about handwriting?', '[{"value":"A","label":"A. It is becoming old-fashioned."},{"value":"B","label":"B. It helps children learn to read."},{"value":"C","label":"C. It improves children''s spelling."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Maya says "writing by hand helps children learn to read."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8c8c9f80-0205-4a3d-8f6a-c8452dcce684', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'multiple_choice_single', 'Which source did the students find most useful?', '[{"value":"A","label":"A. a review article"},{"value":"B","label":"B. newspaper articles"},{"value":"C","label":"C. a government report"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Ethan says the newspaper articles were "one-sided" and the government report was about funding, "so the review was much more helpful."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ba1d0d49-9acb-4e9d-b131-04f3fbb4917a', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'multiple_choice_single', 'What does the tutor say about the note-taking study?', '[{"value":"A","label":"A. It should be left out."},{"value":"B","label":"B. Its uncertainty should be mentioned."},{"value":"C","label":"C. It is the most important study."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The students say later researchers "couldn''t always get the same result", and the tutor says "Don''t present it as if it were certain."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8e26fbef-751d-48e3-83e7-db6a028704e2', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'multiple_choice_single', 'How will the presentation begin?', '[{"value":"A","label":"A. with some statistics"},{"value":"B","label":"B. with an activity for the audience"},{"value":"C","label":"C. with a video clip"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The tutor approves the writing and typing activity and says "give your statistics afterwards."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2959f4e6-64fa-48db-b0ef-5f7cea86051e', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'multiple_choice_multiple', 'Which TWO weaknesses of the research do the students mention?', '[{"value":"A","label":"A. The studies are old."},{"value":"B","label":"B. The studies are small."},{"value":"C","label":"C. The studies come from few countries."},{"value":"D","label":"D. The studies use only older children."},{"value":"E","label":"E. The studies were paid for by companies."}]'::jsonb, ARRAY['B', 'C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Ethan says "Most of the studies are very small", and Maya adds "they''re nearly all from just two or three countries".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('48a76d33-bcc7-47fd-bca8-244f7844285c', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'multiple_choice_multiple', 'Which TWO visual materials will the students use, apart from slides?', '[{"value":"A","label":"A. examples of children''s writing"},{"value":"B","label":"B. a poster"},{"value":"C","label":"C. a video clip"},{"value":"D","label":"D. a handout"},{"value":"E","label":"E. photographs of classrooms"}]'::jsonb, ARRAY['A', 'C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Ethan will "bring some examples of children''s writing", and Maya mentions "a short video clip of a teacher talking about it."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('494ab399-35ab-4e28-b433-acf1c98d4939', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'flowchart_completion', 'Writing and typing activity → statistics on time spent in schools → the link between handwriting and learning to ______', '[]'::jsonb, ARRAY['read', 'reading']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Ethan says they will explain "the link between handwriting and learning to read."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('38ff7863-dca5-4c06-a8ca-cd8d7c698942', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'flowchart_completion', '→ the ______ study', '[]'::jsonb, ARRAY['note-taking', 'notetaking']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Maya says "we describe the note-taking study".', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('04ffb209-8b29-4295-b1b2-fa4869461001', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'flowchart_completion', '→ the ______ of the research', '[]'::jsonb, ARRAY['limitations', 'weaknesses']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"then we discuss the limitations of the research, the small size of the studies and so on."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fe6f61bf-76e2-409a-8b19-d4c2ef8545a2', '3e1d4b89-cb3a-4cb2-8e60-eac92efe6049', 'flowchart_completion', '→ ______ for schools → questions', '[]'::jsonb, ARRAY['recommendations']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Ethan says "we''ll finish with recommendations for schools."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('ddf45397-2589-43ea-a958-3d04be705743', '3a321e63-6b12-4044-85fa-6014ee053e8c', 4, NULL, '/audio/mock/mock-general-2-part-4.mp3', NULL, 'Questions 31-40. Complete the notes below. Write ONE WORD ONLY for each answer.', '{"title":"Part 4 — Lecture: how desert plants survive"}'::jsonb, 3)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_item_group_scripts (group_id, transcript) values ('ddf45397-2589-43ea-a958-3d04be705743', 'LECTURER: Good afternoon, everyone. Today we''re going to look at how plants survive in deserts, which are among the harshest environments on Earth. A desert is usually defined as a place that receives less than two hundred and fifty millimetres of rain a year. But it isn''t only the lack of rain that makes life difficult. Plants also have to cope with intense heat during the day, sometimes freezing temperatures at night, and soils that are often salty and poor in nutrients.
+LECTURER: Broadly speaking, desert plants follow one of three strategies. They either escape the dry conditions, store water, or reduce the amount of water they lose.
+LECTURER: Let''s start with escape. Many desert plants are annuals, meaning they complete their whole life cycle within a single year, and often within a few weeks. Their seeds can lie in the ground for years, waiting. When enough rain finally falls, they germinate, grow, flower and produce new seeds very quickly, before the soil dries out again. This is what produces the famous desert blooms, when an apparently empty landscape is suddenly covered in flowers. Interestingly, the seeds of some species contain a chemical that stops them germinating after a light shower. Only heavy rain washes it away, which ensures that the seeds don''t start growing unless there is enough water for the plant to survive.
+LECTURER: The second strategy is storage, and the best-known example is the cactus. A cactus stores water in its thick stem, which is made of a spongy tissue. Many cacti have folds, rather like the folds of a curtain, which allow the stem to expand when it fills with water after rain and to shrink again during dry periods. A large saguaro cactus in Arizona can take in hundreds of litres of water after a single storm.
+LECTURER: Of course, a plant full of water is an attractive target for thirsty animals. That''s one reason why cacti have spines. But the spines have other functions too. They provide a little shade for the stem, and they trap a thin layer of still air around the plant, which reduces water loss. In fact, the spines are a kind of leaf. By having spines rather than broad leaves, cacti greatly reduce the surface area through which water can escape.
+LECTURER: That brings us to the third strategy, reducing water loss. Plants lose water mainly through tiny pores, mostly on their leaves, which they open to take in carbon dioxide. Many desert plants have a special system: they keep their pores closed during the heat of the day and open them only at night, when it is cooler and the air is more humid. They store the carbon dioxide overnight and use it for photosynthesis the next day. This system is very efficient, although it means the plants tend to grow slowly.
+LECTURER: Other plants have leaves covered with a thick coating of wax, which acts as a barrier to evaporation. And some have leaves covered in fine white hairs. These hairs reflect sunlight, keeping the leaf cooler.
+LECTURER: Roots, too, are important. Desert plants generally have one of two root systems. Some, like the mesquite tree, send a single root very deep into the ground to reach water far below the surface. Mesquite roots have been found more than fifty metres down. Cacti, on the other hand, usually have shallow roots that spread out widely just below the surface, so that they can absorb as much water as possible from even a brief shower before it evaporates.
+LECTURER: Finally, I want to mention why this matters to us. As the climate changes, many farming regions are becoming hotter and drier. Scientists are studying desert plants to understand which of their features could be bred into food crops. Some of the most promising research involves the night-time system I described, which researchers hope to introduce into crops such as rice. It is still at an early stage, but if it succeeds, it could allow food to be grown with far less water.
+LECTURER: For next week, please read the chapter on plants in polar regions, which face a surprisingly similar set of problems.')
+on conflict (group_id) do update set transcript = excluded.transcript;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9db01b64-f817-45a6-9b07-2dc8be311674', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Desert: less than 250 mm of ______ per year', '[]'::jsonb, ARRAY['rain', 'rainfall']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'A desert "receives less than two hundred and fifty millimetres of rain a year."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('937378c6-0d9e-430f-9d3f-2169c6278553', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Desert soils are often salty and poor in ______', '[]'::jsonb, ARRAY['nutrients']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Desert soils "are often salty and poor in nutrients."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6927a59f-82c0-4e95-9d52-d83d67d3fcd0', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Escape: annuals germinate only after heavy rain washes away a ______ in the seed', '[]'::jsonb, ARRAY['chemical']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Some seeds "contain a chemical that stops them germinating after a light shower."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('3fb7dcca-d74f-4a99-86e4-f5d78b4c472f', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Storage: a cactus keeps water in its ______', '[]'::jsonb, ARRAY['stem']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"A cactus stores water in its thick stem".', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('245be7fb-2fd3-449c-b9f3-dd2f2a8e3a18', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Folds allow the stem to ______ after rain', '[]'::jsonb, ARRAY['expand']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The folds "allow the stem to expand when it fills with water after rain".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0a34ef79-1663-414b-a633-227010a269b7', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Spines give the stem some ______ and trap still air', '[]'::jsonb, ARRAY['shade']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The spines "provide a little shade for the stem".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('2d6411c3-e3e7-43bb-ad39-8d2dc3dcf777', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Many desert plants open their pores only at ______', '[]'::jsonb, ARRAY['night']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'They "open them only at night, when it is cooler".', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e092f581-4b1b-4564-a3fa-92443797159f', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Some leaves have a coating of ______ to prevent evaporation', '[]'::jsonb, ARRAY['wax']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Some plants "have leaves covered with a thick coating of wax".', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b2db296a-0b23-4766-9ef9-3f82e2f14974', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'White hairs on leaves reflect ______', '[]'::jsonb, ARRAY['sunlight', 'light']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"These hairs reflect sunlight, keeping the leaf cooler."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('46d403d9-6472-4036-a6b1-e48d129aeb33', 'ddf45397-2589-43ea-a958-3d04be705743', 'note_completion', 'Researchers hope to introduce the night-time system into crops such as ______', '[]'::jsonb, ARRAY['rice']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'Researchers "hope to introduce into crops such as rice."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('281af1c3-9502-4248-9dcb-c3990980195c', '2b46f0f3-5df5-4c11-a16c-67f155d4951f', 'reading', 3600, 40, NULL, 1)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('f205371a-1cc7-44d0-ac3b-d89538501182', '281af1c3-9502-4248-9dcb-c3990980195c', 1, 'KINGSWAY DENTAL PRACTICE — WELCOME TO NEW PATIENTS
+
+Registering
+To register, please complete the medical history form on our website and bring photo identification to your first appointment. Children under 16 must be registered by a parent or guardian.
+
+Opening hours
+The practice is open from 8 am to 6 pm, Monday to Friday, and from 9 am to 1 pm on Saturdays. On Wednesdays we stay open until 8 pm for patients who cannot visit during working hours.
+
+Appointments
+Your first visit will be a full check-up lasting about 40 minutes. After that, most patients are seen every six months. We will send you a text message reminder two days before each appointment.
+
+Cancellations
+If you cannot attend, please let us know at least 24 hours in advance. Patients who miss two appointments without telling us may be removed from our list.
+
+Emergencies
+If you have severe pain or an injury to your teeth, call us as early as possible in the morning; we keep a number of emergency appointments free each day. Outside opening hours, please phone the NHS helpline on 111.
+
+Getting here
+The practice is on the first floor, above the pharmacy. There is a lift for patients who need it. The nearest car park is behind the library on Mount Street.', NULL, NULL, 'Questions 1-7. Answer the questions below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER from the text for each answer.', '{"title":"Section 1 — Kingsway Dental Practice: information for new patients"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('02e93ea4-62f6-4250-a7a7-cec6dc716f33', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'What must new patients bring to their first appointment?', '[]'::jsonb, ARRAY['photo identification', 'photo ID']::text[], 3, 'lenient', true, false, '{}'::jsonb, 'Patients should "bring photo identification to your first appointment."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('bc6b024e-96ed-4ef1-8d04-9ea2b42169d8', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'Who must register patients under the age of 16?', '[]'::jsonb, ARRAY['parent or guardian', 'a parent', 'a guardian']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"Children under 16 must be registered by a parent or guardian."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('09ca6843-f6c7-4f15-8646-e8d8852e79c5', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'On which day is the practice open in the evening?', '[]'::jsonb, ARRAY['Wednesday', 'Wednesdays']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"On Wednesdays we stay open until 8 pm".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('40de6f14-b668-4908-b177-f6c0011878b6', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'How long does the first check-up take?', '[]'::jsonb, ARRAY['40 minutes', 'about 40 minutes']::text[], 3, 'lenient', true, false, '{}'::jsonb, 'The first visit is "a full check-up lasting about 40 minutes."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('1dd5421f-6416-472c-9374-f95a2418cce4', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'How do patients receive a reminder about an appointment?', '[]'::jsonb, ARRAY['text message', 'a text message', 'by text message']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"We will send you a text message reminder two days before each appointment."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('07d53327-a582-43db-8e5c-22b92750d4f5', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'What number should patients phone for help when the practice is closed?', '[]'::jsonb, ARRAY['111']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"Outside opening hours, please phone the NHS helpline on 111."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0de5947b-fe40-46a5-b44c-8d5e328b5161', 'f205371a-1cc7-44d0-ac3b-d89538501182', 'short_answer', 'What is directly below the practice?', '[]'::jsonb, ARRAY['the pharmacy', 'pharmacy', 'a pharmacy']::text[], 3, 'lenient', true, false, '{}'::jsonb, '"The practice is on the first floor, above the pharmacy."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('628a1f09-1d9b-4c3f-8522-6294951c126c', '281af1c3-9502-4248-9dcb-c3990980195c', 2, 'WHERE TO BUY SECOND-HAND FURNITURE IN EASTFORD
+
+A  Second Life Furniture
+Run by a homelessness charity, Second Life sells donated furniture at very low prices, and all profits go to helping people find homes. It will collect unwanted furniture from your home free of charge, but please note that sofas and armchairs must carry a fire safety label.
+
+B  The Oak Barn
+This family business specialises in solid wooden tables, chairs and wardrobes, many of them over a hundred years old. Every item is cleaned and repaired in the workshop behind the shop, and comes with a twelve-month guarantee. Prices are higher than elsewhere, but the quality is excellent.
+
+C  Restore
+Restore takes old furniture and gives it a new look, painting tired chests of drawers in bright colours and covering chairs in new fabric. It also runs Saturday workshops where you can learn to restore a piece of your own.
+
+D  Upstairs Downstairs
+The largest of Eastford''s second-hand shops, Upstairs Downstairs fills two floors of a former cinema. It sells everything from office desks to children''s beds. Delivery within ten miles costs £15, and the shop is open seven days a week.
+
+E  Hartley''s Auction Rooms
+At Hartley''s you will not pay a fixed price: furniture is sold to the highest bidder at auctions every Thursday. Items can be viewed on the Wednesday before each sale, and you can bid online if you cannot attend in person.', NULL, NULL, 'Questions 8-14. Look at the descriptions of five furniture shops, A-E. Which shop matches each statement? You may use any letter more than once.', '{"title":"Section 1 — Second-hand furniture in Eastford"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e1f97c45-71e6-4d42-b8b1-2bc955894e7b', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'This shop gives its profits to people in need.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'At Second Life "all profits go to helping people find homes."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0fa4d149-1311-4956-8f73-11dc3cdeebd8', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'Customers can learn how to improve furniture themselves.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Restore "runs Saturday workshops where you can learn to restore a piece of your own."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('18c44b0b-e135-488d-ade0-91bcdcb69cb2', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'Prices are decided by buyers competing with each other.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['E']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'At Hartley''s "furniture is sold to the highest bidder".', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('17b84f9b-69de-49ab-8956-5bec2cdfd9a8', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'This shop offers a guarantee on what it sells.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Every item at The Oak Barn "comes with a twelve-month guarantee."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fcc22ceb-4a9e-4501-b3b8-065dc9e1ff31', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'This shop is open every day.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Upstairs Downstairs is "open seven days a week."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('8e512acb-c73f-4364-8c8c-bd8dcfe8dcfb', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'This shop will take away furniture you no longer want.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Second Life "will collect unwanted furniture from your home free of charge".', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('41e3c293-0c87-430b-8e17-1f0fb199bbc8', '628a1f09-1d9b-4c3f-8522-6294951c126c', 'matching_information', 'This shop''s building was once used for a different purpose.', '[{"value":"A","label":"A. Second Life Furniture"},{"value":"B","label":"B. The Oak Barn"},{"value":"C","label":"C. Restore"},{"value":"D","label":"D. Upstairs Downstairs"},{"value":"E","label":"E. Hartley''s Auction Rooms"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Upstairs Downstairs "fills two floors of a former cinema."', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('33358791-ea16-4490-8d92-f9a833cae1f8', '281af1c3-9502-4248-9dcb-c3990980195c', 3, 'BRAMLEY INSURANCE — VOLUNTEERING LEAVE POLICY
+
+Bramley Insurance encourages all staff to take part in volunteering in their local community. To support this, every employee is entitled to two days of paid volunteering leave each year, in addition to their normal holiday allowance. Part-time staff receive the same entitlement in proportion to the hours they work.
+
+The leave can be used for any registered charity, school or community group. It cannot be used for activities connected with a political party, or for work that benefits a member of your own family.
+
+Volunteering leave may be taken as whole days or as half days. Requests should be made through the HR system at least two weeks in advance, and must be agreed by your line manager, who will consider the needs of your team. Managers should not refuse a request without a good business reason.
+
+Unused volunteering leave cannot be carried over into the next year, and it cannot be exchanged for payment.
+
+In addition to individual leave, each department may organise one team volunteering day a year. Recent team days have included painting a community centre and helping at a food bank. Ideas for team days should be sent to the Community Committee, which meets every two months.
+
+After your volunteering, we would love to hear about it. Photographs and short reports can be sent to the internal communications team for inclusion in the staff magazine.', NULL, NULL, 'Questions 15-21. Read the text below. Do the following statements agree with the information given? Write TRUE, FALSE or NOT GIVEN.', '{"title":"Section 2 — Volunteering leave: a guide for employees"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d06cabf9-69b4-4824-a2aa-5a364e5dffd3', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'Volunteering leave is taken from employees'' normal holiday allowance.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The leave is "in addition to their normal holiday allowance."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a15b7a69-9f3e-4a4f-8369-c9591d5bc8da', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'Part-time employees are not entitled to volunteering leave.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Part-time staff receive the same entitlement in proportion to the hours they work."', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6fa11d57-1a86-4446-bfca-8d6d032a3770', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'Staff may use the leave to help a relative.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['FALSE']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'It cannot be used "for work that benefits a member of your own family."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e648f8ac-7dca-40eb-a93c-16a8cb8dbfb2', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'Employees can take volunteering leave in half days.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Volunteering leave may be taken as whole days or as half days."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('db93b5ab-654f-4758-9765-027b0ad59eda', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'Most employees use all of their volunteering leave each year.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The text says unused leave "cannot be carried over into the next year" but does not say how many staff use it all.', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5c31030b-33c9-4ee5-84dc-f89387ea9268', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'Each department can organise one team volunteering day per year.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['TRUE']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"each department may organise one team volunteering day a year."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('9adffc84-ef38-4987-bd9b-52502ab9c090', '33358791-ea16-4490-8d92-f9a833cae1f8', 'true_false_notgiven', 'The Community Committee chooses which charities receive company donations.', '[{"value":"TRUE","label":"TRUE"},{"value":"FALSE","label":"FALSE"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The committee receives "Ideas for team days" and "meets every two months"; nothing is said about donations.', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('9e59864b-b334-4d1c-9c18-6579b07ed495', '281af1c3-9502-4248-9dcb-c3990980195c', 4, 'PREPARING FOR YOUR ANNUAL PERFORMANCE REVIEW
+
+Your annual review is a chance to look back at your achievements over the past year and to plan for the year ahead. It is a two-way conversation, not a test, and it works best when both you and your manager have prepared for it.
+
+Before the meeting
+About two weeks before your review, you will receive a self-assessment form. Use it to list your main achievements and any difficulties you have faced. It is helpful to include evidence, such as feedback from customers or figures that show the results of your work. Return the form to your manager at least three days before the meeting, so that they have time to read it.
+
+During the meeting
+Your manager will discuss your self-assessment and share their own view of your performance. Try to listen to any criticism calmly; if you disagree, explain why, giving examples. The meeting is also the right time to raise any concerns about your workload.
+
+Setting objectives
+Together, you will agree three to five objectives for the coming year. Good objectives are specific and measurable, so that both of you will know at the end of the year whether they have been achieved. You should also discuss any training that would help you to meet them.
+
+After the meeting
+Your manager will write a summary of the discussion and send it to you within ten working days. Read it carefully, and if you think anything important has been left out, you can add your own comments before signing it. A copy is then kept on your personnel file.', NULL, NULL, 'Questions 22-27. Complete the notes below. Write ONE WORD ONLY from the text for each answer.', '{"title":"Section 2 — Getting the most from your annual review"}'::jsonb, 3)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d4f5c80a-9849-4050-9a5e-d87d8cee4fee', '9e59864b-b334-4d1c-9c18-6579b07ed495', 'note_completion', 'The review is a two-way conversation, not a ______.', '[]'::jsonb, ARRAY['test']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'The review "is a two-way conversation, not a test".', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5965533d-e51e-46fe-b177-6db22d22c4b4', '9e59864b-b334-4d1c-9c18-6579b07ed495', 'note_completion', 'On the self-assessment form, include ______ such as customer feedback.', '[]'::jsonb, ARRAY['evidence']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"It is helpful to include evidence, such as feedback from customers".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('a0f27ba3-ddf7-42d8-8b4d-2cc88333c02e', '9e59864b-b334-4d1c-9c18-6579b07ed495', 'note_completion', 'If you disagree with criticism, give ______.', '[]'::jsonb, ARRAY['examples']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"if you disagree, explain why, giving examples."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6071c98d-7a72-4a0b-8584-6f4e18d69dd3', '9e59864b-b334-4d1c-9c18-6579b07ed495', 'note_completion', 'The meeting is a good time to discuss concerns about your ______.', '[]'::jsonb, ARRAY['workload']::text[], 1, 'lenient', true, false, '{}'::jsonb, 'It is "the right time to raise any concerns about your workload."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('d6014b08-3c15-48ca-9764-d39c68fee9f1', '9e59864b-b334-4d1c-9c18-6579b07ed495', 'note_completion', 'Objectives should be specific and ______.', '[]'::jsonb, ARRAY['measurable']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"Good objectives are specific and measurable".', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('5a6ae1fd-cacd-40e2-960a-e83bdc45307c', '9e59864b-b334-4d1c-9c18-6579b07ed495', 'note_completion', 'Before signing the summary, you can add your own ______.', '[]'::jsonb, ARRAY['comments']::text[], 1, 'lenient', true, false, '{}'::jsonb, '"you can add your own comments before signing it."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', '281af1c3-9502-4248-9dcb-c3990980195c', 5, 'THE PAPERBACK REVOLUTION
+
+It is hard today to imagine a time when buying a book was a luxury. Yet in Britain in the early 1930s, a new novel in hardback cost around seven shillings and sixpence, a significant part of a working person''s weekly wage. Most people who read regularly borrowed books from libraries or bought cheap magazines. Serious literature, for the most part, belonged to those who could afford it.
+
+Cheap books were not new. Throughout the nineteenth century, publishers had produced inexpensive editions of popular novels, often printed on poor paper and sold at railway stations. But these were widely regarded as disposable and rather vulgar, and respected authors were reluctant to appear in them. What was missing was a cheap book that people would be proud to own.
+
+The story usually told about how this changed begins on a railway platform. In 1934 the publisher Allen Lane was returning to London after visiting the crime writer Agatha Christie in Devon. Looking for something to read on the journey, he found nothing at the station bookstall except expensive hardbacks and cheap magazines. He decided there and then that good books should be available at the price of a packet of cigarettes. Whether or not the story is entirely true, and Lane enjoyed telling it, the business he founded the following year, Penguin Books, transformed reading in Britain.
+
+The first ten Penguins appeared in July 1935, priced at sixpence each. They included novels by Ernest Hemingway and Agatha Christie, and they had a simple, striking design: bands of colour, with orange for fiction and green for crime, and a small drawing of a penguin. The other publishers were sceptical. To make a profit at sixpence, Lane needed to sell around seventeen thousand copies of each title, a figure most people in the trade thought impossible. The breakthrough came when the chain store Woolworths placed an order for sixty-three thousand copies. Within a year, Penguin had sold three million books.
+
+Not everyone was pleased. Some authors feared that cheap books would reduce sales of their hardbacks and lower their income. George Orwell, reviewing some of the early titles, admitted that they were "splendid value for sixpence", but he worried that if other publishers followed Penguin''s example, bookshops would be flooded with cheap books, and authors and publishers would earn less. In fact, the opposite seems to have happened. By creating millions of new readers, the paperback expanded the market for books of every kind.
+
+Lane''s most ambitious idea was Pelican, a series of non-fiction paperbacks launched in 1937 on subjects ranging from economics to astronomy. Critics predicted that ordinary readers would never buy serious books about science or history. They were wrong. Pelicans sold in huge numbers, and for many people who had left school at fourteen, they offered the only education they would receive in such subjects. The literary critic Richard Hoggart, who grew up in a poor district of Leeds, later described how these books opened up a world of ideas that would otherwise have been closed to him.
+
+The Second World War, which might have been expected to ruin a business that depended on paper, in fact strengthened Penguin''s position. Paper was rationed according to how much each publisher had used before the war, and Penguin, having printed such large quantities, received a generous share. Soldiers wanted books that were light and fitted in a pocket, and Penguin produced special editions for the armed forces.
+
+After the war, the paperback became a permanent part of British life. Penguin continued to grow, and other publishers, many of whom had once dismissed the idea, launched paperback lists of their own. By the 1960s it was normal for a successful novel to appear in paperback a year or so after the hardback edition, and for students to buy their set texts in cheap paperback form rather than borrowing them from a library.
+
+In the United States, paperbacks followed a somewhat different path. There the market was dominated by companies that sold through newsagents and drugstores, and they competed with eye-catching, often sensational covers. Kurt Enoch, a German-born publisher who ran Penguin''s American branch before founding his own company, argued that a cheap book could be sold in the same way as any other mass-market product without lowering its quality, and he published serious literature with covers designed to compete for attention on crowded shelves.
+
+It would be wrong to give Lane all the credit for what followed. Changes in printing technology, rising literacy and the growth of free secondary education all played their part, and in Germany, the publisher Albatross had produced attractive paperbacks, with colour-coded covers, several years before Penguin. But Lane combined these elements at the right moment, and he understood something important: that people would buy serious books if they were cheap, well designed and easy to find. In my view, that insight did more to spread reading than any government policy of the time.', NULL, NULL, 'Questions 28-31: choose the correct letter, A, B, C or D. Questions 32-36: do the following statements agree with the views of the writer? Write YES, NO or NOT GIVEN. Questions 37-40: match each statement with the correct person, A-D.', '{"title":"Section 3 — The paperback revolution"}'::jsonb, 4)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('0c74b237-e854-48c4-8fa4-34ac030d146a', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'multiple_choice_single', 'According to the writer, what was the problem with nineteenth-century cheap books?', '[{"value":"A","label":"A. They were sold only at railway stations."},{"value":"B","label":"B. They were not seen as worth keeping."},{"value":"C","label":"C. They contained mainly crime stories."},{"value":"D","label":"D. They were too expensive for most people."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Cheap editions "were widely regarded as disposable and rather vulgar"; what was missing was "a cheap book that people would be proud to own."', 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e9fd6bea-92d5-421a-8be6-861b446d8bc0', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'multiple_choice_single', 'What does the writer suggest about the story of Lane at the railway station?', '[{"value":"A","label":"A. It was invented by Agatha Christie."},{"value":"B","label":"B. It may not be completely accurate."},{"value":"C","label":"C. It happened after Penguin was founded."},{"value":"D","label":"D. It is not widely known."}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The writer says "Whether or not the story is entirely true, and Lane enjoyed telling it".', 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c4657be9-361b-4541-b7f3-e6b6cea627f1', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'multiple_choice_single', 'What made Penguin''s early success possible?', '[{"value":"A","label":"A. support from other publishers"},{"value":"B","label":"B. a large order from a chain store"},{"value":"C","label":"C. an advertising campaign"},{"value":"D","label":"D. a low price for paper"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"The breakthrough came when the chain store Woolworths placed an order for sixty-three thousand copies."', 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('63adf63a-8878-483c-93dc-a5cb14b6f4d8', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'multiple_choice_single', 'Why did the Second World War help Penguin?', '[{"value":"A","label":"A. Paper was shared out according to pre-war use."},{"value":"B","label":"B. Soldiers were given books free of charge."},{"value":"C","label":"C. Other publishers stopped producing paperbacks."},{"value":"D","label":"D. The government paid for special editions."}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"Paper was rationed according to how much each publisher had used before the war, and Penguin, having printed such large quantities, received a generous share."', 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('f216a0e9-2dff-4630-b887-ebdbbbddd9a7', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'yes_no_notgiven', 'In the early 1930s, a new hardback novel was expensive for working people.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['YES']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'A hardback cost "a significant part of a working person''s weekly wage."', 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('7da43e9c-e11b-41f4-b0e9-694430e7c981', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'yes_no_notgiven', 'Orwell''s fears about the effect of cheap books turned out to be justified.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NO']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The writer says "In fact, the opposite seems to have happened."', 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e0ace8bb-600b-4079-97aa-ec8d4892cd5a', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'yes_no_notgiven', 'Pelican books were more profitable than Penguin''s fiction titles.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NOT GIVEN']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The writer says "Pelicans sold in huge numbers" but makes no comparison of profits with fiction.', 6)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('e441b2c0-5076-438a-ae7e-495c4f3f9e34', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'yes_no_notgiven', 'Penguin was the first publisher to use colour-coded paperback covers.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['NO']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'The writer notes that "the publisher Albatross had produced attractive paperbacks, with colour-coded covers, several years before Penguin."', 7)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('fe47d688-5390-447e-9bf3-acd770ab3ca5', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'yes_no_notgiven', 'Lane''s understanding of readers was more important in spreading reading than government policy.', '[{"value":"YES","label":"YES"},{"value":"NO","label":"NO"},{"value":"NOT GIVEN","label":"NOT GIVEN"}]'::jsonb, ARRAY['YES']::text[], 0, 'lenient', true, false, '{}'::jsonb, '"In my view, that insight did more to spread reading than any government policy of the time."', 8)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('4a874dec-153a-41b6-be6d-632c159e42d9', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'matching_features', 'believed that good books should cost no more than an everyday item', '[{"value":"A","label":"A. Allen Lane"},{"value":"B","label":"B. George Orwell"},{"value":"C","label":"C. Kurt Enoch"},{"value":"D","label":"D. Richard Hoggart"}]'::jsonb, ARRAY['A']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Lane "decided there and then that good books should be available at the price of a packet of cigarettes."', 9)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('835aab36-ec8f-40da-ab24-5a54a6efd563', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'matching_features', 'thought cheap books might reduce what writers earn', '[{"value":"A","label":"A. Allen Lane"},{"value":"B","label":"B. George Orwell"},{"value":"C","label":"C. Kurt Enoch"},{"value":"D","label":"D. Richard Hoggart"}]'::jsonb, ARRAY['B']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Orwell "worried that if other publishers followed Penguin''s example" then "authors and publishers would earn less."', 10)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('881c7629-3987-4f00-a00c-0205016fd1e9', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'matching_features', 'said that inexpensive books could be marketed like other popular products', '[{"value":"A","label":"A. Allen Lane"},{"value":"B","label":"B. George Orwell"},{"value":"C","label":"C. Kurt Enoch"},{"value":"D","label":"D. Richard Hoggart"}]'::jsonb, ARRAY['C']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Enoch "argued that a cheap book could be sold in the same way as any other mass-market product without lowering its quality".', 11)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b8249b01-675d-45c3-ba14-4be19eddcb93', 'abac7e0e-f23a-4d6c-8b6a-881e1cdcb7b1', 'matching_features', 'described how cheap non-fiction gave him access to new ideas', '[{"value":"A","label":"A. Allen Lane"},{"value":"B","label":"B. George Orwell"},{"value":"C","label":"C. Kurt Enoch"},{"value":"D","label":"D. Richard Hoggart"}]'::jsonb, ARRAY['D']::text[], 0, 'lenient', true, false, '{}'::jsonb, 'Hoggart "later described how these books opened up a world of ideas that would otherwise have been closed to him."', 12)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('b8911036-8c94-45c9-a0b6-361055ce840f', '2b46f0f3-5df5-4c11-a16c-67f155d4951f', 'writing', 3600, 2, NULL, 2)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('0f001436-760d-41e3-af38-721d226a3eca', 'b8911036-8c94-45c9-a0b6-361055ce840f', 1, 'A close friend has invited you to stay with them next month, but you have just been asked to look after a neighbour''s pet while they are away.
+
+Write a letter to your friend. In your letter:
+  •  thank your friend for the invitation
+  •  explain why you cannot come on the planned dates
+  •  suggest another time when you could visit
+
+Write in an informal style.
+
+Begin your letter as follows:
+
+Dear ...,', NULL, NULL, 'You should spend about 20 minutes on this task. Write at least 150 words. You do NOT need to write any addresses.', '{"title":"Task 1"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('388fcbcc-5b28-46d1-aae7-d70b902a207c', '0f001436-760d-41e3-af38-721d226a3eca', 'short_answer', 'Task 1 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('4a53e0aa-2bef-475e-a0f2-9f8c854bd118', 'b8911036-8c94-45c9-a0b6-361055ce840f', 2, 'These days many people buy most of their goods online instead of from local shops.
+
+Do the advantages of this development outweigh the disadvantages?
+
+Give reasons for your answer and include any relevant examples from your own knowledge or experience.', NULL, NULL, 'You should spend about 40 minutes on this task. Write at least 250 words.', '{"title":"Task 2"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c8c4f47c-e0dd-4dae-bae3-40cf51e9bd64', '4a53e0aa-2bef-475e-a0f2-9f8c854bd118', 'short_answer', 'Task 2 response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)
+values ('7d56f3ed-e581-45ac-b8fb-d8e535f69b87', '2b46f0f3-5df5-4c11-a16c-67f155d4951f', 'speaking', 840, 12, NULL, 3)
+on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('b9b67f2d-3138-48b9-9c96-e71a94574197', '7d56f3ed-e581-45ac-b8fb-d8e535f69b87', 1, NULL, NULL, NULL, 'The examiner asks about yourself, your home, work or studies and other familiar topics. 4-5 minutes.', '{"title":"Part 1 — Introduction and familiar topics"}'::jsonb, 0)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('11779317-a976-4aab-938b-9adfe5c1c523', 'b9b67f2d-3138-48b9-9c96-e71a94574197', 'short_answer', 'Let''s talk about food. What kind of food do you usually eat at home?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('c5d1974a-76cc-4cb6-800f-8cdf61feb89d', 'b9b67f2d-3138-48b9-9c96-e71a94574197', 'short_answer', 'Do you enjoy cooking? Why or why not?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('cf42cfb4-6aaa-4c63-9102-57545d710765', 'b9b67f2d-3138-48b9-9c96-e71a94574197', 'short_answer', 'Is there any food you disliked as a child but enjoy now?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('915fba4c-067d-4882-9384-285a2eb59aa0', 'b9b67f2d-3138-48b9-9c96-e71a94574197', 'short_answer', 'Now let''s talk about the weather. What is the weather usually like where you live?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('564a196e-729f-4918-90bf-9d1219ee206d', 'b9b67f2d-3138-48b9-9c96-e71a94574197', 'short_answer', 'Does the weather affect how you feel?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('dfddafc4-a618-44fa-9a22-ffa3e058f627', 'b9b67f2d-3138-48b9-9c96-e71a94574197', 'short_answer', 'What do you like to do on a rainy day?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 5)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('6f016ce8-5dba-4d26-93cc-c208eea12b12', '7d56f3ed-e581-45ac-b8fb-d8e535f69b87', 2, 'Describe a journey you remember well.
+
+You should say:
+  •  where you were going
+  •  who you travelled with
+  •  how you travelled
+
+and explain why you remember this journey so well.', NULL, NULL, 'You have one minute to prepare. You may make notes. Then talk for one to two minutes. The examiner will tell you when to stop.', '{"title":"Part 2 — Individual long turn"}'::jsonb, 1)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('22b292ee-3922-4fbd-85ed-9814ab2708ac', '6f016ce8-5dba-4d26-93cc-c208eea12b12', 'short_answer', 'Long turn response', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)
+values ('f0030f9c-7dec-4307-aad8-ce27174c0184', '7d56f3ed-e581-45ac-b8fb-d8e535f69b87', 3, NULL, NULL, NULL, 'The examiner asks further questions connected to the topic in Part 2. 4-5 minutes.', '{"title":"Part 3 — Two-way discussion"}'::jsonb, 2)
+on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('ea87deac-0e66-4e99-85a1-ae94eee16be9', 'f0030f9c-7dec-4307-aad8-ce27174c0184', 'short_answer', 'Why do some people enjoy long journeys while others find them tiring?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 0)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('b1005c97-db25-45b4-aff7-d3d1832009ed', 'f0030f9c-7dec-4307-aad8-ce27174c0184', 'short_answer', 'How has public transport changed in your country in recent years?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 1)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('6df62488-89af-48c8-afd6-a26271037113', 'f0030f9c-7dec-4307-aad8-ce27174c0184', 'short_answer', 'Should governments spend more money on trains or on roads? Why?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 2)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('de663606-7038-40f5-adb2-8993e312e5df', 'f0030f9c-7dec-4307-aad8-ce27174c0184', 'short_answer', 'Do you think people travel too much these days?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 3)
+on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
+
+insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)
+values ('623381e4-195e-4602-90db-85a0de6a3ca2', 'f0030f9c-7dec-4307-aad8-ce27174c0184', 'short_answer', 'How might the way people travel change in the next twenty years?', '[]'::jsonb, '{}', 0, 'lenient', true, false, '{}'::jsonb, NULL, 4)
 on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;
 
 commit;
