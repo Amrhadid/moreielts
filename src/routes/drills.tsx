@@ -9,7 +9,7 @@ import { useI18n } from "~/lib/i18n";
 import { useDrillHistory, useTypeAccuracy } from "~/lib/practice-queries";
 import { useQuestionTypes } from "~/lib/queries";
 
-export const Route = createFileRoute("/practice")({ component: PracticeRoute });
+export const Route = createFileRoute("/drills")({ component: PracticeRoute });
 
 function PracticeRoute() {
   return (

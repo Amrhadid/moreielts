@@ -127,8 +127,8 @@ function DrillPage() {
             </>
           )}
           <div className="mt-4">
-            <Link to="/practice" className="text-sm font-medium text-brand-700">
-              Back to practice
+            <Link to="/drills" className="text-sm font-medium text-brand-700">
+              Back to drills
             </Link>
           </div>
         </CardBody>
@@ -144,7 +144,7 @@ function DrillPage() {
     <>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <Link to="/practice" className="text-xs text-muted hover:text-ink">
+          <Link to="/drills" className="text-xs text-muted hover:text-ink">
             ← Practice
           </Link>
           <h1 className="text-xl font-semibold tracking-tight">{label}</h1>
@@ -153,7 +153,7 @@ function DrillPage() {
           <div className="flex gap-2">
             <Button onClick={begin}>Another set</Button>
             <Button asChild variant="outline">
-              <Link to="/practice">Back to practice</Link>
+              <Link to="/drills">Back to drills</Link>
             </Button>
           </div>
         )}

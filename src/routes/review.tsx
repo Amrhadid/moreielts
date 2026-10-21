@@ -85,7 +85,7 @@ function ReviewPage() {
                 Nothing is due for review. Drill a question type to keep improving.
               </p>
               <Button asChild className="mt-4">
-                <Link to="/practice">Go to practice</Link>
+                <Link to="/drills">Go to drills</Link>
               </Button>
             </CardBody>
           </Card>

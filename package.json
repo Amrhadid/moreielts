@@ -16,7 +16,8 @@
     "sql:bundle": "bash scripts/bundle-sql.sh",
     "seed:validate": "esbuild scripts/generate-seed.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/seed.mjs --log-level=error && node node_modules/.cache/seed.mjs --check",
     "sitemap": "esbuild scripts/generate-sitemap.ts --bundle --platform=node --format=esm --alias:~=./src --outfile=node_modules/.cache/sitemap.mjs --log-level=error && node node_modules/.cache/sitemap.mjs",
-    "test:e2e": "node tests/e2e/smoke.mjs"
+    "test:e2e": "node tests/e2e/smoke.mjs",
+    "practice:audio": "esbuild scripts/generate-practice-audio.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/practice-audio.mjs --log-level=error && node node_modules/.cache/practice-audio.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

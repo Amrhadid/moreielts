@@ -42,8 +42,8 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `VITE_SUPABASE_URL` | client build | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | client build | Publishable key. Safe to ship — RLS is what protects the data |
+| `VITE_SUPABASE_URL` | client build | Supabase project URL. Defaults to the shared MoreTOEFL project (`nlsuvapjkznatczghvay`) when unset; a stale value here points production at the wrong project |
+| `VITE_SUPABASE_ANON_KEY` | client build | Publishable key. Safe to ship — RLS is what protects the data. Defaults to the shared project's key when unset |
 | `SUPABASE_URL` | Edge Functions | Injected by Supabase |
 | `SUPABASE_ANON_KEY` | Edge Functions | Injected by Supabase. Used to resolve the caller from their JWT |
 | `SUPABASE_SERVICE_ROLE_KEY` | Edge Functions | Injected by Supabase. Bypasses RLS; the only writer of marks and scores. **Never expose to the client** |
@@ -63,7 +63,34 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 | `STRIPE_PRICE_MONTH`, `STRIPE_PRICE_QUARTER` | Edge Functions | Stripe Price ids for the 30- and 90-day Premium passes |
 
 Google OAuth is configured in the Supabase dashboard (Authentication →
-Providers), with `<site>/auth/callback` as the redirect URL.
+Providers). Because the project is shared with MoreTOEFL, its Site URL is
+moretoefl.com, and Supabase only sends a sign-in back to a `redirectTo` that
+matches **Authentication → URL Configuration → Redirect URLs**. Every
+MoreIELTS origin must therefore be listed there (`https://moreielts.com/**`,
+`https://www.moreielts.com/**`, `http://localhost:3000/**`); otherwise Google
+returns the learner to moretoefl.com, where the PKCE verifier stored by this
+site is not found and the sign-in fails. Nothing changes on the Google Cloud
+side: the authorised redirect URI is the project's
+`/auth/v1/callback`, which both sites share. `/auth/callback` surfaces any
+provider or exchange error on `/login` rather than bouncing silently.
+
+## Deployment
+
+The site is a Cloudflare Worker (`wrangler.jsonc`) built by Cloudflare's Git
+integration from the `Amrhadid/moreielts` repository. **Production builds from
+`main`**; every other branch gets a preview build that is never promoted on its
+own. Build variables and secrets (Settings → Builds) must hold the shared
+Supabase project:
+
+```
+VITE_SUPABASE_URL=https://nlsuvapjkznatczghvay.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_7ehXXiaMvUlfBQX_zMbDbw_ppOo0lxc
+```
+
+Both are baked into the bundle at build time, so changing them needs a new
+deployment, and the code falls back to exactly these values when they are
+unset. The Worker's runtime secrets are not used by the app: Edge Function
+secrets belong in the Supabase project.
 
 ## Stack
 
@@ -97,6 +124,7 @@ supabase/
     0004_attempt_rpcs.sql        Server-authoritative timing, redeem_code
     0005_seed_question_types.sql The 15 question types
     0006_seed_band_conversion.sql Raw score -> band, versioned
+    0007_practice_results.sql    ielts_practice_results, the practice history
   functions/
     _shared/               CORS, service client, rate limit, Anthropic client
     submit-attempt/        Marks responses and writes every score
@@ -108,6 +136,7 @@ supabase/
 
 scripts/
   generate-seed.ts         Emits supabase/seed.sql from seed-content/
+  generate-practice-audio.ts  Listening practice MP3 from its transcript
   seed-content/            The authored test content (3 passages, 4 parts, …)
   test-db.sh               Scratch DB -> migrations -> seed -> RLS suite
   bundle-sql.sh            Concatenates migrations + seed for the SQL editor
@@ -115,7 +144,9 @@ scripts/
                            to a real project
 
 src/
+  data/practice/           The practice sets: 5 items per skill, tested
   lib/
+    practice/              AI client (claude-completion), graders, history
     answer-check.ts        Pure marking rules. Unit tested (59 cases)
     scoring.ts             Pure band maths. Unit tested (37 cases)
     supabase.ts            Browser client (anon key only)
@@ -125,6 +156,7 @@ src/
     adapters.ts            Database rows -> the shapes the components consume
   types/                   content.ts (UI shapes), database.ts (row shapes)
   components/
+    practice/              Practice runners, band card, Task 1 chart/table
     ui/                    Radix-backed primitives
     renderers/             The four question renderers + renderer dispatch
     layout/                Header, Sidebar, Footer, AppShell
@@ -171,7 +203,9 @@ existing renderer, nothing else changes.
 |---|---|
 | `/login`, `/signup`, `/auth/callback` | Email + password and Google OAuth |
 | `/` | Dashboard — target vs estimated band, resume card, recent attempts |
-| `/practice` | Question types ranked by your accuracy; starts a drill |
+| `/practice` | Practice — the four skills, five AI-corrected items each, recent results |
+| `/practice/$section` | Practice runner for `listening`, `reading`, `writing` or `speaking` |
+| `/drills` | Question types ranked by your accuracy; starts a drill |
 | `/drill/$typeCode` | One part's questions of a type, server-marked, explanations and script |
 | `/review` | Mistake notebook — Leitner spaced repetition of wrong answers |
 | `/writing-lab` | Essays outside a mock: background AI grading, corrections, band+1 rewrite, rewrite loop |
@@ -254,6 +288,43 @@ Per-question switches (`spelling_policy`, `accepts_plural`, `case_sensitive`,
 The criterion bands themselves come from Claude, but every band *calculation* is
 done here rather than taken from the model.
 
+## Practice sets and AI correction
+
+`/practice` is a self-contained drill module: five items per skill, authored
+in `src/data/practice/` and shipped with the build, so it needs no published
+test form and no table. Each section is corrected by AI:
+
+| Section | Content | Marking | AI step |
+|---|---|---|---|
+| Listening | One Part 1 telephone conversation (`public/audio/practice/*.mp3`), 4 form-completion + 1 multiple-choice | `answer-check.ts`, instantly in the browser | Explains every answer from the transcript, with a verbatim quote and a technique tip |
+| Reading | One Academic passage, True/False/Not Given + multiple choice + sentence completion | `answer-check.ts`, instantly in the browser | Explains every answer from the passage, with the locating quote |
+| Writing | Two Task 1 data prompts (SVG bar chart, table) and three Task 2 essays | — | Four criteria in half bands with quotes as evidence; the task band is `writingTaskBand()` |
+| Speaking | Two Part 1 questions, a Part 2 cue card with its preparation minute, two Part 3 questions | Web Speech API transcript, editable before grading | Four criteria in half bands with quotes; the band is `speakingBand()` |
+
+The AI step calls the **`claude-completion` Edge Function already deployed and
+keyed on the Supabase project MoreIELTS shares with MoreTOEFL**
+(`nlsuvapjkznatczghvay`) — the same wired path MoreTOEFL's own drills use —
+via `src/lib/practice/ai.ts`. The function is maintained in the MoreTOEFL
+repository; this repo only calls it, with a signed-in learner's token. The
+examiner prompts in `src/lib/practice/grading.ts` are the same briefs as
+`grade-writing` and `grade-speaking`; strict JSON is required and every band is
+validated as 0–9 in half steps before it is shown. The Anthropic key never
+leaves the function environment.
+
+Listening audio is generated from the transcript in
+`src/data/practice/listening.ts` by `npm run practice:audio` (OpenAI speech,
+one voice per speaker, joined with ffmpeg) and committed, so it needs
+re-running only when a line changes. The transcript is revealed after the
+answers are checked.
+
+Every finished item is inserted into `public.ielts_practice_results`
+(migration `0007`: own rows only under RLS, `select` and `insert` for
+`authenticated`, no client update or delete) and mirrored into `localStorage`
+as an offline fallback; "Recent practice" on `/practice` reads the table first.
+The table is namespaced `ielts_` because it lives in the shared project's
+schema next to MoreTOEFL's tables, where it has been applied as migration
+`ielts_practice_results`.
+
 ## AI grading
 
 `grade-writing` and `grade-speaking` call Claude with criterion-specific prompts
@@ -277,8 +348,8 @@ reach the browser.
 
 ## Not built
 
-Cloudflare Stream video, payments, and course content. Speech-to-text for
-speaking recordings is stubbed as described above.
+Cloudflare Stream video and course content. Speech-to-text for
+speaking recordings in the mock test are transcribed on the server (Whisper) by the grading worker; Speaking *practice* transcribes in the browser with the Web Speech API.
 
 ## Background grading, audio and payments (migrations 0007–0010)
 

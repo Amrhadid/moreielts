@@ -14,7 +14,8 @@ export interface NavItem {
 export const PRIMARY_NAV: NavItem[] = [
   { label: "My Tests", labelKey: "nav.home", to: "/", icon: "home", blurb: "Dashboard and progress" },
   { label: "Study plan", labelKey: "nav.plan", to: "/enhance", inHeader: true, icon: "calendar", blurb: "Today's tasks and weak spots" },
-  { label: "Practice", labelKey: "nav.practice", to: "/practice", inHeader: true, icon: "target", blurb: "Drill one question type" },
+  { label: "Practice", labelKey: "nav.practice", to: "/practice", inHeader: true, icon: "target", blurb: "Short sets with AI correction" },
+  { label: "Drills", labelKey: "nav.drills", to: "/drills", icon: "sparkles", blurb: "Drill one question type" },
   { label: "Review", labelKey: "nav.review", to: "/review", icon: "repeat", blurb: "Your mistake notebook" },
   { label: "Writing lab", labelKey: "nav.writing", to: "/writing-lab", icon: "pen", blurb: "Essays with AI feedback" },
   { label: "Vocabulary", labelKey: "nav.vocab", to: "/vocabulary", icon: "language", blurb: "Topic words for IELTS" },
