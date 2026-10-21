@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" width="720" height="460" font-family="Arial, Helvetica, sans-serif">
+<rect width="720" height="460" fill="#ffffff"/>
+<text x="360.0" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#1f2933">How people travelled to work in Northbridge, 2005 and 2025</text>
+<text x="18" y="220.0" transform="rotate(-90 18 220.0)" text-anchor="middle" font-size="13" fill="#3e4c59">Percentage of workers (%)</text>
+<line x1="70" y1="380.0" x2="690" y2="380.0" stroke="#e4e7eb"/>
+<text x="62" y="384.0" text-anchor="end" font-size="12" fill="#52606d">0</text>
+<line x1="70" y1="326.7" x2="690" y2="326.7" stroke="#e4e7eb"/>
+<text x="62" y="330.7" text-anchor="end" font-size="12" fill="#52606d">10</text>
+<line x1="70" y1="273.3" x2="690" y2="273.3" stroke="#e4e7eb"/>
+<text x="62" y="277.3" text-anchor="end" font-size="12" fill="#52606d">20</text>
+<line x1="70" y1="220.0" x2="690" y2="220.0" stroke="#e4e7eb"/>
+<text x="62" y="224.0" text-anchor="end" font-size="12" fill="#52606d">30</text>
+<line x1="70" y1="166.7" x2="690" y2="166.7" stroke="#e4e7eb"/>
+<text x="62" y="170.7" text-anchor="end" font-size="12" fill="#52606d">40</text>
+<line x1="70" y1="113.3" x2="690" y2="113.3" stroke="#e4e7eb"/>
+<text x="62" y="117.3" text-anchor="end" font-size="12" fill="#52606d">50</text>
+<line x1="70" y1="60.0" x2="690" y2="60.0" stroke="#e4e7eb"/>
+<text x="62" y="64.0" text-anchor="end" font-size="12" fill="#52606d">60</text>
+<rect x="96.0" y="102.7" width="34" height="277.3" fill="#2f6fb0"/>
+<text x="113.0" y="97.7" text-anchor="middle" font-size="12" fill="#1f2933">52</text>
+<rect x="134.0" y="177.3" width="34" height="202.7" fill="#e08a1e"/>
+<text x="151.0" y="172.3" text-anchor="middle" font-size="12" fill="#1f2933">38</text>
+<text x="132.0" y="400" text-anchor="middle" font-size="13" fill="#1f2933">Car</text>
+<rect x="220.0" y="284.0" width="34" height="96.0" fill="#2f6fb0"/>
+<text x="237.0" y="279.0" text-anchor="middle" font-size="12" fill="#1f2933">18</text>
+<rect x="258.0" y="273.3" width="34" height="106.7" fill="#e08a1e"/>
+<text x="275.0" y="268.3" text-anchor="middle" font-size="12" fill="#1f2933">20</text>
+<text x="256.0" y="400" text-anchor="middle" font-size="13" fill="#1f2933">Bus</text>
+<rect x="344.0" y="348.0" width="34" height="32.0" fill="#2f6fb0"/>
+<text x="361.0" y="343.0" text-anchor="middle" font-size="12" fill="#1f2933">6</text>
+<rect x="382.0" y="289.3" width="34" height="90.7" fill="#e08a1e"/>
+<text x="399.0" y="284.3" text-anchor="middle" font-size="12" fill="#1f2933">17</text>
+<text x="380.0" y="400" text-anchor="middle" font-size="13" fill="#1f2933">Bicycle</text>
+<rect x="468.0" y="305.3" width="34" height="74.7" fill="#2f6fb0"/>
+<text x="485.0" y="300.3" text-anchor="middle" font-size="12" fill="#1f2933">14</text>
+<rect x="506.0" y="316.0" width="34" height="64.0" fill="#e08a1e"/>
+<text x="523.0" y="311.0" text-anchor="middle" font-size="12" fill="#1f2933">12</text>
+<text x="504.0" y="400" text-anchor="middle" font-size="13" fill="#1f2933">Walking</text>
+<rect x="592.0" y="326.7" width="34" height="53.3" fill="#2f6fb0"/>
+<text x="609.0" y="321.7" text-anchor="middle" font-size="12" fill="#1f2933">10</text>
+<rect x="630.0" y="310.7" width="34" height="69.3" fill="#e08a1e"/>
+<text x="647.0" y="305.7" text-anchor="middle" font-size="12" fill="#1f2933">13</text>
+<text x="628.0" y="400" text-anchor="middle" font-size="13" fill="#1f2933">Train</text>
+<line x1="70" y1="380" x2="690" y2="380" stroke="#52606d"/>
+<rect x="240.0" y="420" width="14" height="14" fill="#2f6fb0"/><text x="260.0" y="432" font-size="13" fill="#1f2933">2005</text>
+<rect x="400.0" y="420" width="14" height="14" fill="#e08a1e"/><text x="420.0" y="432" font-size="13" fill="#1f2933">2025</text>
+</svg>
