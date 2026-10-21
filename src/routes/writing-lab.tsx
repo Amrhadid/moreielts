@@ -40,11 +40,8 @@ const MINUTES: Record<1 | 2, number> = { 1: 20, 2: 40 };
 
 function errorText(err: unknown): { text: string; pricing?: boolean } {
   const msg = String((err as { message?: string })?.message ?? err ?? "");
-  if (msg.includes("essay_limit_reached_free"))
-    return {
-      text: "Free accounts get 3 graded essays every 7 days, and you have used them. Upgrade to Premium for up to 20 a day.",
-      pricing: true,
-    };
+  if (msg.includes("premium_required"))
+    return { text: "The writing lab is part of Premium. Enter your access code to unlock it.", pricing: true };
   if (msg.includes("essay_limit_reached")) return { text: "You have reached today's limit of 20 essays. Try again tomorrow." };
   if (msg.includes("empty_essay")) return { text: "Write your essay before submitting." };
   if (msg.includes("forbidden")) return { text: "That prompt is for Premium members.", pricing: true };

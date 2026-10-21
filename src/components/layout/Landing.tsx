@@ -41,20 +41,20 @@ export function Landing() {
         <div className="pointer-events-none absolute bottom-8 start-[47%] -z-10 h-20 w-20 rounded-full border-[18px] border-warn-soft animate-breathe" />
         <div className="animate-rise">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[.14em] text-brand-700">
-            <span className="h-2 w-2 rounded-full bg-good" /> IELTS Academic preparation
+            <span className="h-2 w-2 rounded-full bg-good" /> IELTS Academic &amp; General Training
           </span>
           <h1 className="mt-6 max-w-xl text-4xl font-extrabold leading-[1.08] tracking-[-.035em] sm:text-5xl lg:text-6xl">
             Your target band is <span className="text-brand-600">closer than you think.</span>
           </h1>
           <p className="mt-5 max-w-lg text-base leading-7 text-ink-soft sm:text-lg">
-            Practise every question type, sit realistic timed mocks and receive clear feedback that turns your next study session into a plan.
+            Four full timed mock exams, practice for every question type, and AI feedback on your writing and speaking that turns your next study session into a plan.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg"><Link to="/signup">Start practising free <span aria-hidden>→</span></Link></Button>
+            <Button asChild size="lg"><Link to="/pricing">Get Premium access <span aria-hidden>→</span></Link></Button>
             <Button asChild size="lg" variant="outline"><a href="#sections">Explore the test</a></Button>
           </div>
           <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-muted">
-            <span>✓ No card required</span><span>✓ Real exam timing</span><span>✓ AI band estimate</span>
+            <span>✓ 4 full mock exams</span><span>✓ Real exam timing</span><span>✓ AI band estimate</span>
           </div>
         </div>
         <div className="relative animate-rise-delay">
@@ -102,7 +102,7 @@ export function Landing() {
               Ready to find your band?
             </p>
             <p className="mt-1 text-sm text-ink-soft">
-              Create a free account to save your attempts and track progress.
+              Sign in and enter your Premium access code to unlock every exam and practice set.
             </p>
           </div>
           <Button asChild>

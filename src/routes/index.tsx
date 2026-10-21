@@ -175,9 +175,16 @@ function Dashboard() {
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Welcome back, {firstName}
         </h1>
-        <p className="mt-1.5 text-sm capitalize text-muted">
-          {profile?.tier === "premium" ? "Premium" : "Free"} plan
-        </p>
+        {profile?.tier === "premium" ? (
+          <p className="mt-1.5 text-sm text-muted">Premium member</p>
+        ) : (
+          <p className="mt-3 inline-flex flex-wrap items-center gap-2 rounded-lg border border-warn/20 bg-warn-soft px-3 py-2 text-sm text-warn">
+            Your exams and practice are locked until you enter a Premium access code.
+            <Link to="/pricing" className="font-semibold underline">
+              Enter a code
+            </Link>
+          </p>
+        )}
       </div>
 
       {/* Stats row */}
