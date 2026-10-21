@@ -42,8 +42,8 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `VITE_SUPABASE_URL` | client build | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | client build | Publishable key. Safe to ship — RLS is what protects the data |
+| `VITE_SUPABASE_URL` | client build | Supabase project URL. Defaults to the shared MoreTOEFL project (`nlsuvapjkznatczghvay`) when unset; a stale value here points production at the wrong project |
+| `VITE_SUPABASE_ANON_KEY` | client build | Publishable key. Safe to ship — RLS is what protects the data. Defaults to the shared project's key when unset |
 | `SUPABASE_URL` | Edge Functions | Injected by Supabase |
 | `SUPABASE_ANON_KEY` | Edge Functions | Injected by Supabase. Used to resolve the caller from their JWT |
 | `SUPABASE_SERVICE_ROLE_KEY` | Edge Functions | Injected by Supabase. Bypasses RLS; the only writer of marks and scores. **Never expose to the client** |
