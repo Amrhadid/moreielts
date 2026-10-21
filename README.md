@@ -57,7 +57,7 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 | `GRADING_MODEL` | Edge Functions | Optional. Claude model for grading (default `claude-opus-5-5`) |
 | `OPENAI_API_KEY` | Edge Functions | Speaking transcription (`whisper-1`) and listening narration (`gpt-4o-mini-tts`) |
 | `TRANSCRIBE_MODEL`, `TTS_MODEL` | Edge Functions | Optional overrides for the two OpenAI models |
-| `GRADING_WORKER_KEY` | Edge Functions | Shared secret for `grading-worker` and batch `generate-audio` calls; must equal the Vault secret `grading_worker_key` |
+| `GRADING_WORKER_KEY` | Edge Functions | Shared secret for `grading-worker` and batch `generate-audio` calls; must equal the Vault secret `ielts_grading_worker_key` |
 | `STRIPE_SECRET_KEY` | Edge Functions | Stripe API key for `checkout` |
 | `STRIPE_WEBHOOK_SECRET` | Edge Functions | Signing secret of the `stripe-webhook` endpoint |
 | `STRIPE_PRICE_MONTH`, `STRIPE_PRICE_QUARTER` | Edge Functions | Stripe Price ids for the 30- and 90-day Premium passes |
@@ -351,6 +351,16 @@ reach the browser.
 Cloudflare Stream video and course content. Speech-to-text for
 speaking recordings in the mock test are transcribed on the server (Whisper) by the grading worker; Speaking *practice* transcribes in the browser with the Web Speech API.
 
+## Shared project and naming
+
+MoreIELTS runs in the Supabase project it shares with MoreTOEFL
+(`nlsuvapjkznatczghvay`). Every MoreIELTS table, view, function, index, cron
+job, Vault secret and Edge Function is prefixed `ielts_` / `ielts-`, and no
+migration here touches a MoreTOEFL object. Accounts (name, email, admin role)
+are MoreTOEFL's `public.profiles`, read only; `public.is_admin()` is reused.
+Everything IELTS-specific about a learner, including IELTS Premium, lives in
+`ielts_learners`, created on first visit by `ielts_ensure_learner()`.
+
 ## Background grading, audio and payments (migrations 0007–0010)
 
 **Grading.** Submitting a whole attempt marks Listening and Reading at once
@@ -365,7 +375,7 @@ One-time setup after `supabase db push`:
 
 ```sql
 -- Database -> Extensions: enable pg_net and pg_cron first.
-select vault.create_secret('<same value as GRADING_WORKER_KEY>', 'grading_worker_key');
+select vault.create_secret('<same value as GRADING_WORKER_KEY>', 'ielts_grading_worker_key');
 select vault.create_secret('https://<ref>.supabase.co/functions/v1/ielts-grading-worker', 'grading_worker_url');
 ```
 
