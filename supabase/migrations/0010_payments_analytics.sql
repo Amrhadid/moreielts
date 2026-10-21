@@ -189,3 +189,39 @@ create policy client_errors_admin_read on public.client_errors
   using (public.is_admin());
 
 grant insert on public.client_errors to anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Table privileges for everything added in 0007-0010, explicit as in 0002:
+-- RLS filters rows, GRANT decides who may attempt the operation at all.
+-- ---------------------------------------------------------------------------
+
+revoke all on
+  public.item_group_scripts, public.grading_jobs, public.drill_attempts,
+  public.drill_responses, public.mistakes, public.writing_submissions,
+  public.vocab_learned, public.study_plan_checks, public.activity_log,
+  public.payments, public.client_errors
+from anon;
+
+grant all on
+  public.item_group_scripts, public.grading_jobs, public.drill_attempts,
+  public.drill_responses, public.mistakes, public.writing_submissions,
+  public.vocab_learned, public.study_plan_checks, public.activity_log,
+  public.payments, public.client_errors
+to service_role;
+grant usage on all sequences in schema public to service_role;
+
+grant select on
+  public.item_group_scripts, public.grading_jobs, public.drill_attempts,
+  public.drill_responses, public.mistakes, public.writing_submissions,
+  public.vocab_learned, public.study_plan_checks, public.activity_log,
+  public.payments, public.client_errors
+to authenticated;
+
+-- Admin-only by policy; the grant only makes the attempt possible.
+grant insert, update, delete on public.item_group_scripts to authenticated;
+-- Learner-owned marks.
+grant insert, delete on public.vocab_learned, public.study_plan_checks to authenticated;
+grant delete on public.mistakes to authenticated;
+-- Anyone may report an error (insert only, bounded by checks).
+grant insert on public.client_errors to anon, authenticated;
+grant usage on sequence public.client_errors_id_seq to anon, authenticated;

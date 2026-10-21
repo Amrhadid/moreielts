@@ -112,7 +112,7 @@ const lines: string[] = [
   "-- GENERATED FILE. Regenerate with `npm run seed:generate`.",
   "--",
   "-- Every authored form in scripts/seed-content/forms, published. Requires",
-  "-- migrations through 0012 (slug, difficulty, explanation, item_group_scripts).",
+  "-- migrations through 0007 (slug, difficulty, explanation, item_group_scripts).",
   "-- Idempotent: ids are derived from stable names, so re-running updates",
   "-- rather than duplicates.",
   "",
