@@ -1,4 +1,4 @@
--- 0009_practice.sql
+-- 0010_practice.sql
 -- Everything a learner does outside a full mock: question-type drills, the
 -- spaced-repetition mistake notebook, the writing lab, topic vocabulary, the
 -- study plan checklist, and the activity log that streaks are computed from.
@@ -9,11 +9,11 @@
 -- reuses the same answer-check module as submit-attempt.
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.drill_attempts (
+create table if not exists public.ielts_drill_attempts (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public.profiles (id) on delete cascade,
-  type_code text not null references public.question_types (code),
-  group_id uuid not null references public.item_groups (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  type_code text not null references public.ielts_question_types (code),
+  group_id uuid not null references public.ielts_item_groups (id) on delete cascade,
   question_ids uuid[] not null,
   correct int,
   total int not null,
@@ -21,32 +21,32 @@ create table if not exists public.drill_attempts (
   submitted_at timestamptz
 );
 
-create index if not exists drill_attempts_user_idx
-  on public.drill_attempts (user_id, started_at desc);
+create index if not exists ielts_drill_attempts_user_idx
+  on public.ielts_drill_attempts (user_id, started_at desc);
 
-create table if not exists public.drill_responses (
-  drill_id uuid not null references public.drill_attempts (id) on delete cascade,
-  question_id uuid not null references public.questions (id) on delete cascade,
+create table if not exists public.ielts_drill_responses (
+  drill_id uuid not null references public.ielts_drill_attempts (id) on delete cascade,
+  question_id uuid not null references public.ielts_questions (id) on delete cascade,
   answer text,
   is_correct boolean not null,
   primary key (drill_id, question_id)
 );
 
-alter table public.drill_attempts enable row level security;
-alter table public.drill_responses enable row level security;
+alter table public.ielts_drill_attempts enable row level security;
+alter table public.ielts_drill_responses enable row level security;
 
-drop policy if exists drill_attempts_select_own on public.drill_attempts;
-create policy drill_attempts_select_own on public.drill_attempts
+drop policy if exists drill_attempts_select_own on public.ielts_drill_attempts;
+create policy drill_attempts_select_own on public.ielts_drill_attempts
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
-drop policy if exists drill_responses_select_own on public.drill_responses;
-create policy drill_responses_select_own on public.drill_responses
+drop policy if exists drill_responses_select_own on public.ielts_drill_responses;
+create policy drill_responses_select_own on public.ielts_drill_responses
   for select to authenticated
   using (
     public.is_admin()
-    or exists (select 1 from public.drill_attempts d
-               where d.id = drill_responses.drill_id and d.user_id = auth.uid())
+    or exists (select 1 from public.ielts_drill_attempts d
+               where d.id = ielts_drill_responses.drill_id and d.user_id = auth.uid())
   );
 
 -- ---------------------------------------------------------------------------
@@ -56,9 +56,9 @@ create policy drill_responses_select_own on public.drill_responses
 -- Rows are written by the service role (drill, submit-attempt).
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.mistakes (
-  user_id uuid not null references public.profiles (id) on delete cascade,
-  question_id uuid not null references public.questions (id) on delete cascade,
+create table if not exists public.ielts_mistakes (
+  user_id uuid not null references auth.users (id) on delete cascade,
+  question_id uuid not null references public.ielts_questions (id) on delete cascade,
   box int not null default 1 check (box between 1 and 6),
   due_at timestamptz not null default now() + interval '1 day',
   last_answer text,
@@ -70,24 +70,24 @@ create table if not exists public.mistakes (
   primary key (user_id, question_id)
 );
 
-create index if not exists mistakes_due_idx
-  on public.mistakes (user_id, due_at) where box < 6;
+create index if not exists ielts_mistakes_due_idx
+  on public.ielts_mistakes (user_id, due_at) where box < 6;
 
-drop trigger if exists mistakes_set_updated_at on public.mistakes;
+drop trigger if exists mistakes_set_updated_at on public.ielts_mistakes;
 create trigger mistakes_set_updated_at
-  before update on public.mistakes
-  for each row execute function public.set_updated_at();
+  before update on public.ielts_mistakes
+  for each row execute function public.ielts_set_updated_at();
 
-alter table public.mistakes enable row level security;
+alter table public.ielts_mistakes enable row level security;
 
-drop policy if exists mistakes_select_own on public.mistakes;
-create policy mistakes_select_own on public.mistakes
+drop policy if exists mistakes_select_own on public.ielts_mistakes;
+create policy mistakes_select_own on public.ielts_mistakes
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
 -- A learner may drop a card from their own notebook.
-drop policy if exists mistakes_delete_own on public.mistakes;
-create policy mistakes_delete_own on public.mistakes
+drop policy if exists mistakes_delete_own on public.ielts_mistakes;
+create policy mistakes_delete_own on public.ielts_mistakes
   for delete to authenticated
   using (user_id = auth.uid());
 
@@ -97,15 +97,15 @@ create policy mistakes_delete_own on public.mistakes
 -- improves, so the page can show the band moving across drafts.
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.writing_submissions (
+create table if not exists public.ielts_writing_submissions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public.profiles (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
   task_number int not null check (task_number in (1, 2)),
   -- The prompt is either a writing task from a published form or free text.
-  group_id uuid references public.item_groups (id) on delete set null,
+  group_id uuid references public.ielts_item_groups (id) on delete set null,
   prompt text not null,
   body text not null check (char_length(body) between 1 and 20000),
-  parent_id uuid references public.writing_submissions (id) on delete set null,
+  parent_id uuid references public.ielts_writing_submissions (id) on delete set null,
   status text not null default 'pending' check (status in ('pending', 'graded', 'failed')),
   task_achievement numeric(2, 1),
   coherence_cohesion numeric(2, 1),
@@ -118,20 +118,20 @@ create table if not exists public.writing_submissions (
   graded_at timestamptz
 );
 
-create index if not exists writing_submissions_user_idx
-  on public.writing_submissions (user_id, created_at desc);
+create index if not exists ielts_writing_submissions_user_idx
+  on public.ielts_writing_submissions (user_id, created_at desc);
 
-alter table public.writing_submissions enable row level security;
+alter table public.ielts_writing_submissions enable row level security;
 
-drop policy if exists writing_submissions_select_own on public.writing_submissions;
-create policy writing_submissions_select_own on public.writing_submissions
+drop policy if exists writing_submissions_select_own on public.ielts_writing_submissions;
+create policy writing_submissions_select_own on public.ielts_writing_submissions
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
 -- Submitting goes through this RPC so the grading job is queued in the same
 -- transaction and the score columns can never be written by the learner.
 -- Free learners get 3 graded essays a week; Premium 20 a day.
-create or replace function public.submit_essay(
+create or replace function public.ielts_submit_essay(
   p_task_number int,
   p_prompt text,
   p_body text,
@@ -157,38 +157,38 @@ begin
     raise exception 'empty_essay';
   end if;
   if p_parent_id is not null and not exists (
-    select 1 from public.writing_submissions where id = p_parent_id and user_id = auth.uid()
+    select 1 from public.ielts_writing_submissions where id = p_parent_id and user_id = auth.uid()
   ) then
     raise exception 'forbidden';
   end if;
 
-  if public.is_premium() then
-    select count(*) into v_recent from public.writing_submissions
+  if public.ielts_is_premium() then
+    select count(*) into v_recent from public.ielts_writing_submissions
     where user_id = auth.uid() and created_at > now() - interval '1 day';
     if v_recent >= 20 then raise exception 'essay_limit_reached'; end if;
   else
-    select count(*) into v_recent from public.writing_submissions
+    select count(*) into v_recent from public.ielts_writing_submissions
     where user_id = auth.uid() and created_at > now() - interval '7 days';
     if v_recent >= 3 then raise exception 'essay_limit_reached_free'; end if;
   end if;
 
-  insert into public.writing_submissions (user_id, task_number, group_id, prompt, body, parent_id)
+  insert into public.ielts_writing_submissions (user_id, task_number, group_id, prompt, body, parent_id)
   values (auth.uid(), p_task_number, p_group_id, btrim(p_prompt), btrim(p_body), p_parent_id)
   returning id into v_id;
 
-  insert into public.grading_jobs (kind, submission_id, user_id)
+  insert into public.ielts_grading_jobs (kind, submission_id, user_id)
   values ('essay', v_id, auth.uid());
 
   return v_id;
 end;
 $$;
 
-revoke all on function public.submit_essay(int, text, text, uuid, uuid) from public, anon;
-grant execute on function public.submit_essay(int, text, text, uuid, uuid) to authenticated;
+revoke all on function public.ielts_submit_essay(int, text, text, uuid, uuid) from public, anon;
+grant execute on function public.ielts_submit_essay(int, text, text, uuid, uuid) to authenticated;
 
 -- Writing prompts a learner can pick in the lab: every writing task of a
 -- published form they can open.
-create or replace function public.list_writing_prompts()
+create or replace function public.ielts_list_writing_prompts()
 returns table (group_id uuid, form_title text, variant text, task_number int,
                prompt text, image_url text, is_premium boolean)
 language sql
@@ -197,15 +197,15 @@ security definer
 set search_path = public
 as $$
   select g.id, f.title, f.variant, g.part_number, g.passage_text, g.image_url, f.is_premium
-  from public.item_groups g
-  join public.test_sections s on s.id = g.section_id and s.section = 'writing'
-  join public.test_forms f on f.id = s.form_id and f.is_published
+  from public.ielts_item_groups g
+  join public.ielts_test_sections s on s.id = g.section_id and s.section = 'writing'
+  join public.ielts_test_forms f on f.id = s.form_id and f.is_published
   where g.passage_text is not null
   order by f.created_at, g.part_number;
 $$;
 
-revoke all on function public.list_writing_prompts() from public, anon;
-grant execute on function public.list_writing_prompts() to authenticated;
+revoke all on function public.ielts_list_writing_prompts() from public, anon;
+grant execute on function public.ielts_list_writing_prompts() to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Vocabulary: the word list ships in the app bundle (src/data/vocabulary.json);
@@ -213,17 +213,17 @@ grant execute on function public.list_writing_prompts() to authenticated;
 -- learned state, so unmarking is a delete.
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.vocab_learned (
-  user_id uuid not null references public.profiles (id) on delete cascade,
+create table if not exists public.ielts_vocab_learned (
+  user_id uuid not null references auth.users (id) on delete cascade,
   word_slug text not null check (word_slug ~ '^[a-z0-9-]{1,80}$'),
   learned_at timestamptz not null default now(),
   primary key (user_id, word_slug)
 );
 
-alter table public.vocab_learned enable row level security;
+alter table public.ielts_vocab_learned enable row level security;
 
-drop policy if exists vocab_learned_own on public.vocab_learned;
-create policy vocab_learned_own on public.vocab_learned
+drop policy if exists vocab_learned_own on public.ielts_vocab_learned;
+create policy vocab_learned_own on public.ielts_vocab_learned
   for all to authenticated
   using (user_id = auth.uid())
   with check (user_id = auth.uid());
@@ -234,18 +234,18 @@ create policy vocab_learned_own on public.vocab_learned
 -- a day's tasks were ticked off.
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.study_plan_checks (
-  user_id uuid not null references public.profiles (id) on delete cascade,
+create table if not exists public.ielts_study_plan_checks (
+  user_id uuid not null references auth.users (id) on delete cascade,
   day date not null,
   task_key text not null check (char_length(task_key) <= 120),
   checked_at timestamptz not null default now(),
   primary key (user_id, day, task_key)
 );
 
-alter table public.study_plan_checks enable row level security;
+alter table public.ielts_study_plan_checks enable row level security;
 
-drop policy if exists study_plan_checks_own on public.study_plan_checks;
-create policy study_plan_checks_own on public.study_plan_checks
+drop policy if exists study_plan_checks_own on public.ielts_study_plan_checks;
+create policy study_plan_checks_own on public.ielts_study_plan_checks
   for all to authenticated
   using (user_id = auth.uid())
   with check (user_id = auth.uid() and day between current_date - 1 and current_date + 1);
@@ -255,73 +255,73 @@ create policy study_plan_checks_own on public.study_plan_checks
 -- client, so a streak cannot be faked from the browser.
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.activity_log (
+create table if not exists public.ielts_activity_log (
   id bigint generated always as identity primary key,
-  user_id uuid not null references public.profiles (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
   kind text not null check (kind in ('mock', 'drill', 'review', 'essay', 'vocab', 'plan')),
   minutes numeric(5, 1) not null default 0,
   created_at timestamptz not null default now()
 );
 
-create index if not exists activity_log_user_idx
-  on public.activity_log (user_id, created_at desc);
+create index if not exists ielts_activity_log_user_idx
+  on public.ielts_activity_log (user_id, created_at desc);
 
-alter table public.activity_log enable row level security;
+alter table public.ielts_activity_log enable row level security;
 
-drop policy if exists activity_log_select_own on public.activity_log;
-create policy activity_log_select_own on public.activity_log
+drop policy if exists activity_log_select_own on public.ielts_activity_log;
+create policy activity_log_select_own on public.ielts_activity_log
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
-create or replace function public.log_activity()
+create or replace function public.ielts_log_activity()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
 begin
-  if tg_table_name = 'drill_attempts' then
+  if tg_table_name = 'ielts_drill_attempts' then
     -- Logged on submission: about 1.5 minutes a question.
     if new.submitted_at is not null and (tg_op = 'INSERT' or old.submitted_at is null) then
-      insert into public.activity_log (user_id, kind, minutes)
+      insert into public.ielts_activity_log (user_id, kind, minutes)
       values (new.user_id, 'drill', least(60, new.total * 1.5));
     end if;
-  elsif tg_table_name = 'attempts' then
+  elsif tg_table_name = 'ielts_attempts' then
     if new.submitted_at is not null and old.submitted_at is null then
-      insert into public.activity_log (user_id, kind, minutes)
+      insert into public.ielts_activity_log (user_id, kind, minutes)
       values (new.user_id, 'mock',
               least(240, extract(epoch from (new.submitted_at - new.started_at)) / 60));
     end if;
-  elsif tg_table_name = 'writing_submissions' then
-    insert into public.activity_log (user_id, kind, minutes)
+  elsif tg_table_name = 'ielts_writing_submissions' then
+    insert into public.ielts_activity_log (user_id, kind, minutes)
     values (new.user_id, 'essay', case when new.task_number = 1 then 20 else 40 end);
-  elsif tg_table_name = 'vocab_learned' then
-    insert into public.activity_log (user_id, kind, minutes) values (new.user_id, 'vocab', 0.5);
-  elsif tg_table_name = 'study_plan_checks' then
-    insert into public.activity_log (user_id, kind, minutes) values (new.user_id, 'plan', 0);
+  elsif tg_table_name = 'ielts_vocab_learned' then
+    insert into public.ielts_activity_log (user_id, kind, minutes) values (new.user_id, 'vocab', 0.5);
+  elsif tg_table_name = 'ielts_study_plan_checks' then
+    insert into public.ielts_activity_log (user_id, kind, minutes) values (new.user_id, 'plan', 0);
   end if;
   return new;
 end;
 $$;
 
-drop trigger if exists drill_attempts_log on public.drill_attempts;
-create trigger drill_attempts_log after insert or update of submitted_at on public.drill_attempts
-  for each row execute function public.log_activity();
-drop trigger if exists attempts_log on public.attempts;
-create trigger attempts_log after update of submitted_at on public.attempts
-  for each row execute function public.log_activity();
-drop trigger if exists writing_submissions_log on public.writing_submissions;
-create trigger writing_submissions_log after insert on public.writing_submissions
-  for each row execute function public.log_activity();
-drop trigger if exists vocab_learned_log on public.vocab_learned;
-create trigger vocab_learned_log after insert on public.vocab_learned
-  for each row execute function public.log_activity();
-drop trigger if exists study_plan_checks_log on public.study_plan_checks;
-create trigger study_plan_checks_log after insert on public.study_plan_checks
-  for each row execute function public.log_activity();
+drop trigger if exists drill_attempts_log on public.ielts_drill_attempts;
+create trigger drill_attempts_log after insert or update of submitted_at on public.ielts_drill_attempts
+  for each row execute function public.ielts_log_activity();
+drop trigger if exists attempts_log on public.ielts_attempts;
+create trigger attempts_log after update of submitted_at on public.ielts_attempts
+  for each row execute function public.ielts_log_activity();
+drop trigger if exists writing_submissions_log on public.ielts_writing_submissions;
+create trigger writing_submissions_log after insert on public.ielts_writing_submissions
+  for each row execute function public.ielts_log_activity();
+drop trigger if exists vocab_learned_log on public.ielts_vocab_learned;
+create trigger vocab_learned_log after insert on public.ielts_vocab_learned
+  for each row execute function public.ielts_log_activity();
+drop trigger if exists study_plan_checks_log on public.ielts_study_plan_checks;
+create trigger study_plan_checks_log after insert on public.ielts_study_plan_checks
+  for each row execute function public.ielts_log_activity();
 
 -- Streak, today's minutes and the last 14 days, in the learner's time zone.
-create or replace function public.get_learning_stats(p_tz text default 'UTC')
+create or replace function public.ielts_get_learning_stats(p_tz text default 'UTC')
 returns jsonb
 language plpgsql
 stable
@@ -341,12 +341,12 @@ begin
   -- Count back from today (or yesterday, so a streak is not "lost" before
   -- the learner has had a chance to study today).
   v_day := v_today;
-  if not exists (select 1 from public.activity_log
+  if not exists (select 1 from public.ielts_activity_log
                  where user_id = auth.uid()
                    and (created_at at time zone p_tz)::date = v_today) then
     v_day := v_today - 1;
   end if;
-  while exists (select 1 from public.activity_log
+  while exists (select 1 from public.ielts_activity_log
                 where user_id = auth.uid()
                   and (created_at at time zone p_tz)::date = v_day) loop
     v_streak := v_streak + 1;
@@ -356,32 +356,32 @@ begin
   select jsonb_build_object(
     'streak', v_streak,
     'today_minutes', coalesce((
-      select round(sum(minutes)) from public.activity_log
+      select round(sum(minutes)) from public.ielts_activity_log
       where user_id = auth.uid() and (created_at at time zone p_tz)::date = v_today), 0),
     'days', coalesce((
       select jsonb_agg(jsonb_build_object('day', d::date, 'minutes', coalesce(m, 0)) order by d)
       from generate_series(v_today - 13, v_today, interval '1 day') d
       left join lateral (
-        select round(sum(minutes)) m from public.activity_log
+        select round(sum(minutes)) m from public.ielts_activity_log
         where user_id = auth.uid() and (created_at at time zone p_tz)::date = d::date
       ) x on true), '[]'::jsonb),
-    'drills_total', (select count(*) from public.drill_attempts
+    'drills_total', (select count(*) from public.ielts_drill_attempts
                      where user_id = auth.uid() and submitted_at is not null),
-    'mistakes_due', (select count(*) from public.mistakes
+    'mistakes_due', (select count(*) from public.ielts_mistakes
                      where user_id = auth.uid() and box < 6 and due_at <= now()),
-    'words_learned', (select count(*) from public.vocab_learned where user_id = auth.uid())
+    'words_learned', (select count(*) from public.ielts_vocab_learned where user_id = auth.uid())
   ) into v_result;
 
   return v_result;
 end;
 $$;
 
-revoke all on function public.get_learning_stats(text) from public, anon;
-grant execute on function public.get_learning_stats(text) to authenticated;
+revoke all on function public.ielts_get_learning_stats(text) from public, anon;
+grant execute on function public.ielts_get_learning_stats(text) to authenticated;
 
 -- Accuracy per question type across the learner's mocks and drills: what the
 -- study plan and Enhance page rank by.
-create or replace function public.get_type_accuracy()
+create or replace function public.ielts_get_type_accuracy()
 returns table (type_code text, type_label text, section text, correct int, total int)
 language sql
 stable
@@ -390,31 +390,31 @@ set search_path = public
 as $$
   with answered as (
     select q.type_code, r.is_correct
-    from public.responses r
-    join public.attempts a on a.id = r.attempt_id and a.user_id = auth.uid()
-    join public.questions q on q.id = r.question_id
+    from public.ielts_responses r
+    join public.ielts_attempts a on a.id = r.attempt_id and a.user_id = auth.uid()
+    join public.ielts_questions q on q.id = r.question_id
     where r.is_correct is not null
     union all
     select q.type_code, dr.is_correct
-    from public.drill_responses dr
-    join public.drill_attempts d on d.id = dr.drill_id and d.user_id = auth.uid()
-    join public.questions q on q.id = dr.question_id
+    from public.ielts_drill_responses dr
+    join public.ielts_drill_attempts d on d.id = dr.drill_id and d.user_id = auth.uid()
+    join public.ielts_questions q on q.id = dr.question_id
   )
   select t.code, t.label, t.section,
          count(*) filter (where a.is_correct)::int,
          count(*)::int
   from answered a
-  join public.question_types t on t.code = a.type_code
+  join public.ielts_question_types t on t.code = a.type_code
   group by t.code, t.label, t.section
   order by t.code;
 $$;
 
-revoke all on function public.get_type_accuracy() from public, anon;
-grant execute on function public.get_type_accuracy() to authenticated;
+revoke all on function public.ielts_get_type_accuracy() from public, anon;
+grant execute on function public.ielts_get_type_accuracy() to authenticated;
 
--- grading_jobs (0008) predates writing_submissions; link them now.
+-- grading_jobs (0009) predates writing_submissions; link them now.
 do $$ begin
-  alter table public.grading_jobs
+  alter table public.ielts_grading_jobs
     add constraint grading_jobs_submission_fk
-    foreign key (submission_id) references public.writing_submissions (id) on delete cascade;
+    foreign key (submission_id) references public.ielts_writing_submissions (id) on delete cascade;
 exception when duplicate_object then null; end $$;

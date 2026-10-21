@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => ({}));
   const db = serviceClient();
-  const { data: jobs, error } = await db.rpc("claim_grading_jobs", {
+  const { data: jobs, error } = await db.rpc("ielts_claim_grading_jobs", {
     p_limit: Math.min(Number(body.limit ?? 5), 10),
     p_job: body.job_id ?? null,
   });
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
           await gradeEssay(db, job.submission_id!);
         }
         await db
-          .from("grading_jobs")
+          .from("ielts_grading_jobs")
           .update({ status: "done", finished_at: new Date().toISOString(), last_error: null })
           .eq("id", job.id);
         return { id: job.id, ok: true };
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
         console.error("grading job failed", job.id, message);
         const exhausted = job.tries >= 5;
         await db
-          .from("grading_jobs")
+          .from("ielts_grading_jobs")
           .update({
             status: exhausted ? "failed" : "pending",
             last_error: message,
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
           })
           .eq("id", job.id);
         if (exhausted && job.kind === "essay") {
-          await db.from("writing_submissions").update({ status: "failed" }).eq("id", job.submission_id!);
+          await db.from("ielts_writing_submissions").update({ status: "failed" }).eq("id", job.submission_id!);
         }
         return { id: job.id, ok: false, error: message };
       }

@@ -33,6 +33,20 @@ export interface ProfileRow {
   updated_at: string;
 }
 
+/** public.ielts_learners: the IELTS-specific half of a learner's profile. */
+export interface LearnerRow {
+  user_id: string;
+  premium_expires_at: string | null;
+  target_band: number | null;
+  current_band: number | null;
+  exam_date: string | null;
+  daily_goal_minutes: number;
+  locale: "en" | "ar";
+  reminder_emails: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface QuestionTypeRow {
   code: string;
   section: SectionCode;

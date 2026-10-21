@@ -22,7 +22,7 @@ import { scoreAttempt } from "../_shared/attempt-score.ts";
 function kickWorker() {
   const key = Deno.env.get("GRADING_WORKER_KEY");
   if (!key) return;
-  const call = fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/grading-worker`, {
+  const call = fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/ielts-grading-worker`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-grade-key": key },
     body: JSON.stringify({ limit: 5 }),
@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
     const db = serviceClient();
 
     const { data: attempt, error: attemptError } = await db
-      .from("attempts")
+      .from("ielts_attempts")
       .select("id, user_id, form_id, status")
       .eq("id", attempt_id)
       .single();
@@ -61,22 +61,22 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- mark
     // Pull every objective question on the form together with its answers.
     const { data: questions, error: questionsError } = await db
-      .from("questions")
+      .from("ielts_questions")
       .select(
         `id, type_code, accepted_answers, word_limit, spelling_policy,
          accepts_plural, case_sensitive, scoring_rules,
-         item_groups!inner (
+         item_groups:ielts_item_groups!inner (
            part_number,
-           test_sections!inner ( section, form_id )
+           test_sections:ielts_test_sections!inner ( section, form_id )
          ),
-         question_types!inner ( renderer )`,
+         question_types:ielts_question_types!inner ( renderer )`,
       )
       .eq("item_groups.test_sections.form_id", attempt.form_id);
 
     if (questionsError) throw questionsError;
 
     const { data: responses } = await db
-      .from("responses")
+      .from("ielts_responses")
       .select("id, question_id, answer")
       .eq("attempt_id", attempt_id);
 
@@ -136,7 +136,7 @@ Deno.serve(async (req) => {
 
     // Persist the marks. Only the service role may write this column.
     for (const row of marked) {
-      await db.from("responses").update({ is_correct: row.is_correct }).eq("id", row.id);
+      await db.from("ielts_responses").update({ is_correct: row.is_correct }).eq("id", row.id);
     }
 
     // ---------------------------------------------------- mistake notebook
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
       const wrong = marked.filter((m) => !m.is_correct);
       if (wrong.length) {
         const answerById = new Map((responses ?? []).map((r) => [r.id, r]));
-        await db.from("mistakes").upsert(
+        await db.from("ielts_mistakes").upsert(
           wrong.map((m) => ({
             user_id: user.id,
             question_id: answerById.get(m.id)!.question_id,
@@ -165,8 +165,8 @@ Deno.serve(async (req) => {
     // the candidate never waits on the model. One job per task and part.
     if (!section) {
       const { data: aiGroups } = await db
-        .from("item_groups")
-        .select("part_number, test_sections!inner ( section, form_id )")
+        .from("ielts_item_groups")
+        .select("part_number, test_sections:ielts_test_sections!inner ( section, form_id )")
         .eq("test_sections.form_id", attempt.form_id)
         .in("test_sections.section", ["writing", "speaking"]);
 
@@ -179,7 +179,7 @@ Deno.serve(async (req) => {
       }));
       if (jobs.length) {
         const { error: jobError } = await db
-          .from("grading_jobs")
+          .from("ielts_grading_jobs")
           .upsert(jobs, { onConflict: "attempt_id,kind,part_number", ignoreDuplicates: true });
         if (jobError) throw jobError;
         kickWorker();

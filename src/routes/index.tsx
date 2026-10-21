@@ -29,8 +29,8 @@ function useRecentSectionBands(userId: string | undefined) {
     enabled: Boolean(userId),
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("attempts")
-        .select("id, submitted_at, attempt_scores ( listening_band, reading_band, writing_band, speaking_band )")
+        .from("ielts_attempts")
+        .select("id, submitted_at, attempt_scores:ielts_attempt_scores ( listening_band, reading_band, writing_band, speaking_band )")
         .eq("status", "completed")
         .order("submitted_at", { ascending: false })
         .limit(10);

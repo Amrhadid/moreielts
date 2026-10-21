@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
         return json({ error: "attempt_id_and_question_id_required" }, 400);
       }
       const { data: attempt } = await db
-        .from("attempts")
+        .from("ielts_attempts")
         .select("id, user_id, status")
         .eq("id", attempt_id)
         .single();

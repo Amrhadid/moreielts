@@ -2,7 +2,7 @@ import { supabase } from "./supabase";
 
 /**
  * Sends uncaught errors and unhandled rejections to public.client_errors
- * (migration 0010), where /admin/analytics lists them. Deliberately tiny: no
+ * (migration 0011), where /admin/analytics lists them. Deliberately tiny: no
  * vendor, a per-page cap, and duplicate messages are sent once.
  */
 const MAX_PER_PAGE = 10;
@@ -15,7 +15,7 @@ function report(message: string, stack?: string) {
   if (/ResizeObserver loop|Script error\.|AbortError|chrome-extension:/i.test(message + (stack ?? ""))) return;
   seen.add(message);
   sent++;
-  void supabase.from("client_errors").insert({
+  void supabase.from("ielts_client_errors").insert({
     message: message.slice(0, 2000),
     stack: stack?.slice(0, 8000) ?? null,
     url: window.location.href.slice(0, 1000),

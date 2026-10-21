@@ -124,15 +124,15 @@ export async function gradeAttemptWriting(
   taskNumber: 1 | 2,
 ): Promise<WritingGrade | null> {
   const { data: attempt } = await db
-    .from("attempts")
+    .from("ielts_attempts")
     .select("form_id")
     .eq("id", attemptId)
     .single();
   if (!attempt) throw new Error("attempt_not_found");
 
   const { data: groups } = await db
-    .from("item_groups")
-    .select("id, passage_text, test_sections!inner ( section, form_id ), questions ( id )")
+    .from("ielts_item_groups")
+    .select("id, passage_text, test_sections:ielts_test_sections!inner ( section, form_id ), questions:ielts_questions ( id )")
     .eq("test_sections.form_id", attempt.form_id)
     .eq("test_sections.section", "writing")
     .eq("part_number", taskNumber);
@@ -142,7 +142,7 @@ export async function gradeAttemptWriting(
 
   const questionIds = (group.questions ?? []).map((q: { id: string }) => q.id);
   const { data: responses } = await db
-    .from("responses")
+    .from("ielts_responses")
     .select("answer")
     .eq("attempt_id", attemptId)
     .in("question_id", questionIds.length ? questionIds : ["00000000-0000-0000-0000-000000000000"]);
@@ -162,7 +162,7 @@ export async function gradeAttemptWriting(
         model_version: MODEL_VERSION,
       };
 
-  const { error } = await db.from("writing_scores").upsert(
+  const { error } = await db.from("ielts_writing_scores").upsert(
     { attempt_id: attemptId, task_number: taskNumber, ...grade },
     { onConflict: "attempt_id,task_number" },
   );
@@ -173,7 +173,7 @@ export async function gradeAttemptWriting(
 /** Grades a writing-lab essay and stores the result on the submission. */
 export async function gradeEssay(db: SupabaseClient, submissionId: string): Promise<void> {
   const { data: sub } = await db
-    .from("writing_submissions")
+    .from("ielts_writing_submissions")
     .select("id, task_number, prompt, body, parent_id")
     .eq("id", submissionId)
     .single();
@@ -185,7 +185,7 @@ export async function gradeEssay(db: SupabaseClient, submissionId: string): Prom
   // movement per criterion.
   if (sub.parent_id) {
     const { data: parent } = await db
-      .from("writing_submissions")
+      .from("ielts_writing_submissions")
       .select("task_band, task_achievement, coherence_cohesion, lexical_resource, grammatical_range")
       .eq("id", sub.parent_id)
       .maybeSingle();
@@ -193,7 +193,7 @@ export async function gradeEssay(db: SupabaseClient, submissionId: string): Prom
   }
 
   const { error } = await db
-    .from("writing_submissions")
+    .from("ielts_writing_submissions")
     .update({ ...grade, status: "graded", graded_at: new Date().toISOString() })
     .eq("id", submissionId);
   if (error) throw error;
@@ -254,16 +254,16 @@ export async function gradeAttemptSpeaking(
   partNumber: 1 | 2 | 3,
 ): Promise<void> {
   const { data: attempt } = await db
-    .from("attempts")
+    .from("ielts_attempts")
     .select("form_id")
     .eq("id", attemptId)
     .single();
   if (!attempt) throw new Error("attempt_not_found");
 
   const { data: groups } = await db
-    .from("item_groups")
+    .from("ielts_item_groups")
     .select(
-      "id, passage_text, shared_instructions, test_sections!inner ( section, form_id ), questions ( id, prompt, order_index )",
+      "id, passage_text, shared_instructions, test_sections:ielts_test_sections!inner ( section, form_id ), questions:ielts_questions ( id, prompt, order_index )",
     )
     .eq("test_sections.form_id", attempt.form_id)
     .eq("test_sections.section", "speaking")
@@ -277,7 +277,7 @@ export async function gradeAttemptSpeaking(
   ) as Array<{ id: string; prompt: string }>;
 
   const { data: responses } = await db
-    .from("responses")
+    .from("ielts_responses")
     .select("question_id, audio_url, answer")
     .eq("attempt_id", attemptId)
     .in("question_id", questions.length ? questions.map((q) => q.id) : ["00000000-0000-0000-0000-000000000000"]);
@@ -286,7 +286,7 @@ export async function gradeAttemptSpeaking(
   // Reuse a transcript from an earlier try so a retried job does not pay for
   // transcription twice.
   const { data: existing } = await db
-    .from("speaking_scores")
+    .from("ielts_speaking_scores")
     .select("transcript, feedback")
     .eq("attempt_id", attemptId)
     .eq("part_number", partNumber)
@@ -316,7 +316,7 @@ export async function gradeAttemptSpeaking(
     : ((existing?.feedback as Record<string, unknown> | null)?.stats ?? null);
 
   if (!transcript) {
-    const { error } = await db.from("speaking_scores").upsert(
+    const { error } = await db.from("ielts_speaking_scores").upsert(
       {
         attempt_id: attemptId,
         part_number: partNumber,
@@ -356,7 +356,7 @@ export async function gradeAttemptSpeaking(
     pronunciation: assertBand(result.pronunciation, "pronunciation"),
   };
 
-  const { error } = await db.from("speaking_scores").upsert(
+  const { error } = await db.from("ielts_speaking_scores").upsert(
     {
       attempt_id: attemptId,
       part_number: partNumber,

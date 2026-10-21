@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     }
     return json({ url: session.url });
   } catch (error) {
-    console.error("checkout failed", error);
+    console.error("ielts-checkout failed", error);
     return new Response(
       JSON.stringify({ error: String((error as Error).message ?? error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

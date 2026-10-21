@@ -46,7 +46,7 @@ export async function checkRateLimit(
   const since = new Date(Date.now() - windowMinutes * 60_000).toISOString();
 
   const { count, error } = await db
-    .from("ai_grading_usage")
+    .from("ielts_ai_grading_usage")
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId)
     .eq("function_name", functionName)
@@ -55,7 +55,7 @@ export async function checkRateLimit(
   if (error) throw error;
   if ((count ?? 0) >= limit) return false;
 
-  await db.from("ai_grading_usage").insert({
+  await db.from("ielts_ai_grading_usage").insert({
     user_id: userId,
     function_name: functionName,
     attempt_id: attemptId ?? null,

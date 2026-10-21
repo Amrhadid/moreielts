@@ -6,7 +6,7 @@ import type { RendererKey, SectionCode } from "~/types/database";
  * Reads and writes for everything outside the mock player: drills, the
  * mistake notebook, the writing lab, vocabulary, the study plan, streaks,
  * results extras, analytics and checkout. Server shapes come from migrations
- * 0007-0010 and the drill / checkout Edge Functions.
+ * 0008-0011 and the drill / checkout Edge Functions.
  */
 
 export const practiceKeys = {
@@ -46,7 +46,7 @@ export function useLearningStats(enabled = true) {
     enabled,
     queryFn: async (): Promise<LearningStats> => {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-      const { data, error } = await supabase.rpc("get_learning_stats", { p_tz: tz });
+      const { data, error } = await supabase.rpc("ielts_get_learning_stats", { p_tz: tz });
       if (error) throw error;
       return data as LearningStats;
     },
@@ -66,7 +66,7 @@ export function useTypeAccuracy(enabled = true) {
     queryKey: practiceKeys.typeAccuracy,
     enabled,
     queryFn: async (): Promise<TypeAccuracyRow[]> => {
-      const { data, error } = await supabase.rpc("get_type_accuracy");
+      const { data, error } = await supabase.rpc("ielts_get_type_accuracy");
       if (error) throw error;
       return (data as TypeAccuracyRow[]) ?? [];
     },
@@ -84,7 +84,7 @@ export function useUpdateGoals() {
       daily_goal_minutes?: number;
     }) => {
       const { userId, ...patch } = vars;
-      const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
+      const { error } = await supabase.from("ielts_learners").update(patch).eq("user_id", userId);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }),
@@ -142,7 +142,7 @@ export interface DrillResult {
 export function useStartDrill() {
   return useMutation({
     mutationFn: (vars: { typeCode: string; difficulty?: string }) =>
-      invokeFunction<DrillStart>("drill", {
+      invokeFunction<DrillStart>("ielts-drill", {
         action: "start",
         type_code: vars.typeCode,
         difficulty: vars.difficulty,
@@ -154,7 +154,7 @@ export function useSubmitDrill() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (vars: { drillId: string; answers: Record<string, string | string[]> }) =>
-      invokeFunction<DrillResult>("drill", {
+      invokeFunction<DrillResult>("ielts-drill", {
         action: "submit",
         drill_id: vars.drillId,
         answers: vars.answers,
@@ -173,8 +173,8 @@ export function useDrillHistory(enabled = true) {
     enabled,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("drill_attempts")
-        .select("id, type_code, correct, total, submitted_at, question_types ( label )")
+        .from("ielts_drill_attempts")
+        .select("id, type_code, correct, total, submitted_at, question_types:ielts_question_types ( label )")
         .not("submitted_at", "is", null)
         .order("submitted_at", { ascending: false })
         .limit(20);
@@ -235,7 +235,7 @@ export function useDueCards(enabled = true) {
     enabled,
     staleTime: 0,
     queryFn: async () =>
-      (await invokeFunction<{ cards: MistakeCard[] }>("drill", { action: "due", limit: 20 })).cards,
+      (await invokeFunction<{ cards: MistakeCard[] }>("ielts-drill", { action: "due", limit: 20 })).cards,
   });
 }
 
@@ -246,8 +246,8 @@ export function useMistakeCount(enabled = true) {
     enabled,
     queryFn: async () => {
       const [{ count: open }, { count: mastered }] = await Promise.all([
-        supabase.from("mistakes").select("question_id", { count: "exact", head: true }).lt("box", 6),
-        supabase.from("mistakes").select("question_id", { count: "exact", head: true }).eq("box", 6),
+        supabase.from("ielts_mistakes").select("question_id", { count: "exact", head: true }).lt("box", 6),
+        supabase.from("ielts_mistakes").select("question_id", { count: "exact", head: true }).eq("box", 6),
       ]);
       return { open: open ?? 0, mastered: mastered ?? 0 };
     },
@@ -258,7 +258,7 @@ export function useReviewCard() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (vars: { questionId: string; answer: string | string[] }) =>
-      invokeFunction<ReviewVerdict>("drill", {
+      invokeFunction<ReviewVerdict>("ielts-drill", {
         action: "review",
         question_id: vars.questionId,
         answer: vars.answer,
@@ -274,7 +274,7 @@ export function useDropCard() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (questionId: string) => {
-      const { error } = await supabase.from("mistakes").delete().eq("question_id", questionId);
+      const { error } = await supabase.from("ielts_mistakes").delete().eq("question_id", questionId);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: practiceKeys.mistakeCount }),
@@ -342,7 +342,7 @@ export function useWritingPrompts() {
     queryKey: practiceKeys.prompts,
     staleTime: 10 * 60 * 1000,
     queryFn: async (): Promise<WritingPrompt[]> => {
-      const { data, error } = await supabase.rpc("list_writing_prompts");
+      const { data, error } = await supabase.rpc("ielts_list_writing_prompts");
       if (error) throw error;
       return (data as WritingPrompt[]) ?? [];
     },
@@ -358,7 +358,7 @@ export function useEssays(enabled = true) {
       (query.state.data as EssayRow[] | undefined)?.some((e) => e.status === "pending") ? 5000 : false,
     queryFn: async (): Promise<EssayRow[]> => {
       const { data, error } = await supabase
-        .from("writing_submissions")
+        .from("ielts_writing_submissions")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(50);
@@ -378,7 +378,7 @@ export function useSubmitEssay() {
       groupId?: string | null;
       parentId?: string | null;
     }) => {
-      const { data, error } = await supabase.rpc("submit_essay", {
+      const { data, error } = await supabase.rpc("ielts_submit_essay", {
         p_task_number: vars.taskNumber,
         p_prompt: vars.prompt,
         p_body: vars.body,
@@ -405,7 +405,7 @@ export function useLearnedWords(enabled = true) {
     enabled,
     staleTime: Infinity,
     queryFn: async (): Promise<Set<string>> => {
-      const { data, error } = await supabase.from("vocab_learned").select("word_slug");
+      const { data, error } = await supabase.from("ielts_vocab_learned").select("word_slug");
       if (error) throw error;
       return new Set((data ?? []).map((r) => r.word_slug as string));
     },
@@ -419,8 +419,8 @@ export function useToggleLearned(userId: string | undefined) {
     mutationFn: async (vars: { slug: string; learned: boolean }) => {
       if (!userId) throw new Error("not_signed_in");
       const { error } = vars.learned
-        ? await supabase.from("vocab_learned").upsert({ user_id: userId, word_slug: vars.slug })
-        : await supabase.from("vocab_learned").delete().eq("word_slug", vars.slug);
+        ? await supabase.from("ielts_vocab_learned").upsert({ user_id: userId, word_slug: vars.slug })
+        : await supabase.from("ielts_vocab_learned").delete().eq("word_slug", vars.slug);
       if (error) throw error;
     },
     onMutate: async (vars) => {
@@ -448,7 +448,7 @@ export function usePlanChecks(day: string, enabled = true) {
     queryKey: practiceKeys.planChecks(day),
     enabled,
     queryFn: async (): Promise<Set<string>> => {
-      const { data, error } = await supabase.from("study_plan_checks").select("task_key").eq("day", day);
+      const { data, error } = await supabase.from("ielts_study_plan_checks").select("task_key").eq("day", day);
       if (error) throw error;
       return new Set((data ?? []).map((r) => r.task_key as string));
     },
@@ -461,8 +461,8 @@ export function useTogglePlanCheck(userId: string | undefined, day: string) {
     mutationFn: async (vars: { taskKey: string; done: boolean }) => {
       if (!userId) throw new Error("not_signed_in");
       const { error } = vars.done
-        ? await supabase.from("study_plan_checks").upsert({ user_id: userId, day, task_key: vars.taskKey })
-        : await supabase.from("study_plan_checks").delete().eq("day", day).eq("task_key", vars.taskKey);
+        ? await supabase.from("ielts_study_plan_checks").upsert({ user_id: userId, day, task_key: vars.taskKey })
+        : await supabase.from("ielts_study_plan_checks").delete().eq("day", day).eq("task_key", vars.taskKey);
       if (error) throw error;
     },
     onMutate: async (vars) => {
@@ -500,7 +500,7 @@ export function useGradingJobs(attemptId: string | undefined, poll: boolean) {
     refetchInterval: poll ? 4000 : false,
     queryFn: async (): Promise<GradingJobRow[]> => {
       const { data, error } = await supabase
-        .from("grading_jobs")
+        .from("ielts_grading_jobs")
         .select("id, kind, part_number, status, tries")
         .eq("attempt_id", attemptId!)
         .order("kind")
@@ -532,7 +532,7 @@ export function useAttemptReviewV2(attemptId: string | undefined, enabled = true
     enabled: Boolean(attemptId) && enabled,
     retry: false,
     queryFn: async (): Promise<AttemptReviewV2Row[]> => {
-      const { data, error } = await supabase.rpc("get_attempt_review_v2", { p_attempt_id: attemptId! });
+      const { data, error } = await supabase.rpc("ielts_get_attempt_review_v2", { p_attempt_id: attemptId! });
       if (error) throw error;
       return (data as AttemptReviewV2Row[]) ?? [];
     },
@@ -552,7 +552,7 @@ export function useAttemptTranscripts(attemptId: string | undefined, enabled = t
     enabled: Boolean(attemptId) && enabled,
     retry: false,
     queryFn: async (): Promise<TranscriptRow[]> => {
-      const { data, error } = await supabase.rpc("get_attempt_transcripts", { p_attempt_id: attemptId! });
+      const { data, error } = await supabase.rpc("ielts_get_attempt_transcripts", { p_attempt_id: attemptId! });
       if (error) throw error;
       return (data as TranscriptRow[]) ?? [];
     },
@@ -585,7 +585,7 @@ export function useAdminAnalytics(days: number) {
   return useQuery({
     queryKey: practiceKeys.analytics(days),
     queryFn: async (): Promise<AdminAnalytics> => {
-      const { data, error } = await supabase.rpc("admin_analytics", { p_days: days });
+      const { data, error } = await supabase.rpc("ielts_admin_analytics", { p_days: days });
       if (error) throw error;
       return data as AdminAnalytics;
     },
@@ -597,7 +597,7 @@ export function useClientErrors() {
     queryKey: practiceKeys.clientErrors,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("client_errors")
+        .from("ielts_client_errors")
         .select("id, message, url, created_at")
         .order("created_at", { ascending: false })
         .limit(25);
@@ -611,7 +611,7 @@ export function useClientErrors() {
 export function useGenerateAudio() {
   return useMutation({
     mutationFn: (vars: { groupId: string; force?: boolean }) =>
-      invokeFunction<{ audio_url: string; skipped?: boolean }>("generate-audio", {
+      invokeFunction<{ audio_url: string; skipped?: boolean }>("ielts-generate-audio", {
         group_id: vars.groupId,
         force: vars.force ?? false,
       }),
@@ -625,7 +625,7 @@ export function useGroupScript(groupId: string | undefined) {
     enabled: Boolean(groupId),
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("item_group_scripts")
+        .from("ielts_item_group_scripts")
         .select("transcript")
         .eq("group_id", groupId!)
         .maybeSingle();
@@ -640,7 +640,7 @@ export function useSaveGroupScript() {
   return useMutation({
     mutationFn: async (vars: { groupId: string; transcript: string }) => {
       const { error } = await supabase
-        .from("item_group_scripts")
+        .from("ielts_item_group_scripts")
         .upsert({ group_id: vars.groupId, transcript: vars.transcript });
       if (error) throw error;
     },
@@ -655,7 +655,7 @@ export function useSaveGroupScript() {
 export function useCheckout() {
   return useMutation({
     mutationFn: async (plan: "month" | "quarter") => {
-      const { url } = await invokeFunction<{ url: string }>("checkout", { plan });
+      const { url } = await invokeFunction<{ url: string }>("ielts-checkout", { plan });
       window.location.assign(url);
     },
   });

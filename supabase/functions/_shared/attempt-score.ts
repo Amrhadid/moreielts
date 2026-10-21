@@ -29,8 +29,8 @@ export async function scoreAttempt(
   options: { close?: boolean } = {},
 ): Promise<ScoreResult> {
   const { data: attempt, error } = await db
-    .from("attempts")
-    .select("id, user_id, form_id, submitted_at, test_forms ( variant, scoring_version )")
+    .from("ielts_attempts")
+    .select("id, user_id, form_id, submitted_at, test_forms:ielts_test_forms ( variant, scoring_version )")
     .eq("id", attemptId)
     .single();
   if (error || !attempt) throw new Error("attempt_not_found");
@@ -39,16 +39,16 @@ export async function scoreAttempt(
   const version = form?.scoring_version ?? "v1";
 
   const { data: marked } = await db
-    .from("responses")
+    .from("ielts_responses")
     .select(
       `id, is_correct,
-       questions!inner ( item_groups!inner ( part_number, test_sections!inner ( section ) ) )`,
+       questions:ielts_questions!inner ( item_groups:ielts_item_groups!inner ( part_number, test_sections:ielts_test_sections!inner ( section ) ) )`,
     )
     .eq("attempt_id", attemptId)
     .not("is_correct", "is", null);
 
   const { data: conversion } = await db
-    .from("band_conversion")
+    .from("ielts_band_conversion")
     .select("variant, section, raw_min, raw_max, band, version")
     .eq("version", version);
   const table = (conversion ?? []) as BandConversionRow[];
@@ -73,7 +73,7 @@ export async function scoreAttempt(
   const reading = sectionBand("reading");
 
   const { data: writingRows } = await db
-    .from("writing_scores")
+    .from("ielts_writing_scores")
     .select("task_number, task_band")
     .eq("attempt_id", attemptId);
   const task1 = writingRows?.find((r) => r.task_number === 1)?.task_band ?? null;
@@ -82,7 +82,7 @@ export async function scoreAttempt(
     task1 !== null && task2 !== null ? writingSectionBand(Number(task1), Number(task2)) : null;
 
   const { data: speakingRows } = await db
-    .from("speaking_scores")
+    .from("ielts_speaking_scores")
     .select("part_band")
     .eq("attempt_id", attemptId);
   const speakingBand = speakingRows?.length
@@ -99,7 +99,7 @@ export async function scoreAttempt(
       })
     : null;
 
-  await db.from("attempt_scores").upsert(
+  await db.from("ielts_attempt_scores").upsert(
     {
       attempt_id: attemptId,
       listening_raw: listening.raw,
@@ -119,7 +119,7 @@ export async function scoreAttempt(
   // grade arrives. `close` is the submission itself.
   if (options.close || attempt.submitted_at) {
     await db
-      .from("attempts")
+      .from("ielts_attempts")
       .update({
         status: complete ? "completed" : "awaiting_speaking",
         ...(options.close
@@ -129,7 +129,9 @@ export async function scoreAttempt(
       .eq("id", attemptId);
 
     if (complete && overall) {
-      await db.from("profiles").update({ current_band: overall.band }).eq("id", attempt.user_id);
+      await db
+        .from("ielts_learners")
+        .upsert({ user_id: attempt.user_id, current_band: overall.band }, { onConflict: "user_id" });
     }
   }
 

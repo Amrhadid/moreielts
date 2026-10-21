@@ -25,21 +25,21 @@ Deno.serve(async (req) => {
 
     const db = serviceClient();
     const { data: attempt } = await db
-      .from("attempts")
+      .from("ielts_attempts")
       .select("user_id")
       .eq("id", attempt_id)
       .single();
     if (!attempt) return json({ error: "attempt_not_found" }, 404);
     if (attempt.user_id !== user.id) return json({ error: "forbidden" }, 403);
 
-    const allowed = await checkRateLimit(db, user.id, "grade-speaking", 9, 60, attempt_id);
+    const allowed = await checkRateLimit(db, user.id, "ielts-grade-speaking", 9, 60, attempt_id);
     if (!allowed) return json({ error: "rate_limited", retry_after_minutes: 60 }, 429);
 
     await gradeAttemptSpeaking(db, attempt_id, part_number);
     await scoreAttempt(db, attempt_id);
     return json({ attempt_id, part_number, status: "graded" });
   } catch (error) {
-    console.error("grade-speaking failed", error);
+    console.error("ielts-grade-speaking failed", error);
     return new Response(
       JSON.stringify({ error: String((error as Error).message ?? error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

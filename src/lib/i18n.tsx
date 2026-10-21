@@ -159,7 +159,7 @@ export function I18nProvider({
       } catch {
         // private mode: the choice lasts for this page only
       }
-      if (userId) void supabase.from("profiles").update({ locale: next }).eq("id", userId);
+      if (userId) void supabase.from("ielts_learners").update({ locale: next }).eq("user_id", userId);
     },
     [userId],
   );

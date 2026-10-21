@@ -10,7 +10,35 @@ import {
 } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "./supabase";
-import type { ProfileRow } from "~/types/database";
+import type { LearnerRow, ProfileRow } from "~/types/database";
+
+/** One ProfileRow for the app, from the shared account and the learner row. */
+export function mergeProfile(
+  userId: string,
+  email: string,
+  account: Partial<ProfileRow> | null,
+  learner: LearnerRow | null,
+): ProfileRow {
+  const premium = Boolean(
+    learner?.premium_expires_at && new Date(learner.premium_expires_at) > new Date(),
+  );
+  return {
+    id: userId,
+    email: account?.email ?? email,
+    full_name: account?.full_name ?? null,
+    role: account?.role === "admin" ? "admin" : "user",
+    tier: premium ? "premium" : "free",
+    premium_expires_at: learner?.premium_expires_at ?? null,
+    target_band: learner?.target_band ?? null,
+    current_band: learner?.current_band ?? null,
+    exam_date: learner?.exam_date ?? null,
+    daily_goal_minutes: learner?.daily_goal_minutes ?? 20,
+    locale: learner?.locale ?? "en",
+    reminder_emails: learner?.reminder_emails ?? true,
+    created_at: learner?.created_at ?? account?.created_at ?? new Date().toISOString(),
+    updated_at: learner?.updated_at ?? new Date().toISOString(),
+  };
+}
 
 interface AuthState {
   session: Session | null;
@@ -62,14 +90,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: profile } = useQuery({
     queryKey: ["profile", session?.user.id],
     enabled: Boolean(session?.user.id),
+    // The account (name, email, admin role) is the shared MoreTOEFL profile;
+    // everything IELTS-specific, Premium included, is the learner row, which
+    // ielts_ensure_learner() creates on the first visit.
     queryFn: async (): Promise<ProfileRow | null> => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session!.user.id)
-        .single();
-      if (error) throw error;
-      return data as unknown as ProfileRow;
+      const [account, learner] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, email, full_name, role, created_at")
+          .eq("id", session!.user.id)
+          .maybeSingle(),
+        supabase.rpc("ielts_ensure_learner"),
+      ]);
+      if (account.error) throw account.error;
+      if (learner.error) throw learner.error;
+      return mergeProfile(
+        session!.user.id,
+        session!.user.email ?? "",
+        account.data as Partial<ProfileRow> | null,
+        learner.data as LearnerRow,
+      );
     },
   });
 
@@ -80,9 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile: profile ?? null,
       loading,
       isAdmin: profile?.role === "admin",
-      isPremium:
-        profile?.tier === "premium" &&
-        (!profile.premium_expires_at || new Date(profile.premium_expires_at) > new Date()),
+      isPremium: profile?.tier === "premium",
     }),
     [session, profile, loading],
   );

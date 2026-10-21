@@ -38,8 +38,8 @@ Deno.serve(async (req) => {
     if (!group_id) return json({ error: "group_id_required" }, 400);
 
     const { data: group } = await db
-      .from("item_groups")
-      .select("id, part_number, audio_url, test_sections!inner ( section )")
+      .from("ielts_item_groups")
+      .select("id, part_number, audio_url, test_sections:ielts_test_sections!inner ( section )")
       .eq("id", group_id)
       .single();
     // deno-lint-ignore no-explicit-any
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     }
 
     const { data: script } = await db
-      .from("item_group_scripts")
+      .from("ielts_item_group_scripts")
       .select("transcript, audio_script_hash")
       .eq("group_id", group_id)
       .maybeSingle();
@@ -86,8 +86,8 @@ Deno.serve(async (req) => {
 
     const url = await putObject(`audio/generated/${group_id}-${hash.slice(0, 10)}.mp3`, audio, "audio/mpeg");
 
-    await db.from("item_groups").update({ audio_url: url }).eq("id", group_id);
-    await db.from("item_group_scripts").update({ audio_script_hash: hash }).eq("group_id", group_id);
+    await db.from("ielts_item_groups").update({ audio_url: url }).eq("id", group_id);
+    await db.from("ielts_item_group_scripts").update({ audio_script_hash: hash }).eq("group_id", group_id);
 
     return json({
       group_id,

@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
   }
 
   const db = serviceClient();
-  const { error } = await db.rpc("grant_paid_premium", {
+  const { error } = await db.rpc("ielts_grant_paid_premium", {
     p_session_id: session.id,
     p_user: userId,
     p_plan: plan,

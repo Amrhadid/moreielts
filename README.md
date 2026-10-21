@@ -366,7 +366,7 @@ One-time setup after `supabase db push`:
 ```sql
 -- Database -> Extensions: enable pg_net and pg_cron first.
 select vault.create_secret('<same value as GRADING_WORKER_KEY>', 'grading_worker_key');
-select vault.create_secret('https://<ref>.supabase.co/functions/v1/grading-worker', 'grading_worker_url');
+select vault.create_secret('https://<ref>.supabase.co/functions/v1/ielts-grading-worker', 'grading_worker_url');
 ```
 
 **Listening audio.** Scripts live in the admin-only `item_group_scripts`
@@ -381,7 +381,7 @@ which gives each speaker a voice and accent, uploads the MP3 to R2 and sets
 
 **Payments.** `checkout` creates a Stripe Checkout Session for a 30- or
 90-day pass; `stripe-webhook` (point Stripe's `checkout.session.completed`
-at `https://<ref>.supabase.co/functions/v1/stripe-webhook`) grants Premium
+at `https://<ref>.supabase.co/functions/v1/ielts-stripe-webhook`) grants Premium
 through the idempotent `grant_paid_premium()`.
 
 `grading-worker` and `stripe-webhook` are deployed with `--no-verify-jwt`

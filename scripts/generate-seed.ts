@@ -52,7 +52,7 @@ function formSql(form: SeedForm): string[] {
 
   const lines = [
     `-- ${form.title} (${form.slug})`,
-    `insert into public.test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)`,
+    `insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)`,
     `values (${q(formId)}, ${q(form.slug)}, ${q(form.title)}, ${q(form.description)}, ${q(form.variant)}, 'computer', true, ${form.isPremium}, ${q(form.difficulty)}, 'v1')`,
     "on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;",
     "",
@@ -61,7 +61,7 @@ function formSql(form: SeedForm): string[] {
   form.sections.forEach((section, order) => {
     const sectionId = uuidFor(name(`section:${section.code}`));
     lines.push(
-      `insert into public.test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)`,
+      `insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)`,
       `values (${q(sectionId)}, ${q(formId)}, ${q(section.code)}, ${section.durationMinutes * 60}, ${section.questionCount}, NULL, ${order})`,
       "on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;",
       "",
@@ -77,15 +77,15 @@ function formSql(form: SeedForm): string[] {
       // An R2 URL written by generate-audio must survive a re-seed, so the
       // update keeps a stored audio_url over the authored placeholder.
       lines.push(
-        `insert into public.item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)`,
+        `insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)`,
         `values (${q(groupId)}, ${q(sectionId)}, ${group.partNumber}, ${q(group.passageText)}, ${q(group.audioUrl)}, ${q(group.imageUrl)}, ${q(group.instructions)}, ${q(metadata)}::jsonb, ${groupIndex})`,
-        "on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.item_groups.audio_url, excluded.audio_url);",
+        "on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);",
         "",
       );
 
       if (group.transcript?.trim()) {
         lines.push(
-          `insert into public.item_group_scripts (group_id, transcript) values (${q(groupId)}, ${q(group.transcript.trim())})`,
+          `insert into public.ielts_item_group_scripts (group_id, transcript) values (${q(groupId)}, ${q(group.transcript.trim())})`,
           "on conflict (group_id) do update set transcript = excluded.transcript;",
           "",
         );
@@ -95,7 +95,7 @@ function formSql(form: SeedForm): string[] {
         const questionId = uuidFor(name(`question:${section.code}:${question.id}`));
         const options = JSON.stringify(question.options ?? []);
         lines.push(
-          `insert into public.questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)`,
+          `insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, explanation, order_index)`,
           `values (${q(questionId)}, ${q(groupId)}, ${q(question.type)}, ${q(question.prompt)}, ${q(options)}::jsonb, ${textArray(question.acceptedAnswers)}, ${question.wordLimit ?? 0}, ${q(question.spellingStrict ? "strict" : "lenient")}, true, false, '{}'::jsonb, ${q(question.explanation ?? null)}, ${questionIndex})`,
           "on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit, explanation = excluded.explanation;",
           "",
@@ -112,7 +112,7 @@ const lines: string[] = [
   "-- GENERATED FILE. Regenerate with `npm run seed:generate`.",
   "--",
   "-- Every authored form in scripts/seed-content/forms, published. Requires",
-  "-- migrations through 0007 (slug, difficulty, explanation, item_group_scripts).",
+  "-- migrations through 0008 (slug, difficulty, explanation, item_group_scripts).",
   "-- Idempotent: ids are derived from stable names, so re-running updates",
   "-- rather than duplicates.",
   "",
