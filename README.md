@@ -90,6 +90,7 @@ supabase/
     0004_attempt_rpcs.sql        Server-authoritative timing, redeem_code
     0005_seed_question_types.sql The 15 question types
     0006_seed_band_conversion.sql Raw score -> band, versioned
+    0007_practice_results.sql    ielts_practice_results, the practice history
   functions/
     _shared/               CORS, service client, rate limit, Anthropic client
     submit-attempt/        Marks responses and writes every score
@@ -275,8 +276,12 @@ one voice per speaker, joined with ffmpeg) and committed, so it needs
 re-running only when a line changes. The transcript is revealed after the
 answers are checked.
 
-Practice results are kept per user in `localStorage` (last forty) and shown as
-"Recent practice" on `/practice`; there is no practice attempt table yet.
+Every finished item is inserted into `public.ielts_practice_results`
+(migration `0007`: own rows only under RLS, `select` and `insert` for
+`authenticated`, no client update or delete) and mirrored into `localStorage`
+as an offline fallback; "Recent practice" on `/practice` reads the table first.
+The table is namespaced `ielts_` because it lives in the MoreTOEFL project's
+schema, where it was applied as migration `ielts_practice_results`.
 
 ## AI grading
 
@@ -303,5 +308,4 @@ reach the browser.
 
 Cloudflare Stream video, payments, and course content. Speech-to-text for
 speaking recordings in the mock test is stubbed as described above (Speaking
-*practice* transcribes in the browser with the Web Speech API). Practice
-results are not yet stored server-side.
+*practice* transcribes in the browser with the Web Speech API).

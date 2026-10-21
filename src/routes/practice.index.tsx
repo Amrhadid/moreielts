@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "~/components/layout/AppShell";
@@ -6,6 +7,7 @@ import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
 import { PRACTICE_META, PRACTICE_SECTIONS } from "~/data/practice";
 import { Protected, useAuth } from "~/lib/auth";
 import {
+  fetchHistory,
   formatHistoryScore,
   readHistory,
   type PracticeHistoryEntry,
@@ -35,12 +37,21 @@ function PracticeRoute() {
 
 function PracticeHome() {
   const { user } = useAuth();
-  const [history, setHistory] = useState<PracticeHistoryEntry[]>([]);
+  const [local, setLocal] = useState<PracticeHistoryEntry[]>([]);
 
   // localStorage is read after mount so the server render matches the client.
   useEffect(() => {
-    setHistory(readHistory(user?.id));
+    setLocal(readHistory(user?.id));
   }, [user?.id]);
+
+  // The server copy (ielts_practice_results) wins when it answers; the local
+  // mirror covers offline use and a failed query.
+  const remote = useQuery({
+    queryKey: ["practice-history", user?.id],
+    enabled: Boolean(user?.id),
+    queryFn: () => fetchHistory(user!.id),
+  });
+  const history = remote.data ?? local;
 
   return (
     <AppShell>
@@ -95,7 +106,9 @@ function PracticeHome() {
         <CardBody>
           {history.length === 0 ? (
             <p className="text-sm text-muted">
-              Nothing yet. Your last forty practice results are kept on this device.
+              {remote.isLoading
+                ? "Loading your results…"
+                : "Nothing yet. Your last forty practice results will appear here."}
             </p>
           ) : (
             <ul className="divide-y divide-line">
