@@ -38,6 +38,18 @@ every user as `role = 'user'`:
 update public.profiles set role = 'admin' where email = 'you@example.com';
 ```
 
+## Shared Supabase project with MoreTOEFL
+
+MoreIELTS and MoreTOEFL (moretoefl.com) are separate sites on one Supabase
+project, so they share `auth.users` and `public.profiles`. `profiles.sites`
+records which site(s) an account has signed in to: email sign-ups pass
+`site` in the user metadata, and `src/lib/auth.tsx` calls the
+`register_site_visit` RPC once per sign-in (which also covers Google). The
+admin Students and Analytics pages read only rows whose `sites` contains
+`ielts` (`src/lib/site.ts`), so the two dashboards do not show each other's
+learners. The migration is `0007_profile_sites.sql` here and
+`0043_profile_sites.sql` in the MoreTOEFL repository.
+
 ## Environment variables
 
 | Variable | Where | Purpose |

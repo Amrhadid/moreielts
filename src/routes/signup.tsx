@@ -7,6 +7,7 @@ import { Logo } from "~/components/layout/Logo";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Input, Label } from "~/components/ui/Field";
+import { SITE } from "~/lib/site";
 import { supabase } from "~/lib/supabase";
 
 export const Route = createFileRoute("/signup")({ component: SignupPage });
@@ -37,7 +38,9 @@ function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
-      options: { data: { full_name: values.fullName } },
+      // `site` stamps profiles.sites at creation, so the account shows up in
+      // this site's admin dashboard and not MoreTOEFL's.
+      options: { data: { full_name: values.fullName, site: SITE } },
     });
     if (error) {
       setServerError(error.message);

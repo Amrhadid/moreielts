@@ -4,6 +4,7 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/react-query";
+import { SITE } from "./site";
 import { supabase, invokeFunction } from "./supabase";
 import type {
   AttemptReviewRow,
@@ -567,6 +568,9 @@ export function useStudents() {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
+        // Only accounts that have used this site — profiles is shared with
+        // MoreTOEFL (see ~/lib/site).
+        .contains("sites", [SITE])
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
