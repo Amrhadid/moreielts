@@ -10,7 +10,7 @@ import { Progress } from "~/components/ui/Progress";
 import { Select } from "~/components/ui/Select";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
-import { Protected, useAuth } from "~/lib/auth";
+import { PremiumGate, useAuth } from "~/lib/auth";
 import { usePlanChecks, useTogglePlanCheck, useUpdateGoals, type TypeAccuracyRow } from "~/lib/practice-queries";
 import type { PlanPhase } from "~/lib/study-plan";
 import { useDailyPlan } from "~/lib/use-daily-plan";
@@ -19,9 +19,9 @@ export const Route = createFileRoute("/enhance")({ component: EnhanceRoute });
 
 function EnhanceRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <StudyPlan />
-    </Protected>
+    </PremiumGate>
   );
 }
 

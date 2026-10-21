@@ -8,16 +8,20 @@ import { SubmitDialog } from "~/components/player/SubmitDialog";
 import { Button } from "~/components/ui/Button";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/listening")({ component: ListeningRoute });
+export const Route = createFileRoute("/test/listening")({
+  validateSearch: (s: Record<string, unknown>): { form?: string } =>
+    typeof s.form === "string" ? { form: s.form } : {},
+  component: ListeningRoute,
+});
 
 function ListeningRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <ListeningPlayer />
-    </Protected>
+    </PremiumGate>
   );
 }
 
@@ -168,6 +172,7 @@ function ListeningPlayer() {
           <SubmitDialog
             attemptId={player.attemptId!}
             section="listening"
+            formId={player.form?.id}
             answeredCount={player.answered.size}
             total={numbers.length}
           />

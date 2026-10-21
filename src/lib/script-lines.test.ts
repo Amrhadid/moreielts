@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { castSpeakers, chunkText, parseScript } from "./script-lines";
+import { castSpeakers, chunkText, guessGender, parseScript } from "./script-lines";
 
 describe("parseScript", () => {
   it("splits speaker turns and joins wrapped lines", () => {
@@ -20,6 +20,23 @@ describe("castSpeakers", () => {
     const cast = castSpeakers(parseScript("A: x\nB: y\nC: z\nA: w"), 3);
     const voices = [...cast.values()].map((c) => c.voice);
     expect(new Set(voices).size).toBe(3);
+  });
+});
+
+describe("guessGender", () => {
+  it("reads names and titles", () => {
+    expect(guessGender("HELEN")).toBe("female");
+    expect(guessGender("MRS OKAFOR")).toBe("female");
+    expect(guessGender("MR BROWN")).toBe("male");
+    expect(guessGender("TOMAS")).toBe("male");
+    expect(guessGender("LECTURER")).toBeNull();
+  });
+
+  it("never gives a woman a man's voice", () => {
+    const cast = castSpeakers(parseScript("HELEN: Hi\nJAMES: Hello\nPRIYA: Hey"), 2);
+    expect(cast.get("HELEN")!.gender).toBe("female");
+    expect(cast.get("PRIYA")!.gender).toBe("female");
+    expect(cast.get("HELEN")!.elevenVoice).not.toBe(cast.get("PRIYA")!.elevenVoice);
   });
 });
 

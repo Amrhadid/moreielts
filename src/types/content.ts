@@ -128,5 +128,11 @@ export interface SeedForm {
   variant: "academic" | "general_training";
   difficulty: Difficulty;
   isPremium: boolean;
+  /**
+   * "practice" forms feed the skill sections (drills, writing lab prompts);
+   * "mock" forms are full exams shown only on the Mock Test page. Defaults to
+   * "practice".
+   */
+  purpose?: "practice" | "mock";
   sections: Section[];
 }

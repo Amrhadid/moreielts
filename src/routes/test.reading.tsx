@@ -8,16 +8,20 @@ import { QuestionNavigator } from "~/components/player/QuestionNavigator";
 import { SubmitDialog } from "~/components/player/SubmitDialog";
 import { Button } from "~/components/ui/Button";
 import { cn } from "~/lib/cn";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/reading")({ component: ReadingRoute });
+export const Route = createFileRoute("/test/reading")({
+  validateSearch: (s: Record<string, unknown>): { form?: string } =>
+    typeof s.form === "string" ? { form: s.form } : {},
+  component: ReadingRoute,
+});
 
 function ReadingRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <ReadingPlayer />
-    </Protected>
+    </PremiumGate>
   );
 }
 
@@ -77,6 +81,7 @@ function ReadingPlayer() {
           <SubmitDialog
             attemptId={player.attemptId!}
             section="reading"
+            formId={player.form?.id}
             answeredCount={player.answered.size}
             total={numbers.length}
           />

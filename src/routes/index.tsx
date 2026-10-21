@@ -120,10 +120,10 @@ function ActivityChart({ days, goal }: { days: Array<{ day: string; minutes: num
 export const Route = createFileRoute("/")({ component: HomeRoute });
 
 const SECTION_LINKS = [
-  { code: "listening", icon: "◉", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening", color: "text-[#607eea] bg-[#eef1ff]" },
-  { code: "reading", icon: "▤", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/test/reading", color: "text-[#07966f] bg-[#e8f8f2]" },
-  { code: "writing", icon: "✎", label: "Writing", detail: "2 tasks · 60 min", to: "/test/writing", color: "text-[#c47918] bg-[#fff4df]" },
-  { code: "speaking", icon: "◌", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking", color: "text-[#a055c9] bg-[#f7ecfc]" },
+  { code: "listening", icon: "◉", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/practice/listening", color: "text-[#607eea] bg-[#eef1ff]" },
+  { code: "reading", icon: "▤", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/practice/reading", color: "text-[#07966f] bg-[#e8f8f2]" },
+  { code: "writing", icon: "✎", label: "Writing", detail: "2 tasks · 60 min", to: "/practice/writing", color: "text-[#c47918] bg-[#fff4df]" },
+  { code: "speaking", icon: "◌", label: "Speaking", detail: "3 parts · 11–14 min", to: "/practice/speaking", color: "text-[#a055c9] bg-[#f7ecfc]" },
 ] as const;
 
 /**
@@ -295,6 +295,7 @@ function Dashboard() {
                           ? "/test/speaking"
                           : "/test/reading"
                   }
+                  search={{ form: inProgress.form_id }}
                 >
                   Continue test
                 </Link>
@@ -391,7 +392,7 @@ function Dashboard() {
       </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {SECTION_LINKS.map((section) => (
-          <Link key={section.code} to={section.to} className="group">
+          <Link key={section.code} to="/practice/$section" params={{ section: section.code }} className="group">
             <Card className="h-full transition-all group-hover:-translate-y-1 group-hover:border-brand-200 group-hover:bg-brand-50/30 group-hover:shadow-[0_14px_30px_rgba(20,75,120,.09)]">
               <CardBody className="pt-5">
                 <span className={`grid h-11 w-11 place-items-center rounded-xl text-lg font-bold ${section.color}`} aria-hidden>{section.icon}</span>

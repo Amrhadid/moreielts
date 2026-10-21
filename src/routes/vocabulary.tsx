@@ -8,7 +8,7 @@ import { Input } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
 import { Progress } from "~/components/ui/Progress";
 import vocabulary from "~/data/vocabulary.json";
-import { useAuth } from "~/lib/auth";
+import { PremiumGate, useAuth } from "~/lib/auth";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
 import { useLearnedWords, useToggleLearned } from "~/lib/practice-queries";
@@ -35,9 +35,11 @@ export const Route = createFileRoute("/vocabulary")({
   validateSearch: (s: Record<string, unknown>): { topic?: string } =>
     typeof s.topic === "string" && s.topic ? { topic: s.topic } : {},
   component: () => (
-    <AppShell>
-      <VocabularyPage />
-    </AppShell>
+    <PremiumGate>
+      <AppShell>
+        <VocabularyPage />
+      </AppShell>
+    </PremiumGate>
   ),
 });
 

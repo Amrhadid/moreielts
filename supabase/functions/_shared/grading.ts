@@ -5,7 +5,7 @@
  */
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import { assertBand, callClaude, MODEL_VERSION, parseStrictJson } from "./anthropic.ts";
-import { transcribeUrl, type TranscriptWord } from "./openai.ts";
+import { transcribe, type TranscriptWord } from "./speech.ts";
 import { speakingBand, writingTaskBand } from "../../../src/lib/scoring.ts";
 import { speechStats } from "../../../src/lib/speech-stats.ts";
 
@@ -203,6 +203,20 @@ export async function gradeEssay(db: SupabaseClient, submissionId: string): Prom
  * Speaking
  * ------------------------------------------------------------------ */
 
+/** Loads a recording from "storage:<bucket>/<path>" or a plain URL. */
+async function fetchRecording(db: SupabaseClient, ref: string): Promise<Blob> {
+  if (ref.startsWith("storage:")) {
+    const rest = ref.slice("storage:".length);
+    const slash = rest.indexOf("/");
+    const { data, error } = await db.storage.from(rest.slice(0, slash)).download(rest.slice(slash + 1));
+    if (error || !data) throw new Error(`recording_download_failed: ${error?.message ?? "empty"}`);
+    return data;
+  }
+  const response = await fetch(ref);
+  if (!response.ok) throw new Error(`recording_fetch_failed_${response.status}`);
+  return await response.blob();
+}
+
 const SPEAKING_PROMPT = `You are a certified IELTS Speaking examiner applying the public band descriptors.
 
 You assess ONE part of the Speaking test against exactly four criteria:
@@ -300,8 +314,11 @@ export async function gradeAttemptSpeaking(
   } else {
     for (const question of questions) {
       const response = byQuestion.get(question.id);
-      if (!response?.audio_url) continue;
-      const t = await transcribeUrl(response.audio_url);
+      // The player stores the recording reference as the answer; older rows
+      // may carry it in audio_url instead.
+      const ref = response?.audio_url ?? response?.answer ?? "";
+      if (!ref) continue;
+      const t = await transcribe(await fetchRecording(db, ref));
       lines.push(`EXAMINER: ${question.prompt}\nCANDIDATE: ${t.text || "(silence)"}`);
       // Concatenate timings so pauses between answers are not counted.
       const base = offset - (t.words[0]?.start ?? 0);

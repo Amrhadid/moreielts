@@ -76,12 +76,6 @@ begin
   if v_count <> 1 then raise exception 'FAIL: submit_essay did not queue a job'; end if;
   perform public.ielts_submit_essay(2, 'Discuss both views.', 'Draft two');
   perform public.ielts_submit_essay(2, 'Discuss both views.', 'Draft three');
-  v_failed := false;
-  begin
-    perform public.ielts_submit_essay(2, 'Discuss both views.', 'Draft four');
-  exception when others then v_failed := sqlerrm = 'essay_limit_reached_free'; end;
-  if not v_failed then raise exception 'FAIL: free essay limit not enforced'; end if;
-
   -- Vocabulary marks: own rows only, and the activity trigger fires.
   insert into public.ielts_vocab_learned (user_id, word_slug) values (v_alice, 'mitigate');
   v_failed := false;
@@ -122,12 +116,59 @@ begin
 end;
 $$;
 
+-- A signed-in learner without Premium is locked out of all content.
+reset role;
+insert into auth.users (id, email) values ('44444444-4444-4444-4444-444444444444', 'carol@example.com');
+set role authenticated;
+set request.jwt.claim.sub = '44444444-4444-4444-4444-444444444444';
+do $$
+declare
+  v_failed boolean;
+  v_form uuid;
+begin
+  if (select count(*) from public.ielts_questions_public) <> 0 then
+    raise exception 'FAIL: non-premium learner can read questions';
+  end if;
+  if (select count(*) from public.ielts_item_groups) <> 0 then
+    raise exception 'FAIL: non-premium learner can read passages';
+  end if;
+  if (select count(*) from public.ielts_test_forms) = 0 then
+    raise exception 'FAIL: the catalogue should stay visible';
+  end if;
+  select id into v_form from public.ielts_test_forms limit 1;
+  v_failed := false;
+  begin
+    perform public.ielts_start_attempt(v_form);
+  exception when others then v_failed := sqlerrm = 'premium_required'; end;
+  if not v_failed then raise exception 'FAIL: non-premium learner started an attempt'; end if;
+  v_failed := false;
+  begin
+    perform public.ielts_submit_essay(2, 'Prompt', 'Body');
+  exception when others then v_failed := sqlerrm = 'premium_required'; end;
+  if not v_failed then raise exception 'FAIL: non-premium learner submitted an essay'; end if;
+  v_failed := false;
+  begin
+    perform * from public.ielts_generate_codes(1, 30);
+  exception when others then v_failed := true; end;
+  if not v_failed then raise exception 'FAIL: non-admin generated codes'; end if;
+  raise notice 'premium gate passed';
+end;
+$$;
+
 -- Admin sees analytics.
 set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
 do $$
 begin
   if (public.ielts_admin_analytics(30) -> 'totals' ->> 'essays')::int <> 3 then
     raise exception 'FAIL: analytics essay total wrong';
+  end if;
+  -- Code batches: unique, prefixed, look-alike free, redeemable once.
+  if (select count(distinct code) from public.ielts_generate_codes(50, 30, null, 'spring', 'Batch A')) <> 50 then
+    raise exception 'FAIL: code generator did not make 50 distinct codes';
+  end if;
+  if exists (select 1 from public.ielts_redemption_codes
+             where batch_label = 'Batch A' and code !~ '^SPRING-[A-HJ-KM-NP-Z2-9]{4}-[A-HJ-KM-NP-Z2-9]{4}$') then
+    raise exception 'FAIL: generated code has the wrong shape';
   end if;
   raise notice 'ALL PRACTICE TESTS PASSED';
 end;

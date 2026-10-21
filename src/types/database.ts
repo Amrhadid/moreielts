@@ -66,6 +66,8 @@ export interface TestFormRow {
   is_premium: boolean;
   slug: string | null;
   difficulty: "foundation" | "standard" | "challenge";
+  /** "practice" feeds the skill sections; "mock" forms are full exams. */
+  purpose: "practice" | "mock";
   scoring_version: string;
   created_by: string | null;
   created_at: string;

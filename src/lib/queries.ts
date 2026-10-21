@@ -143,6 +143,24 @@ export function useSectionContent(
   });
 }
 
+/** One form by id, for players opened from the Mock Test page (?form=). */
+export function useFormById(formId: string | undefined) {
+  return useQuery({
+    queryKey: queryKeys.form(formId ?? "none"),
+    enabled: Boolean(formId),
+    staleTime: 5 * 60 * 1000,
+    queryFn: async (): Promise<TestFormRow | null> => {
+      const { data, error } = await supabase
+        .from("ielts_test_forms")
+        .select("*")
+        .eq("id", formId!)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as unknown as TestFormRow) ?? null;
+    },
+  });
+}
+
 /** The default published form a player uses when no form id is supplied. */
 export function useDefaultForm(variant: "academic" | "general_training" = "academic") {
   return useQuery({
@@ -154,6 +172,8 @@ export function useDefaultForm(variant: "academic" | "general_training" = "acade
         .select("*")
         .eq("is_published", true)
         .eq("variant", variant)
+        // Full exams first: practice forms feed the skill sections instead.
+        .order("purpose", { ascending: true })
         .order("created_at")
         .limit(1)
         .maybeSingle();
@@ -572,24 +592,54 @@ export function useStudents() {
   });
 }
 
+export interface RedemptionCodeListRow {
+  code: string;
+  type: string;
+  duration_days: number | null;
+  used_by: string | null;
+  used_at: string | null;
+  expires_at: string | null;
+  batch_label: string | null;
+  created_at: string;
+}
+
 export function useRedemptionCodes() {
   return useQuery({
     queryKey: queryKeys.codes,
-    queryFn: async () => {
+    queryFn: async (): Promise<RedemptionCodeListRow[]> => {
       const { data, error } = await supabase
         .from("ielts_redemption_codes")
-        .select("*")
+        .select("code, type, duration_days, used_by, used_at, expires_at, batch_label, created_at")
         .order("created_at", { ascending: false })
-        .limit(100);
+        .limit(1000);
       if (error) throw error;
-      return data as unknown as Array<{
-        code: string;
-        type: string;
-        duration_days: number | null;
-        used_by: string | null;
-        expires_at: string | null;
-      }>;
+      return (data as unknown as RedemptionCodeListRow[]) ?? [];
     },
+  });
+}
+
+/** Admin: creates a batch of Premium codes (ielts_generate_codes, 0013). */
+export function useGenerateCodes() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: {
+      count: number;
+      durationDays: number;
+      expiresAt: string | null;
+      prefix: string;
+      batchLabel: string;
+    }) => {
+      const { data, error } = await supabase.rpc("ielts_generate_codes", {
+        p_count: vars.count,
+        p_duration_days: vars.durationDays,
+        p_expires_at: vars.expiresAt,
+        p_prefix: vars.prefix,
+        p_batch_label: vars.batchLabel,
+      });
+      if (error) throw error;
+      return (data as Array<{ code: string }>).map((r) => r.code);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.codes }),
   });
 }
 
@@ -611,24 +661,29 @@ export async function uploadToR2(
   kind: "item_audio" | "item_image" | "response_audio",
   extra: Record<string, unknown> = {},
 ): Promise<string> {
-  const signed = await invokeFunction<{
-    upload_url: string;
-    public_url: string;
-    required_headers: Record<string, string>;
-  }>("ielts-upload-url", {
-    kind,
-    content_type: file.type,
-    file_size: file.size,
-    ...extra,
-  });
-
-  const response = await fetch(signed.upload_url, {
-    method: "PUT",
-    headers: signed.required_headers,
-    body: file,
-  });
-  if (!response.ok) {
-    throw new Error(`R2 upload failed with ${response.status}`);
+  // Media lives in Supabase Storage (migration 0013). Speaking recordings go to
+  // the private ielts-recordings bucket under the learner's own folder, and the
+  // stored value is a storage reference the grader downloads with the service
+  // role; listening audio and images go to the public ielts-media bucket.
+  if (kind === "response_audio") {
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) throw new Error("not_signed_in");
+    const extension = file.type.includes("mp4") ? "m4a" : file.type.includes("ogg") ? "ogg" : "webm";
+    const path = `${auth.user.id}/${extra.attempt_id}/${extra.question_id}.${extension}`;
+    const { error } = await supabase.storage
+      .from("ielts-recordings")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (error) throw error;
+    return `storage:ielts-recordings/${path}`;
   }
-  return signed.public_url;
+
+  const folder = kind === "item_audio" ? "audio" : "images";
+  const slug = String(extra.slug ?? "asset").toLowerCase().replace(/[^a-z0-9-]+/g, "-").slice(0, 60);
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "bin";
+  const path = `${folder}/${slug}-${crypto.randomUUID()}.${extension}`;
+  const { error } = await supabase.storage
+    .from("ielts-media")
+    .upload(path, file, { contentType: file.type });
+  if (error) throw error;
+  return supabase.storage.from("ielts-media").getPublicUrl(path).data.publicUrl;
 }

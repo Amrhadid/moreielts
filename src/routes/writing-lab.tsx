@@ -8,7 +8,7 @@ import { Textarea } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
 import { EssayFeedback } from "~/components/writing/EssayFeedback";
 import { countWords } from "~/lib/answer-check";
-import { Protected, useAuth } from "~/lib/auth";
+import { PremiumGate, useAuth } from "~/lib/auth";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
 import {
@@ -27,11 +27,11 @@ export const Route = createFileRoute("/writing-lab")({
     ...(Number(s.task) === 1 || Number(s.task) === 2 ? { task: Number(s.task) as 1 | 2 } : {}),
   }),
   component: () => (
-    <Protected>
+    <PremiumGate>
       <AppShell>
         <WritingLab />
       </AppShell>
-    </Protected>
+    </PremiumGate>
   ),
 });
 

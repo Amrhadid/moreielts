@@ -1,19 +1,18 @@
 /**
  * generate-audio
  *
- * Narrates one listening part from its script (item_group_scripts) with
- * OpenAI text-to-speech, uploads the MP3 to R2 and stores the URL on
- * item_groups.audio_url. Each speaker gets their own voice and accent
+ * Narrates one listening part from its script (ielts_item_group_scripts) with
+ * ElevenLabs, stores the MP3 in the public ielts-media bucket and sets
+ * ielts_item_groups.audio_url. Each speaker gets a voice of the right gender
  * (src/lib/script-lines.ts). An unchanged script is skipped unless forced.
  *
- * Auth: an admin session, or the x-grade-key header for batch runs.
+ * Auth: an admin session.
  * Body: { group_id, force? }. One part per call keeps each run well inside
  * the Edge Function time limit; /admin loops over a form's parts.
  */
 import { corsHeaders, json, preflight } from "../_shared/cors.ts";
 import { getCaller, serviceClient } from "../_shared/supabase.ts";
-import { synthesize, TTS_MODEL } from "../_shared/openai.ts";
-import { putObject } from "../_shared/r2.ts";
+import { synthesize, TTS_MODEL } from "../_shared/speech.ts";
 import { castSpeakers, chunkText, parseScript } from "../../../src/lib/script-lines.ts";
 
 async function sha1(text: string): Promise<string> {
@@ -26,13 +25,10 @@ Deno.serve(async (req) => {
 
   try {
     const db = serviceClient();
-    const key = Deno.env.get("GRADING_WORKER_KEY");
-    if (!(key && req.headers.get("x-grade-key") === key)) {
-      const user = await getCaller(req);
-      if (!user) return json({ error: "unauthorized" }, 401);
-      const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).single();
-      if (profile?.role !== "admin") return json({ error: "forbidden" }, 403);
-    }
+    const user = await getCaller(req);
+    if (!user) return json({ error: "unauthorized" }, 401);
+    const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).single();
+    if (profile?.role !== "admin") return json({ error: "forbidden" }, 403);
 
     const { group_id, force } = await req.json();
     if (!group_id) return json({ error: "group_id_required" }, 400);
@@ -65,15 +61,9 @@ Deno.serve(async (req) => {
     // MP3 frames concatenate cleanly, so the part is the turns end to end.
     const pieces: Uint8Array[] = [];
     for (const turn of turns) {
-      const { voice, accent } = cast.get(turn.speaker)!;
-      for (const chunk of chunkText(turn.text)) {
-        pieces.push(
-          await synthesize(
-            chunk,
-            voice,
-            `Speak with a natural ${accent} accent at a calm, clear pace, like a recording in an English listening exam. Do not add or drop words.`,
-          ),
-        );
+      const { elevenVoice } = cast.get(turn.speaker)!;
+      for (const chunk of chunkText(turn.text, 2500)) {
+        pieces.push(await synthesize(chunk, elevenVoice));
       }
     }
     const total = pieces.reduce((n, p) => n + p.length, 0);
@@ -84,7 +74,12 @@ Deno.serve(async (req) => {
       at += p.length;
     }
 
-    const url = await putObject(`audio/generated/${group_id}-${hash.slice(0, 10)}.mp3`, audio, "audio/mpeg");
+    const path = `audio/generated/${group_id}-${hash.slice(0, 10)}.mp3`;
+    const { error: uploadError } = await db.storage
+      .from("ielts-media")
+      .upload(path, audio, { contentType: "audio/mpeg", upsert: true });
+    if (uploadError) throw uploadError;
+    const url = db.storage.from("ielts-media").getPublicUrl(path).data.publicUrl;
 
     await db.from("ielts_item_groups").update({ audio_url: url }).eq("id", group_id);
     await db.from("ielts_item_group_scripts").update({ audio_script_hash: hash }).eq("group_id", group_id);

@@ -53,11 +53,9 @@ await check("unknown guide is a not-found page", async () => {
   assert.ok(res.status() === 404 || (await page.getByText(/not found/i).count()) > 0);
 });
 
-await check("vocabulary is browsable without an account", async () => {
+await check("vocabulary asks visitors to sign in (Premium only)", async () => {
   await page.goto(BASE + "/vocabulary");
-  await page.getByText("Environment").first().waitFor();
-  await page.getByText("Environment").first().click();
-  await page.getByText(/mitigate|sustainable|emission/i).first().waitFor();
+  await page.getByText("Sign in to continue").waitFor();
 });
 
 await check("learn page is public and links to guides", async () => {

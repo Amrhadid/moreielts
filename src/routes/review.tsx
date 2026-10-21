@@ -6,7 +6,7 @@ import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Icon } from "~/components/ui/Icon";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
 import {
@@ -23,11 +23,11 @@ export const Route = createFileRoute("/review")({ component: ReviewRoute });
 
 function ReviewRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <AppShell>
         <ReviewPage />
       </AppShell>
-    </Protected>
+    </PremiumGate>
   );
 }
 

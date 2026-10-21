@@ -21,7 +21,7 @@ const PUBLIC_QUESTION = "id, group_id, type_code, prompt, options, word_limit, o
 const KEYED_QUESTION =
   "id, group_id, prompt, accepted_answers, explanation, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, question_types:ielts_question_types!inner ( renderer )";
 const GROUP_FIELDS =
-  "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, is_published, is_premium, difficulty ) )";
+  "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, is_published, is_premium, difficulty, purpose ) )";
 
 // deno-lint-ignore no-explicit-any
 type Row = any;
@@ -39,7 +39,9 @@ Deno.serve(async (req) => {
     const db = serviceClient();
     const body = await req.json();
 
+    // MoreIELTS is Premium-only (0013); admins count as Premium.
     const { data: premium } = await db.rpc("ielts_is_premium", { p_user: user.id });
+    if (!premium) return json({ error: "premium_required" }, 403);
 
     /* ------------------------------------------------------------ start */
     if (body.action === "start") {
@@ -54,6 +56,8 @@ Deno.serve(async (req) => {
       for (const c of (candidates ?? []) as Row[]) {
         const form = c.item_groups.test_sections.test_forms;
         if (!form.is_published) continue;
+        // Drills draw on the skill-practice forms; mock exams stay unseen.
+        if (form.purpose !== "practice") continue;
         if (form.is_premium && !premium) continue;
         if (body.difficulty && form.difficulty !== body.difficulty) continue;
         groups.set(c.group_id, c.item_groups);

@@ -3,7 +3,8 @@
  *
  * Drains grading_jobs. Called by the grading-sweep cron (every minute) and by
  * submit-attempt right after a submission, always with the x-grade-key header
- * (GRADING_WORKER_KEY). Deploy with --no-verify-jwt: the key is the auth.
+ * (a random key kept only in Vault). Deploy with --no-verify-jwt: the key,
+ * checked by ielts_check_worker_key(), is the auth.
  *
  * Each job is claimed with SKIP LOCKED, so overlapping invocations never grade
  * the same job twice. A failure leaves the job pending for the next sweep;
@@ -24,13 +25,13 @@ interface Job {
 }
 
 Deno.serve(async (req) => {
-  const key = Deno.env.get("GRADING_WORKER_KEY");
-  if (!key || req.headers.get("x-grade-key") !== key) {
-    return json({ error: "forbidden" }, 403);
-  }
+  const db = serviceClient();
+  const { data: keyOk } = await db.rpc("ielts_check_worker_key", {
+    p_key: req.headers.get("x-grade-key"),
+  });
+  if (keyOk !== true) return json({ error: "forbidden" }, 403);
 
   const body = await req.json().catch(() => ({}));
-  const db = serviceClient();
   const { data: jobs, error } = await db.rpc("ielts_claim_grading_jobs", {
     p_limit: Math.min(Number(body.limit ?? 5), 10),
     p_job: body.job_id ?? null,

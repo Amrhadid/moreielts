@@ -38,7 +38,12 @@ begin
   end if;
 
   update public.profiles set role = 'admin' where id = v_admin;
-  insert into public.ielts_learners (user_id) values (v_admin), (v_alice), (v_bob);
+  -- MoreIELTS is Premium-only (0013); the candidate checks run as Premium
+  -- learners. A non-Premium account is tested in practice_test.sql.
+  insert into public.ielts_learners (user_id, premium_expires_at) values
+    (v_admin, null),
+    (v_alice, '2099-01-01'),
+    (v_bob, '2099-01-01');
 
   insert into public.ielts_test_forms (id, title, variant, is_published, created_by)
   values (gen_random_uuid(), 'Published Academic Form', 'academic', true, v_admin)
@@ -191,7 +196,8 @@ begin
   where user_id = auth.uid();
   if exists (
     select 1 from public.ielts_learners
-    where user_id = auth.uid() and (premium_expires_at is not null or current_band is not null)
+    where user_id = auth.uid()
+      and (premium_expires_at <> '2099-01-01'::timestamptz or current_band is not null)
   ) then
     raise exception 'FAIL: candidate escalated their own privileges';
   end if;

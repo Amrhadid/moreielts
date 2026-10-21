@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { AppShell } from "~/components/layout/AppShell";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Icon } from "~/components/ui/Icon";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
 import { useDrillHistory, useTypeAccuracy } from "~/lib/practice-queries";
@@ -13,11 +13,11 @@ export const Route = createFileRoute("/drills")({ component: PracticeRoute });
 
 function PracticeRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <AppShell>
         <PracticeHub />
       </AppShell>
-    </Protected>
+    </PremiumGate>
   );
 }
 

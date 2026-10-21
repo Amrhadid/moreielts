@@ -5,7 +5,7 @@ import { QuestionRenderer } from "~/components/renderers/QuestionRenderer";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Icon } from "~/components/ui/Icon";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { cn } from "~/lib/cn";
 import {
   type DrillGroup,
@@ -25,11 +25,11 @@ export const Route = createFileRoute("/drill/$typeCode")({
 
 function DrillRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <AppShell>
         <DrillPage />
       </AppShell>
-    </Protected>
+    </PremiumGate>
   );
 }
 

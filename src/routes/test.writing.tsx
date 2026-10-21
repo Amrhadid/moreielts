@@ -6,16 +6,20 @@ import { SubmitDialog } from "~/components/player/SubmitDialog";
 import { Textarea } from "~/components/ui/Field";
 import { cn } from "~/lib/cn";
 import { countWords } from "~/lib/answer-check";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/writing")({ component: WritingRoute });
+export const Route = createFileRoute("/test/writing")({
+  validateSearch: (s: Record<string, unknown>): { form?: string } =>
+    typeof s.form === "string" ? { form: s.form } : {},
+  component: WritingRoute,
+});
 
 function WritingRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <WritingPlayer />
-    </Protected>
+    </PremiumGate>
   );
 }
 
@@ -49,6 +53,7 @@ function WritingPlayer() {
           <SubmitDialog
             attemptId={player.attemptId!}
             section="writing"
+            formId={player.form?.id}
             answeredCount={
               player.groups.filter((g) =>
                 g.questions.some((q) => String(player.answers[q.id] ?? "").trim()),

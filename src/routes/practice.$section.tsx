@@ -13,7 +13,7 @@ import {
   WRITING_TASKS,
   type PracticeSection,
 } from "~/data/practice";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 
 export const Route = createFileRoute("/practice/$section")({
   beforeLoad: ({ params }) => {
@@ -51,9 +51,9 @@ function PracticeSectionRoute() {
   const { section } = Route.useParams();
   if (!isPracticeSection(section)) return null;
   return (
-    <Protected>
+    <PremiumGate>
       <SectionRunner section={section} />
-    </Protected>
+    </PremiumGate>
   );
 }
 

@@ -120,7 +120,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile: profile ?? null,
       loading,
       isAdmin: profile?.role === "admin",
-      isPremium: profile?.tier === "premium",
+      // Mirrors ielts_is_premium(): admins always count as Premium.
+      isPremium: profile?.tier === "premium" || profile?.role === "admin",
     }),
     [session, profile, loading],
   );
@@ -206,6 +207,62 @@ export function AdminOnly({ children }: { children: ReactNode }) {
         </p>
         <Link to="/" className="mt-5 inline-block text-sm font-medium text-brand-600">
           Back to dashboard
+        </Link>
+      </Centered>
+    );
+  }
+
+  return <>{children}</>;
+}
+
+/**
+ * MoreIELTS is Premium-only. Wraps every content page: signed-out visitors
+ * are asked to sign in, signed-in learners without Premium see how to get a
+ * code. The server enforces the same rule (ielts_is_premium in RLS and RPCs),
+ * so this gate is about the experience, not the security.
+ */
+export function PremiumGate({ children }: { children: ReactNode }) {
+  const { session, profile, loading, isPremium } = useAuth();
+
+  if (loading || (session && !profile)) {
+    return (
+      <Centered>
+        <p className="text-sm text-muted">Loading…</p>
+      </Centered>
+    );
+  }
+
+  if (!session) {
+    return (
+      <Centered>
+        <h1 className="text-xl font-semibold tracking-tight">Sign in to continue</h1>
+        <p className="mt-2 text-sm text-muted">
+          MoreIELTS practice, mock exams and feedback are for Premium members.
+        </p>
+        <Link
+          to="/login"
+          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+        >
+          Sign in
+        </Link>
+      </Centered>
+    );
+  }
+
+  if (!isPremium) {
+    return (
+      <Centered>
+        <span aria-hidden className="text-3xl">🔒</span>
+        <h1 className="mt-3 text-xl font-semibold tracking-tight">Premium members only</h1>
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
+          Every MoreIELTS mock exam, practice set and AI correction is part of Premium.
+          Enter your access code to unlock everything.
+        </p>
+        <Link
+          to="/pricing"
+          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+        >
+          Enter an access code
         </Link>
       </Centered>
     );

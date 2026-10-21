@@ -19,13 +19,18 @@ export const Route = createFileRoute("/pricing")({
   component: Pricing,
 });
 
-const FEATURES: Array<{ label: string; free: string; premium: string }> = [
-  { label: "Mock tests", free: "Free mock forms (1 or more)", premium: "Every form, including premium" },
-  { label: "Practice drills", free: "Drills on free forms", premium: "Unlimited drills" },
-  { label: "Essay grading", free: "3 graded essays a week", premium: "20 essays a day" },
-  { label: "Grading speed", free: "Standard queue", premium: "Priority grading" },
-  { label: "Vocabulary", free: "Included", premium: "Included" },
+/** What Premium includes. MoreIELTS has no free tier: this is the product. */
+const FEATURES = [
+  "Four full timed mock exams (Academic and General Training) with band scores",
+  "Skill practice for Listening, Reading, Writing and Speaking with AI correction",
+  "Question-type drills with explanations and a spaced-repetition mistake notebook",
+  "Writing lab: examiner-style feedback, corrections and a band+1 rewrite",
+  "Speaking feedback from your own recordings: fluency, vocabulary, grammar",
+  "Topic vocabulary with Arabic meanings, a daily study plan and progress tracking",
 ];
+
+/** Online card payments stay hidden until Stripe is configured for the site. */
+const STRIPE_ENABLED = import.meta.env.VITE_STRIPE_ENABLED === "true";
 
 function Pricing() {
   const { t } = useI18n();
@@ -53,7 +58,7 @@ function Pricing() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-3xl font-semibold tracking-tight">{t("pricing.title")}</h1>
-      <p className="mt-2 text-muted">Practise for free, or unlock every test with Premium.</p>
+      <p className="mt-2 text-muted">MoreIELTS is for Premium members. Unlock everything with an access code.</p>
 
       {search.paid && (
         <div role="status" className="mt-6 rounded-lg border border-good/20 bg-good-soft px-4 py-3 text-sm text-good">
@@ -71,101 +76,67 @@ function Pricing() {
       {isPremium && (
         <div className="mt-6 flex flex-wrap items-center gap-2 rounded-lg border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-700">
           <Icon name="crown" size={18} />
-          You are on Premium{expires ? ` until ${expires}` : ""}. Buying again extends it.
+          You are on Premium{expires ? ` until ${expires}` : ""}. Another code extends it.
         </div>
       )}
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Free</CardTitle>
-            <CardDescription>Everything you need to get started.</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <ul className="grid gap-2 text-sm">
-              {FEATURES.map((f) => (
-                <li key={f.label} className="flex gap-2">
-                  <Icon name="check" size={18} className="shrink-0 text-good" />
-                  {f.free}
-                </li>
-              ))}
-            </ul>
-            {!user && (
-              <Button asChild variant="outline" className="mt-6 w-full">
-                <Link to="/signup">Create a free account</Link>
-              </Button>
-            )}
+      {user ? (
+        <RedeemBox />
+      ) : (
+        <Card className="mt-8">
+          <CardBody className="flex flex-wrap items-center justify-between gap-3 pt-5">
+            <p className="text-sm text-ink-soft">Sign in, then enter your access code to unlock Premium.</p>
+            <Button asChild>
+              <Link to="/login">Sign in</Link>
+            </Button>
           </CardBody>
         </Card>
+      )}
 
-        <Card className="border-brand-200">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <CardTitle>Premium</CardTitle>
-              <Badge tone="brand">Recommended</Badge>
-            </div>
-            <CardDescription>Full access. See price at checkout.</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <ul className="grid gap-2 text-sm">
-              {FEATURES.map((f) => (
-                <li key={f.label} className="flex gap-2">
-                  <Icon name="check" size={18} className="shrink-0 text-brand-600" />
-                  {f.premium}
-                </li>
-              ))}
-            </ul>
-            {user ? (
+      <Card className="mt-6 border-brand-200">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <CardTitle>Premium</CardTitle>
+            <Badge tone="brand">Everything included</Badge>
+          </div>
+          <CardDescription>
+            All MoreIELTS exams, practice and feedback are for Premium members. Ask your
+            teacher or the MoreIELTS team for an access code.
+          </CardDescription>
+        </CardHeader>
+        <CardBody>
+          <ul className="grid gap-2 text-sm sm:grid-cols-2">
+            {FEATURES.map((f) => (
+              <li key={f} className="flex gap-2">
+                <Icon name="check" size={18} className="shrink-0 text-brand-600" />
+                {f}
+              </li>
+            ))}
+          </ul>
+          {STRIPE_ENABLED && user && (
+            <>
               <div className="mt-6 grid gap-2 sm:grid-cols-2">
                 <Button disabled={checkout.isPending} onClick={() => checkout.mutate("month")}>
-                  30 days
+                  Buy 30 days
                 </Button>
                 <Button
                   variant="secondary"
                   disabled={checkout.isPending}
                   onClick={() => checkout.mutate("quarter")}
                 >
-                  90 days
+                  Buy 90 days
                 </Button>
               </div>
-            ) : (
-              <Button asChild className="mt-6 w-full">
-                <Link to="/login">Sign in to upgrade</Link>
-              </Button>
-            )}
-            <p className="mt-2 text-xs text-muted">See price at checkout. One-off payment, no auto-renewal.</p>
-            {checkout.isError && (
-              <p className="mt-2 text-xs text-bad">
-                {(checkout.error as Error).message || "Could not start checkout."}
-              </p>
-            )}
-          </CardBody>
-        </Card>
-      </div>
-
-      <Card className="mt-8 overflow-x-auto">
-        <table className="w-full text-sm">
-          <caption className="sr-only">Free and Premium compared</caption>
-          <thead>
-            <tr className="border-b border-line text-start text-muted">
-              <th scope="col" className="px-5 py-3 text-start font-medium">Feature</th>
-              <th scope="col" className="px-5 py-3 text-start font-medium">Free</th>
-              <th scope="col" className="px-5 py-3 text-start font-medium">Premium</th>
-            </tr>
-          </thead>
-          <tbody>
-            {FEATURES.map((f) => (
-              <tr key={f.label} className="border-b border-line last:border-0">
-                <th scope="row" className="px-5 py-3 text-start font-medium">{f.label}</th>
-                <td className="px-5 py-3 text-ink-soft">{f.free}</td>
-                <td className="px-5 py-3">{f.premium}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              <p className="mt-2 text-xs text-muted">See price at checkout. One-off payment, no auto-renewal.</p>
+              {checkout.isError && (
+                <p className="mt-2 text-xs text-bad">
+                  {(checkout.error as Error).message || "Could not start checkout."}
+                </p>
+              )}
+            </>
+          )}
+        </CardBody>
       </Card>
-
-      {user && <RedeemBox />}
     </div>
   );
 }

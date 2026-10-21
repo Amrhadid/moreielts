@@ -18,15 +18,14 @@ import {
 } from "../../../src/lib/answer-check.ts";
 import { scoreAttempt } from "../_shared/attempt-score.ts";
 
-/** Starts grading now instead of waiting up to a minute for the sweep. */
-function kickWorker() {
-  const key = Deno.env.get("GRADING_WORKER_KEY");
-  if (!key) return;
-  const call = fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/ielts-grading-worker`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-grade-key": key },
-    body: JSON.stringify({ limit: 5 }),
-  }).catch((err) => console.error("kickWorker failed", err));
+/**
+ * Starts grading now instead of waiting up to a minute for the sweep. The
+ * database posts to the worker with the Vault-held key (ielts_kick_grading).
+ */
+function kickWorker(db: ReturnType<typeof serviceClient>) {
+  const call = db.rpc("ielts_kick_grading").then(({ error }) => {
+    if (error) console.error("kickWorker failed", error.message);
+  });
   // deno-lint-ignore no-explicit-any
   (globalThis as any).EdgeRuntime?.waitUntil?.(call);
 }
@@ -182,7 +181,7 @@ Deno.serve(async (req) => {
           .from("ielts_grading_jobs")
           .upsert(jobs, { onConflict: "attempt_id,kind,part_number", ignoreDuplicates: true });
         if (jobError) throw jobError;
-        kickWorker();
+        kickWorker(db);
       }
     }
 
