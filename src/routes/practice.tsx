@@ -1,197 +1,190 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { AppShell } from "~/components/layout/AppShell";
-import { Badge } from "~/components/ui/Badge";
-import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
+import { Icon } from "~/components/ui/Icon";
+import { Protected } from "~/lib/auth";
 import { cn } from "~/lib/cn";
-import { Protected, useAuth } from "~/lib/auth";
+import { useI18n } from "~/lib/i18n";
+import { useDrillHistory, useTypeAccuracy } from "~/lib/practice-queries";
 import { useQuestionTypes } from "~/lib/queries";
-import type { Difficulty, SectionCode } from "~/types/content";
 
 export const Route = createFileRoute("/practice")({ component: PracticeRoute });
 
 function PracticeRoute() {
   return (
     <Protected>
-      <PracticePicker />
+      <AppShell>
+        <PracticeHub />
+      </AppShell>
     </Protected>
   );
 }
 
-const SECTIONS: Array<{ code: SectionCode; label: string; detail: string }> = [
-  { code: "listening", label: "Listening", detail: "4 parts · audio plays once" },
-  { code: "reading", label: "Reading", detail: "3 passages · 60 minutes" },
-  { code: "writing", label: "Writing", detail: "Task 1 and Task 2" },
-  { code: "speaking", label: "Speaking", detail: "3 parts · recorded" },
+type Tab = "listening" | "reading" | "writing" | "speaking";
+const TABS: Array<{ code: Tab; label: string; icon: string }> = [
+  { code: "listening", label: "Listening", icon: "headphones" },
+  { code: "reading", label: "Reading", icon: "book" },
+  { code: "writing", label: "Writing", icon: "pen" },
+  { code: "speaking", label: "Speaking", icon: "mic" },
+];
+const DIFFICULTIES = [
+  { code: "", label: "Any difficulty" },
+  { code: "foundation", label: "Foundation" },
+  { code: "standard", label: "Standard" },
+  { code: "challenge", label: "Challenge" },
 ];
 
-const DIFFICULTIES: Array<{ code: Difficulty; label: string; detail: string }> = [
-  { code: "foundation", label: "Foundation", detail: "Around band 5–6" },
-  { code: "standard", label: "Standard", detail: "Around band 6–7" },
-  { code: "challenge", label: "Challenge", detail: "Around band 7.5+" },
-];
-
-const PLAYER_ROUTE: Record<SectionCode, string> = {
-  listening: "/test/listening",
-  reading: "/test/reading",
-  writing: "/test/writing",
-  speaking: "/test/speaking",
-};
-
-function Step({ n, title, hint }: { n: number; title: string; hint?: string }) {
-  return (
-    <div className="mb-3 flex items-baseline gap-2.5">
-      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-        {n}
-      </span>
-      <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-      {hint && <span className="text-xs text-muted">{hint}</span>}
-    </div>
-  );
-}
-
-function PracticePicker() {
+function PracticeHub() {
+  const { t } = useI18n();
   const navigate = useNavigate();
-  const { profile } = useAuth();
-  // The registry now comes from question_types, so a new type appears here
-  // without a client release.
-  const { data: allTypes, isLoading } = useQuestionTypes();
+  const [tab, setTab] = useState<Tab>("reading");
+  const [difficulty, setDifficulty] = useState("");
+  const { data: types, isLoading } = useQuestionTypes();
+  const { data: accuracy } = useTypeAccuracy();
+  const { data: history } = useDrillHistory();
 
-  const [section, setSection] = useState<SectionCode>("reading");
-  const [type, setType] = useState<string | null>(null);
-  const [difficulty, setDifficulty] = useState<Difficulty>("standard");
-
-  const typeRequired = section === "reading" || section === "listening";
-  const types = (allTypes ?? []).filter((t) =>
-    typeRequired
-      ? t.section === section ||
-        (section === "listening" && t.renderer === "text_input") ||
-        (section === "reading" && t.section === "reading")
-      : false,
-  );
-  const ready = !typeRequired || type !== null;
-  const isPremiumUser = profile?.tier === "premium";
+  const cards = useMemo(() => {
+    const acc = new Map((accuracy ?? []).map((a) => [a.type_code, a]));
+    return (types ?? [])
+      .filter((ty) => ty.section === tab)
+      .map((ty) => {
+        const a = acc.get(ty.code);
+        return { ...ty, correct: a?.correct ?? 0, total: a?.total ?? 0 };
+      })
+      .sort((x, y) => {
+        // Weakest first; untried types after tried ones.
+        if (!x.total && !y.total) return x.label.localeCompare(y.label);
+        if (!x.total) return 1;
+        if (!y.total) return -1;
+        return x.correct / x.total - y.correct / y.total;
+      });
+  }, [types, accuracy, tab]);
 
   return (
-    <AppShell>
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Practice</h1>
-      <p className="mt-1.5 text-sm text-muted">
-        Drill a single question type, untimed, with answers revealed at the end.
-      </p>
+    <>
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("practice.title")}</h1>
+      <p className="mt-1.5 text-sm text-muted">{t("practice.subtitle")}</p>
 
-      <section className="mt-8">
-        <Step n={1} title="Choose a section" />
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SECTIONS.map((s) => (
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div role="tablist" className="flex flex-wrap gap-1 rounded-card border border-line bg-surface p-1">
+          {TABS.map((s) => (
             <button
               key={s.code}
+              role="tab"
               type="button"
-              onClick={() => {
-                setSection(s.code);
-                setType(null);
-              }}
+              aria-selected={tab === s.code}
+              onClick={() => setTab(s.code)}
               className={cn(
-                "rounded-card border p-4 text-left transition-colors",
-                section === s.code
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-line bg-surface hover:border-line-strong",
+                "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium",
+                tab === s.code ? "bg-brand-600 text-white" : "text-ink-soft hover:bg-paper",
               )}
             >
-              <p className="font-medium">{s.label}</p>
-              <p className="mt-1 text-xs text-muted">{s.detail}</p>
+              <Icon name={s.icon as never} className="h-4 w-4" />
+              {s.label}
             </button>
           ))}
         </div>
-      </section>
+        {(tab === "listening" || tab === "reading") && (
+          <select
+            aria-label="Difficulty"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="h-9 rounded-md border border-line-strong bg-surface px-2 text-sm"
+          >
+            {DIFFICULTIES.map((d) => (
+              <option key={d.code} value={d.code}>
+                {d.label}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
 
-      <section className="mt-8">
-        <Step
-          n={2}
-          title="Choose a question type"
-          hint={typeRequired ? undefined : "Not applicable for this section"}
-        />
-        {!typeRequired ? (
+      <section className="mt-6">
+        {tab === "writing" ? (
+          <Card>
+            <CardBody className="pt-5">
+              <p className="font-medium">Writing is practised in the Writing lab</p>
+              <p className="mt-1 text-sm text-muted">
+                Write a Task 1 or Task 2 response and get band-style feedback with corrections.
+              </p>
+              <Link to={"/writing-lab" as never} className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-700">
+                Open the Writing lab <Icon name="arrowRight" className="h-4 w-4 rtl:rotate-180" />
+              </Link>
+            </CardBody>
+          </Card>
+        ) : tab === "speaking" ? (
           <Card>
             <CardBody className="pt-5 text-sm text-muted">
-              {section === "writing"
-                ? "Writing practice runs a full Task 1 or Task 2 prompt with the live word count."
-                : "Speaking practice runs all three parts, including the Part 2 cue card."}
+              Speaking is practised in the full mock tests, where all three parts are recorded
+              and assessed together, including the Part 2 cue card.
             </CardBody>
           </Card>
         ) : isLoading ? (
           <p className="text-sm text-muted">Loading question types…</p>
+        ) : cards.length === 0 ? (
+          <p className="text-sm text-muted">No question types to drill in this section yet.</p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {types.map((t) => (
-              <button
-                key={t.code}
-                type="button"
-                onClick={() => setType(t.code)}
-                className={cn(
-                  "rounded-card border p-4 text-left transition-colors",
-                  type === t.code
-                    ? "border-brand-500 bg-brand-50"
-                    : "border-line bg-surface hover:border-line-strong",
-                )}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-medium">{t.label}</p>
-                  <Badge tone={isPremiumUser ? "good" : "neutral"}>
-                    {isPremiumUser ? "Included" : "Free"}
-                  </Badge>
-                </div>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted">
-                  Answered with the {t.renderer.replace("_", " ")} control.
-                </p>
-              </button>
-            ))}
+            {cards.map((c) => {
+              const pct = c.total ? Math.round((c.correct / c.total) * 100) : 0;
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  onClick={() =>
+                    navigate({
+                      to: "/drill/$typeCode",
+                      params: { typeCode: c.code },
+                      search: (difficulty ? { difficulty } : {}) as never,
+                    })
+                  }
+                  className="rounded-card border border-line bg-surface p-4 text-start transition-colors hover:border-brand-500"
+                >
+                  <p className="text-sm font-medium">{c.label}</p>
+                  {c.total ? (
+                    <>
+                      <p className="mt-2 text-xs text-muted">
+                        {c.correct}/{c.total} · {pct}%
+                      </p>
+                      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-paper">
+                        <div
+                          className={cn("h-full rounded-full", pct >= 70 ? "bg-good" : pct >= 50 ? "bg-warn" : "bg-bad")}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-xs text-muted">Not tried yet</p>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </section>
 
-      <section className="mt-8">
-        <Step n={3} title="Choose a difficulty" />
-        <div className="grid gap-3 sm:grid-cols-3">
-          {DIFFICULTIES.map((d) => (
-            <button
-              key={d.code}
-              type="button"
-              onClick={() => setDifficulty(d.code)}
-              className={cn(
-                "rounded-card border p-4 text-left transition-colors",
-                difficulty === d.code
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-line bg-surface hover:border-line-strong",
-              )}
-            >
-              <p className="font-medium">{d.label}</p>
-              <p className="mt-1 text-xs text-muted">{d.detail}</p>
-            </button>
-          ))}
-        </div>
-        <p className="mt-3 text-xs text-muted">
-          Difficulty selects which fixed practice set you receive. The test itself is
-          never adaptive — questions do not change while you work.
-        </p>
+      <section className="mt-10">
+        <h2 className="text-base font-semibold tracking-tight">Recent drills</h2>
+        {!history?.length ? (
+          <p className="mt-2 text-sm text-muted">Your finished drills will appear here.</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-line rounded-card border border-line bg-surface">
+            {history.map((h) => (
+              <li key={h.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+                <span className="font-medium">{h.question_types?.label ?? h.type_code}</span>
+                <span className="flex items-center gap-3 text-muted">
+                  <span>
+                    {h.correct}/{h.total}
+                  </span>
+                  <span className="text-xs">{new Date(h.submitted_at).toLocaleDateString()}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
-
-      <div className="sticky bottom-0 mt-10 border-t border-line bg-paper/95 py-4 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            size="lg"
-            disabled={!ready}
-            onClick={() => navigate({ to: PLAYER_ROUTE[section] })}
-          >
-            Start practice
-          </Button>
-          <p className="text-sm text-muted">
-            {ready
-              ? `${SECTIONS.find((s) => s.code === section)?.label} · ${difficulty}`
-              : "Select a question type to continue"}
-          </p>
-        </div>
-      </div>
-    </AppShell>
+    </>
   );
 }
