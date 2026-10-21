@@ -9,6 +9,7 @@ import { cn } from "~/lib/cn";
 import { useAuth } from "~/lib/auth";
 import { Landing } from "~/components/layout/Landing";
 import { useAttempts } from "~/lib/queries";
+import { WHATSAPP_MESSAGES, whatsappLink } from "~/lib/whatsapp";
 import { useQuery } from "@tanstack/react-query";
 import { Icon, type IconName } from "~/components/ui/Icon";
 import { supabase } from "~/lib/supabase";
@@ -180,6 +181,14 @@ function Dashboard() {
         ) : (
           <p className="mt-3 inline-flex flex-wrap items-center gap-2 rounded-lg border border-warn/20 bg-warn-soft px-3 py-2 text-sm text-warn">
             Your exams and practice are locked until you enter a Premium access code.
+            <a
+              href={whatsappLink(WHATSAPP_MESSAGES.premium)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold underline"
+            >
+              Get Premium on WhatsApp
+            </a>
             <Link to="/pricing" className="font-semibold underline">
               Enter a code
             </Link>

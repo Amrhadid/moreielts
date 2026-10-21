@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { AuthProvider, useAuth } from "~/lib/auth";
 import { installErrorReporter, registerServiceWorker } from "~/lib/error-reporter";
+import { WhatsAppFloatingButton } from "~/components/WhatsApp";
 import { I18nProvider } from "~/lib/i18n";
 import appCss from "~/styles.css?url";
 
@@ -68,7 +69,10 @@ function RootDocument({ children }: { children: ReactNode }) {
         </a>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <LocaleFromProfile>{children}</LocaleFromProfile>
+            <LocaleFromProfile>
+              {children}
+              <WhatsAppFloatingButton />
+            </LocaleFromProfile>
           </AuthProvider>
         </QueryClientProvider>
         <Scripts />

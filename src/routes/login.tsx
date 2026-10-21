@@ -1,12 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { Logo } from "~/components/layout/Logo";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
-import { Input, Label } from "~/components/ui/Field";
 import { useAuth } from "~/lib/auth";
 import { supabase } from "~/lib/supabase";
 
@@ -18,40 +14,21 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-const schema = z.object({
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(8, "Passwords are at least 8 characters"),
-});
-
-type FormValues = z.infer<typeof schema>;
-
+/**
+ * Google is the only way in: accounts are shared with MoreTOEFL, and Google
+ * sign-in means no passwords to manage or reset. New users are created on
+ * their first Google sign-in, so there is no separate sign-up form.
+ */
 function LoginPage() {
   const navigate = useNavigate();
   const { oauth_error } = Route.useSearch();
   const { session } = useAuth();
-  const [serverError, setServerError] = useState<string | null>(null);
   const [googleError, setGoogleError] = useState<string | null>(oauth_error ?? null);
   const [googleBusy, setGoogleBusy] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
     if (session) navigate({ to: "/" });
   }, [session, navigate]);
-
-  async function onSubmit(values: FormValues) {
-    setServerError(null);
-    const { error } = await supabase.auth.signInWithPassword(values);
-    if (error) {
-      setServerError(error.message);
-      return;
-    }
-    navigate({ to: "/" });
-  }
 
   async function signInWithGoogle() {
     setGoogleError(null);
@@ -85,55 +62,19 @@ function LoginPage() {
         </Link>
         <Card>
           <CardBody className="pt-6">
-            <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Sign in to MoreIELTS</h1>
             <p className="mt-1 text-sm text-muted">
-              Continue your practice where you left off.
+              Use your Google account. New here? Signing in creates your account.
             </p>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" autoComplete="email" {...register("email")} />
-                {errors.email && (
-                  <p className="mt-1 text-xs text-bad">{errors.email.message}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="mt-1 text-xs text-bad">{errors.password.message}</p>
-                )}
-              </div>
-
-              {serverError && (
-                <p className="rounded-lg border border-bad/20 bg-bad-soft px-3 py-2 text-sm text-bad">
-                  {serverError}
-                </p>
-              )}
-
-              <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? "Signing in…" : "Sign in"}
-              </Button>
-            </form>
-
-            <div className="my-5 flex items-center gap-3 text-xs text-muted">
-              <span className="h-px flex-1 bg-line" />
-              or
-              <span className="h-px flex-1 bg-line" />
-            </div>
 
             <Button
               variant="outline"
-              className="w-full"
+              size="lg"
+              className="mt-6 w-full"
               onClick={signInWithGoogle}
               disabled={googleBusy}
             >
+              <GoogleIcon />
               {googleBusy ? "Opening Google…" : "Continue with Google"}
             </Button>
             {googleError && (
@@ -145,15 +86,23 @@ function LoginPage() {
               </p>
             )}
 
-            <p className="mt-5 text-center text-sm text-muted">
-              No account?{" "}
-              <Link to="/signup" className="font-medium text-brand-600">
-                Create one
-              </Link>
+            <p className="mt-5 text-center text-xs leading-relaxed text-muted">
+              Your MoreTOEFL Google account works here too.
             </p>
           </CardBody>
         </Card>
       </div>
     </div>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
   );
 }

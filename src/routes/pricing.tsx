@@ -8,6 +8,7 @@ import { Input, Label } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
 import { useAuth } from "~/lib/auth";
 import { useI18n } from "~/lib/i18n";
+import { WhatsAppPremiumButton } from "~/components/WhatsApp";
 import { useCheckout } from "~/lib/practice-queries";
 import { useRedeemCode } from "~/lib/queries";
 
@@ -100,8 +101,8 @@ function Pricing() {
             <Badge tone="brand">Everything included</Badge>
           </div>
           <CardDescription>
-            All MoreIELTS exams, practice and feedback are for Premium members. Ask your
-            teacher or the MoreIELTS team for an access code.
+            All MoreIELTS exams, practice and feedback are for Premium members. Message us on
+            WhatsApp to get your access code.
           </CardDescription>
         </CardHeader>
         <CardBody>
@@ -113,6 +114,7 @@ function Pricing() {
               </li>
             ))}
           </ul>
+          {!isPremium && <WhatsAppPremiumButton className="mt-6 w-full sm:w-auto" />}
           {STRIPE_ENABLED && user && (
             <>
               <div className="mt-6 grid gap-2 sm:grid-cols-2">

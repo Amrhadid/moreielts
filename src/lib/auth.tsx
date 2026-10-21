@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "./supabase";
+import { WhatsAppPremiumButton } from "~/components/WhatsApp";
 import type { LearnerRow, ProfileRow } from "~/types/database";
 
 /** One ProfileRow for the app, from the shared account and the learner row. */
@@ -256,14 +257,17 @@ export function PremiumGate({ children }: { children: ReactNode }) {
         <h1 className="mt-3 text-xl font-semibold tracking-tight">Premium members only</h1>
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Every MoreIELTS mock exam, practice set and AI correction is part of Premium.
-          Enter your access code to unlock everything.
+          Message us on WhatsApp to get an access code, or enter the code you have.
         </p>
-        <Link
-          to="/pricing"
-          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
-        >
-          Enter an access code
-        </Link>
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          <WhatsAppPremiumButton />
+          <Link
+            to="/pricing"
+            className="inline-flex h-11 items-center rounded-xl border border-line-strong bg-surface px-5 text-sm font-semibold text-ink hover:bg-paper"
+          >
+            I have a code
+          </Link>
+        </div>
       </Centered>
     );
   }
