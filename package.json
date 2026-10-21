@@ -15,7 +15,8 @@
     "functions:deploy": "supabase functions deploy submit-attempt grade-writing grade-speaking upload-url drill generate-audio checkout && supabase functions deploy grading-worker stripe-webhook --no-verify-jwt",
     "sql:bundle": "bash scripts/bundle-sql.sh",
     "seed:validate": "esbuild scripts/generate-seed.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/seed.mjs --log-level=error && node node_modules/.cache/seed.mjs --check",
-    "sitemap": "esbuild scripts/generate-sitemap.ts --bundle --platform=node --format=esm --alias:~=./src --outfile=node_modules/.cache/sitemap.mjs --log-level=error && node node_modules/.cache/sitemap.mjs"
+    "sitemap": "esbuild scripts/generate-sitemap.ts --bundle --platform=node --format=esm --alias:~=./src --outfile=node_modules/.cache/sitemap.mjs --log-level=error && node node_modules/.cache/sitemap.mjs",
+    "test:e2e": "node tests/e2e/smoke.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

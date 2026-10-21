@@ -99,3 +99,10 @@
 }
 
 ::selection { background: var(--color-brand-100); }
+
+/* In the Arabic interface, English content (passages, questions, examples)
+   must still read left to right. Each block takes its direction from its own
+   first strong character, so punctuation stays at the right end. */
+[dir="rtl"] :is(p, li, h1, h2, h3, h4, blockquote, label, td, th, span, textarea, input) {
+  unicode-bidi: plaintext;
+}
