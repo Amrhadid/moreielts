@@ -51,11 +51,22 @@ function SignupPage() {
   }
 
   async function signUpWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) setServerError(error.message);
+    setServerError(null);
+    try {
+      // redirectTo is honoured only if this origin is listed under Redirect
+      // URLs in the Supabase project's Authentication → URL Configuration.
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/")}`,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      setServerError(
+        err instanceof Error ? err.message : "Google sign-in failed. Please try again.",
+      );
+    }
   }
 
   return (

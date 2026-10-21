@@ -56,7 +56,16 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 | `SITE_URL` | Edge Functions | Origin allowed by CORS |
 
 Google OAuth is configured in the Supabase dashboard (Authentication →
-Providers), with `<site>/auth/callback` as the redirect URL.
+Providers). Because the project is shared with MoreTOEFL, its Site URL is
+moretoefl.com, and Supabase only sends a sign-in back to a `redirectTo` that
+matches **Authentication → URL Configuration → Redirect URLs**. Every
+MoreIELTS origin must therefore be listed there (`https://moreielts.com/**`,
+`https://www.moreielts.com/**`, `http://localhost:3000/**`); otherwise Google
+returns the learner to moretoefl.com, where the PKCE verifier stored by this
+site is not found and the sign-in fails. Nothing changes on the Google Cloud
+side: the authorised redirect URI is the project's
+`/auth/v1/callback`, which both sites share. `/auth/callback` surfaces any
+provider or exchange error on `/login` rather than bouncing silently.
 
 ## Stack
 
@@ -261,14 +270,14 @@ test form and no table. Each section is corrected by AI:
 | Speaking | Two Part 1 questions, a Part 2 cue card with its preparation minute, two Part 3 questions | Web Speech API transcript, editable before grading | Four criteria in half bands with quotes; the band is `speakingBand()` |
 
 The AI step calls the **`claude-completion` Edge Function already deployed and
-keyed on the MoreTOEFL Supabase project** (`nlsuvapjkznatczghvay`) — the same
-wired path MoreTOEFL's own drills use — via `src/lib/practice/ai.ts`. The
+keyed on the Supabase project MoreIELTS shares with MoreTOEFL**
+(`nlsuvapjkznatczghvay`) — the same wired path MoreTOEFL's own drills use —
+via `src/lib/practice/ai.ts`. The function is maintained in the MoreTOEFL
+repository; this repo only calls it, with a signed-in learner's token. The
 examiner prompts in `src/lib/practice/grading.ts` are the same briefs as
 `grade-writing` and `grade-speaking`; strict JSON is required and every band is
 validated as 0–9 in half steps before it is shown. The Anthropic key never
-leaves the function environment. For this to work the site must be built
-against that project (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in
-`.env.example`), so a signed-in learner's token is accepted by the function.
+leaves the function environment.
 
 Listening audio is generated from the transcript in
 `src/data/practice/listening.ts` by `npm run practice:audio` (OpenAI speech,
@@ -280,8 +289,9 @@ Every finished item is inserted into `public.ielts_practice_results`
 (migration `0007`: own rows only under RLS, `select` and `insert` for
 `authenticated`, no client update or delete) and mirrored into `localStorage`
 as an offline fallback; "Recent practice" on `/practice` reads the table first.
-The table is namespaced `ielts_` because it lives in the MoreTOEFL project's
-schema, where it was applied as migration `ielts_practice_results`.
+The table is namespaced `ielts_` because it lives in the shared project's
+schema next to MoreTOEFL's tables, where it has been applied as migration
+`ielts_practice_results`.
 
 ## AI grading
 

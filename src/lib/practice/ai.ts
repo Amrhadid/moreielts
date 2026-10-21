@@ -1,12 +1,13 @@
-
 /**
  * AI correction for the practice module.
  *
- * Practice grading goes through the `claude-completion` Edge Function that the
- * MoreTOEFL Supabase project already has deployed and keyed (the browser never
- * sees an Anthropic key). The function takes a prompt, an optional system
- * prompt, and model parameters, and returns the model's text. This mirrors the
- * MoreTOEFL drill grader, so the two sites share one wired grading path.
+ * Practice grading goes through the `claude-completion` Edge Function that is
+ * already deployed and keyed on the Supabase project MoreIELTS shares with
+ * MoreTOEFL (the browser never sees an Anthropic key). The function takes a
+ * prompt, an optional system prompt and model parameters, and returns the
+ * model's text; this client mirrors the MoreTOEFL drill grader, so the two
+ * sites share one wired grading path and the function is maintained in the
+ * MoreTOEFL repository.
  *
  * The model is left to the function's own default so it is controlled in one
  * place; the strict-JSON parsing and band validation below match the

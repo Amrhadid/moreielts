@@ -10,7 +10,13 @@ import { Input, Label } from "~/components/ui/Field";
 import { useAuth } from "~/lib/auth";
 import { supabase } from "~/lib/supabase";
 
-export const Route = createFileRoute("/login")({ component: LoginPage });
+export const Route = createFileRoute("/login")({
+  /** `oauth_error` is set by /auth/callback when Google sign-in fails, so the
+   *  reason is shown. Optional, so plain links to /login need no search. */
+  validateSearch: (s: Record<string, unknown>): { oauth_error?: string } =>
+    typeof s.oauth_error === "string" ? { oauth_error: s.oauth_error } : {},
+  component: LoginPage,
+});
 
 const schema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -21,8 +27,11 @@ type FormValues = z.infer<typeof schema>;
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { oauth_error } = Route.useSearch();
   const { session } = useAuth();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [googleError, setGoogleError] = useState<string | null>(oauth_error ?? null);
+  const [googleBusy, setGoogleBusy] = useState(false);
 
   const {
     register,
@@ -45,11 +54,27 @@ function LoginPage() {
   }
 
   async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) setServerError(error.message);
+    setGoogleError(null);
+    setGoogleBusy(true);
+    try {
+      // Supabase only honours redirectTo when the origin is listed under
+      // Authentication → URL Configuration → Redirect URLs for the project;
+      // otherwise it falls back to the project's Site URL and the PKCE
+      // verifier stored on this origin is never found. See the README.
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/")}`,
+        },
+      });
+      if (error) throw error;
+      // The browser is now on its way to Google; leave the button busy.
+    } catch (err) {
+      setGoogleError(
+        err instanceof Error ? err.message : "Google sign-in failed. Please try again.",
+      );
+      setGoogleBusy(false);
+    }
   }
 
   return (
@@ -103,9 +128,22 @@ function LoginPage() {
               <span className="h-px flex-1 bg-line" />
             </div>
 
-            <Button variant="outline" className="w-full" onClick={signInWithGoogle}>
-              Continue with Google
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={signInWithGoogle}
+              disabled={googleBusy}
+            >
+              {googleBusy ? "Opening Google…" : "Continue with Google"}
             </Button>
+            {googleError && (
+              <p
+                role="alert"
+                className="mt-3 rounded-lg border border-bad/20 bg-bad-soft px-3 py-2 text-sm text-bad"
+              >
+                {googleError}
+              </p>
+            )}
 
             <p className="mt-5 text-center text-sm text-muted">
               No account?{" "}
