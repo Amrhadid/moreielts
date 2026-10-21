@@ -9,11 +9,13 @@ export function QuestionNavigator({
   answered,
   current,
   onJump,
+  flagged,
 }: {
   numbers: number[];
   answered: Set<number>;
   current: number;
   onJump: (n: number) => void;
+  flagged?: Set<number>;
 }) {
   return (
     <div className="border-t border-line bg-surface/95 shadow-[0_-6px_24px_rgba(20,49,78,.05)] backdrop-blur">
@@ -27,20 +29,27 @@ export function QuestionNavigator({
             <i className="h-2.5 w-2.5 rounded-sm border border-line-strong bg-surface" aria-hidden />
             Blank
           </span>
+          {flagged && (
+            <span className="flex items-center gap-1.5">
+              <i className="h-2.5 w-2.5 rounded-full bg-warn" aria-hidden />
+              Flagged
+            </span>
+          )}
         </div>
         <div className="thin-scroll flex flex-1 gap-1 overflow-x-auto pb-0.5">
           {numbers.map((n) => {
             const isCurrent = n === current;
             const isAnswered = answered.has(n);
+            const isFlagged = flagged?.has(n) ?? false;
             return (
               <button
                 key={n}
                 type="button"
                 onClick={() => onJump(n)}
                 aria-current={isCurrent ? "true" : undefined}
-                aria-label={`Question ${n}${isAnswered ? ", answered" : ", not answered"}`}
+                aria-label={`Question ${n}${isAnswered ? ", answered" : ", not answered"}${isFlagged ? ", flagged" : ""}`}
                 className={cn(
-                  "h-9 w-9 shrink-0 rounded-lg border text-xs font-semibold transition-all hover:-translate-y-0.5",
+                  "relative h-9 w-9 shrink-0 rounded-lg border text-xs font-semibold transition-all hover:-translate-y-0.5",
                   isCurrent && "ring-2 ring-brand-600 ring-offset-1",
                   isAnswered
                     ? "border-brand-600 bg-brand-600 text-white"
@@ -48,6 +57,12 @@ export function QuestionNavigator({
                 )}
               >
                 {n}
+                {isFlagged && (
+                  <i
+                    aria-hidden
+                    className="absolute -top-1 -end-1 h-2.5 w-2.5 rounded-full border border-surface bg-warn"
+                  />
+                )}
               </button>
             );
           })}

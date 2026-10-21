@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Input, Label, Textarea } from "~/components/ui/Field";
@@ -6,6 +6,7 @@ import { cn } from "~/lib/cn";
 import { uploadToR2, useDeleteQuestion, useQuestionTypes } from "~/lib/queries";
 import type { AdminQuestion } from "~/lib/queries";
 import type { ItemGroupRow, SectionCode } from "~/types/database";
+import { useGenerateAudio, useGroupScript, useSaveGroupScript } from "~/lib/practice-queries";
 import { moveItem, useDragList } from "./useDragList";
 import { QuestionRow } from "./QuestionRow";
 
@@ -157,6 +158,10 @@ export function GroupCard({
               </div>
             )}
 
+            {showAudio && (
+              <ScriptPanel groupId={group.id} onAudio={(audio_url) => patch({ audio_url })} />
+            )}
+
             {showImage && (
               <div className="mt-3 rounded-lg border border-dashed border-line-strong bg-paper p-4">
                 <p className="text-sm font-medium">Image (chart, map or diagram)</p>
@@ -241,5 +246,82 @@ export function GroupCard({
         </div>
       </CardBody>
     </Card>
+  );
+}
+
+/** Listening only: the part's narration script and TTS generation. */
+function ScriptPanel({
+  groupId,
+  onAudio,
+}: {
+  groupId: string;
+  onAudio: (url: string) => void;
+}) {
+  const { data: stored, isLoading } = useGroupScript(groupId);
+  const save = useSaveGroupScript();
+  const generate = useGenerateAudio();
+  const [text, setText] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (stored !== undefined) setText(stored);
+  }, [stored]);
+
+  const dirty = stored !== undefined && text !== stored;
+
+  async function run(force: boolean) {
+    setMessage(null);
+    try {
+      if (dirty) await save.mutateAsync({ groupId, transcript: text });
+      const result = await generate.mutateAsync({ groupId, force });
+      if (result.audio_url) onAudio(result.audio_url);
+      setMessage(
+        result.skipped
+          ? "Audio already exists — use Regenerate to replace it."
+          : "Audio generated. Save the form to keep it in the builder.",
+      );
+    } catch (error) {
+      setMessage((error as Error).message ?? "Generation failed. Save the form first, then retry.");
+    }
+  }
+
+  const busy = generate.isPending || save.isPending;
+
+  return (
+    <div className="mt-3 rounded-lg border border-dashed border-line-strong bg-paper p-4">
+      <Label htmlFor={`${groupId}-script`}>Script &amp; audio</Label>
+      <p className="mb-2 text-xs text-muted">One turn per line, as “NAME: text”.</p>
+      <Textarea
+        id={`${groupId}-script`}
+        rows={6}
+        value={text}
+        disabled={isLoading}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={"SARAH: Good morning, how can I help?\nTOM: I'd like to book a room."}
+      />
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!dirty || busy}
+          onClick={() => save.mutate({ groupId, transcript: text })}
+        >
+          {save.isPending ? "Saving…" : "Save script"}
+        </Button>
+        <Button size="sm" disabled={busy || !text.trim()} onClick={() => void run(false)}>
+          {generate.isPending && (
+            <span
+              aria-hidden
+              className="size-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            />
+          )}
+          {generate.isPending ? "Generating…" : "Generate audio"}
+        </Button>
+        <Button variant="ghost" size="sm" disabled={busy || !text.trim()} onClick={() => void run(true)}>
+          Regenerate
+        </Button>
+      </div>
+      {message && <p className="mt-2 text-xs text-muted">{message}</p>}
+    </div>
   );
 }
