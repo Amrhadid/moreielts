@@ -16,14 +16,20 @@ import {
   checkMultiAnswer,
   type CheckableQuestion,
 } from "../../../src/lib/answer-check.ts";
-import {
-  overallBand,
-  rawScore,
-  rawScoreToBand,
-  speakingSectionBand,
-  writingSectionBand,
-  type BandConversionRow,
-} from "../../../src/lib/scoring.ts";
+import { scoreAttempt } from "../_shared/attempt-score.ts";
+
+/** Starts grading now instead of waiting up to a minute for the sweep. */
+function kickWorker() {
+  const key = Deno.env.get("GRADING_WORKER_KEY");
+  if (!key) return;
+  const call = fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/grading-worker`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-grade-key": key },
+    body: JSON.stringify({ limit: 5 }),
+  }).catch((err) => console.error("kickWorker failed", err));
+  // deno-lint-ignore no-explicit-any
+  (globalThis as any).EdgeRuntime?.waitUntil?.(call);
+}
 
 interface SubmitBody {
   attempt_id: string;
@@ -51,13 +57,6 @@ Deno.serve(async (req) => {
 
     if (attemptError || !attempt) return json({ error: "attempt_not_found" }, 404);
     if (attempt.user_id !== user.id) return json({ error: "forbidden" }, 403);
-
-    const { data: form } = await db
-      .from("test_forms")
-      .select("id, variant, scoring_version")
-      .eq("id", attempt.form_id)
-      .single();
-    if (!form) return json({ error: "form_not_found" }, 404);
 
     // ---------------------------------------------------------------- mark
     // Pull every objective question on the form together with its answers.
@@ -120,7 +119,7 @@ Deno.serve(async (req) => {
           const parsed = JSON.parse(response.answer ?? "[]");
           selected = Array.isArray(parsed) ? parsed : [];
         } catch {
-          selected = (response.answer ?? "").split(",").map((s) => s.trim());
+          selected = (response.answer ?? "").split(",").map((s: string) => s.trim());
         }
         isCorrect = checkMultiAnswer(selected, checkable).correct;
       } else {
@@ -140,101 +139,58 @@ Deno.serve(async (req) => {
       await db.from("responses").update({ is_correct: row.is_correct }).eq("id", row.id);
     }
 
-    // --------------------------------------------------------------- score
-    const { data: conversion } = await db
-      .from("band_conversion")
-      .select("variant, section, raw_min, raw_max, band, version")
-      .eq("version", form.scoring_version ?? "v1");
-
-    const table = (conversion ?? []) as BandConversionRow[];
-    const variant = form.variant as "academic" | "general_training";
-
-    function sectionBand(code: "listening" | "reading") {
-      const rows = marked
-        .filter((m) => m.section === code)
-        .map((m) => ({
-          questionId: m.id,
-          typeCode: "",
-          partNumber: m.part_number,
-          isCorrect: m.is_correct,
-        }));
-      const raw = rawScore(rows);
-      return { raw, band: rawScoreToBand(raw, code, variant, table) };
-    }
-
-    const listening = sectionBand("listening");
-    const reading = sectionBand("reading");
-
-    // Writing and Speaking bands come from the AI graders, which run
-    // separately. A section with no scores yet contributes 0 and the attempt
-    // stays awaiting_speaking until they land.
-    const { data: writingRows } = await db
-      .from("writing_scores")
-      .select("task_number, task_band")
-      .eq("attempt_id", attempt_id);
-
-    const task1 = writingRows?.find((r) => r.task_number === 1)?.task_band ?? null;
-    const task2 = writingRows?.find((r) => r.task_number === 2)?.task_band ?? null;
-    const writingBand =
-      task1 !== null && task2 !== null
-        ? writingSectionBand(Number(task1), Number(task2))
-        : null;
-
-    const { data: speakingRows } = await db
-      .from("speaking_scores")
-      .select("part_band")
-      .eq("attempt_id", attempt_id);
-
-    const speakingBandValue = speakingRows?.length
-      ? speakingSectionBand(speakingRows.map((r) => Number(r.part_band)))
-      : null;
-
-    const complete = writingBand !== null && speakingBandValue !== null;
-
-    const overall = complete
-      ? overallBand({
-          listening: listening.band,
-          reading: reading.band,
-          writing: writingBand,
-          speaking: speakingBandValue,
-        })
-      : null;
-
-    await db.from("attempt_scores").upsert(
-      {
-        attempt_id,
-        listening_raw: listening.raw,
-        listening_band: listening.band,
-        reading_raw: reading.raw,
-        reading_band: reading.band,
-        writing_band: writingBand,
-        speaking_band: speakingBandValue,
-        overall_unrounded: overall?.unrounded ?? null,
-        overall_band: overall?.band ?? null,
-        scoring_version: form.scoring_version ?? "v1",
-      },
-      { onConflict: "attempt_id" },
-    );
-
-    // A whole-attempt submission closes the attempt; a section submission
-    // leaves it open for the next section.
+    // ---------------------------------------------------- mistake notebook
+    // Wrong objective answers go into the learner's spaced-repetition deck.
     if (!section) {
-      await db
-        .from("attempts")
-        .update({
-          status: complete ? "completed" : "awaiting_speaking",
-          submitted_at: new Date().toISOString(),
-          section_deadline_at: null,
-        })
-        .eq("id", attempt_id);
-
-      if (complete && overall) {
-        await db
-          .from("profiles")
-          .update({ current_band: overall.band })
-          .eq("id", user.id);
+      const wrong = marked.filter((m) => !m.is_correct);
+      if (wrong.length) {
+        const answerById = new Map((responses ?? []).map((r) => [r.id, r]));
+        await db.from("mistakes").upsert(
+          wrong.map((m) => ({
+            user_id: user.id,
+            question_id: answerById.get(m.id)!.question_id,
+            last_answer: answerById.get(m.id)!.answer,
+            box: 1,
+            due_at: new Date(Date.now() + 86_400_000).toISOString(),
+            source: "mock",
+          })),
+          // A card answered wrong again goes back to box 1.
+          { onConflict: "user_id,question_id" },
+        );
       }
     }
+
+    // ------------------------------------------------------ queue AI grading
+    // Writing and Speaking are graded in the background by grading-worker;
+    // the candidate never waits on the model. One job per task and part.
+    if (!section) {
+      const { data: aiGroups } = await db
+        .from("item_groups")
+        .select("part_number, test_sections!inner ( section, form_id )")
+        .eq("test_sections.form_id", attempt.form_id)
+        .in("test_sections.section", ["writing", "speaking"]);
+
+      const jobs = (aiGroups ?? []).map((g) => ({
+        // deno-lint-ignore no-explicit-any
+        kind: (g as any).test_sections.section as "writing" | "speaking",
+        attempt_id,
+        part_number: g.part_number,
+        user_id: user.id,
+      }));
+      if (jobs.length) {
+        const { error: jobError } = await db
+          .from("grading_jobs")
+          .upsert(jobs, { onConflict: "attempt_id,kind,part_number", ignoreDuplicates: true });
+        if (jobError) throw jobError;
+        kickWorker();
+      }
+    }
+
+    // --------------------------------------------------------------- score
+    const score = await scoreAttempt(db, attempt_id, { close: !section });
+    const { listening, reading, overall, complete } = score;
+    const writingBand = score.writingBand;
+    const speakingBandValue = score.speakingBand;
 
     return json({
       attempt_id,

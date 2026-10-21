@@ -5,7 +5,7 @@
  * the browser. Every result records MODEL_VERSION so a re-grade can be
  * distinguished from an original score.
  */
-export const MODEL_VERSION = "claude-sonnet-5";
+export const MODEL_VERSION = Deno.env.get("GRADING_MODEL") ?? "claude-opus-5-5";
 
 interface AnthropicContentBlock {
   type: string;
@@ -15,7 +15,7 @@ interface AnthropicContentBlock {
 export async function callClaude(
   system: string,
   userContent: string,
-  maxTokens = 2000,
+  maxTokens = 16000,
 ): Promise<string> {
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -23,11 +23,16 @@ export async function callClaude(
       "content-type": "application/json",
       "x-api-key": Deno.env.get("ANTHROPIC_API_KEY")!,
       "anthropic-version": "2023-06-01",
+      // Lets a refused request be retried on a fallback model server-side.
+      "anthropic-beta": "server-side-fallback-2026-07-01",
     },
+    // No temperature: current models reject sampling parameters. Calibration
+    // comes from the rubric in the system prompt instead.
     body: JSON.stringify({
       model: MODEL_VERSION,
       max_tokens: maxTokens,
-      temperature: 0,
+      output_config: { effort: "medium" },
+      fallbacks: "default",
       system,
       messages: [{ role: "user", content: userContent }],
     }),
@@ -38,6 +43,8 @@ export async function callClaude(
   }
 
   const body = await response.json();
+  if (body.stop_reason === "refusal") throw new Error("anthropic_refusal");
+  if (body.stop_reason === "max_tokens") throw new Error("anthropic_truncated");
   const text = (body.content as AnthropicContentBlock[])
     .filter((block) => block.type === "text")
     .map((block) => block.text ?? "")
