@@ -161,7 +161,6 @@ const part1: ItemGroup = {
   partNumber: 1,
   title: "Part 1 — Enquiry about a community sports centre",
   stimulusKind: "audio",
-  audioUrl: "/mock-audio/part-1.mp3",
   transcript: TRANSCRIPT_1,
   instructions:
     "Questions 1-10. Complete the form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
@@ -184,7 +183,6 @@ const part2: ItemGroup = {
   partNumber: 2,
   title: "Part 2 — Introductory talk at an arts centre",
   stimulusKind: "audio",
-  audioUrl: "/mock-audio/part-2.mp3",
   transcript: TRANSCRIPT_2,
   imageUrl: "/mock-images/site-plan.svg",
   imageCaption: "Site plan referred to in Questions 18-20",
@@ -209,7 +207,6 @@ const part3: ItemGroup = {
   partNumber: 3,
   title: "Part 3 — Two students discuss a field-work project",
   stimulusKind: "audio",
-  audioUrl: "/mock-audio/part-3.mp3",
   transcript: TRANSCRIPT_3,
   instructions:
     "Questions 21-30. Choose the correct letter for Questions 21-24, choose TWO letters for Questions 25-26, and match the speakers for Questions 27-30.",
@@ -258,7 +255,6 @@ const part4: ItemGroup = {
   partNumber: 4,
   title: "Part 4 — Lecture on the history of standardised time",
   stimulusKind: "audio",
-  audioUrl: "/mock-audio/part-4.mp3",
   transcript: TRANSCRIPT_4,
   instructions:
     "Questions 31-40. Complete the notes, table and flow-chart below. Write ONE WORD ONLY for each answer.",

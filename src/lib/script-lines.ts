@@ -34,7 +34,10 @@ const FEMALE_NAMES = new Set(
    "diana ella ellie emily emma eva fatima grace hannah helen holly isabel jane jasmine jenny jess " +
    "jessica julia karen kate katie laura layla leila lily linda lisa lucy maria mary maya mia molly " +
    "nadia nina nora olivia paula priya rachel rebecca rosa ruth sally sara sarah sophie susan " +
-   "tara una vanessa zara zoe narrator-f receptionist-f mrs ms miss").split(" "),
+   "tara una vanessa zara zoe clare gemma harriet imogen joanna kirsty lauren megan natalie sian " +
+   "tanya yasmin zainab aisha amira beatrice eleanor fiona georgia heather iris joy louise martha " +
+   "naomi phoebe rita shona tessa violet wendy abigail alison bridget catherine deborah esther " +
+   "freya gloria hazel ingrid janet kim lena margaret noor olga pam ruby sophia vera").split(" "),
 );
 const MALE_HINTS = new Set(["mr", "sir", "man", "father", "dad", "boy"]);
 const FEMALE_HINTS = new Set(["mrs", "ms", "miss", "woman", "mother", "mum", "girl", "lady"]);

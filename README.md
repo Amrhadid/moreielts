@@ -361,6 +361,44 @@ are MoreTOEFL's `public.profiles`, read only; `public.is_admin()` is reused.
 Everything IELTS-specific about a learner, including IELTS Premium, lives in
 `ielts_learners`, created on first visit by `ielts_ensure_learner()`.
 
+## Premium-only, access codes and mock exams (migration 0013)
+
+MoreIELTS has no free tier. `ielts_is_premium()` (an active
+`ielts_learners.premium_expires_at`, or an admin) gates every question
+(`ielts_questions_public`), passage and audio (`ielts_item_groups` RLS),
+attempt (`ielts_start_attempt`), drill, essay and learner mark on the server;
+`<PremiumGate>` gives the same rule a friendly face in the app. The form
+catalogue stays readable so locked exams can be listed.
+
+Admins generate codes at **Admin → Access codes** (up to 500 per batch:
+duration, prefix, batch label, optional redeem-by date; copy or CSV). Learners
+redeem them on `/pricing`; time stacks on top of any Premium they already have.
+
+Forms have a `purpose`: `practice` forms feed the skill sections (drills,
+writing-lab prompts); `mock` forms are the full exams on the Mock Test page,
+run in order Listening → Reading → Writing → Speaking with `?form=<id>`.
+There are four mock exams (`mock-academic-1/2`, `mock-general-1/2`).
+
+Listening audio is narrated from each part's script by
+`npm run mock:audio -- --all` (OpenAI speech + ffmpeg, one gender-matched
+voice per speaker) into `public/audio/mock` and `public/audio/forms`, and
+`npm run seed:generate` points `audio_url` at those files.
+
+## Edge Functions in the shared project
+
+The deployed functions are `ielts-submit-attempt`, `ielts-drill`,
+`ielts-grading-worker` (no JWT; it checks a key that exists only in Vault,
+via `ielts_check_worker_key()`) and `ielts-generate-audio`. They use secrets
+the shared project already has: `ANTHROPIC_API_KEY` (grading) and
+`ELEVENLABS_API_KEY` (speaking transcription, in-app narration). Media is in
+Supabase Storage (`ielts-media` public, `ielts-recordings` private).
+
+`npm run functions:build` bundles each function into
+`supabase/functions/_dist/<name>.js`. Each deployed function is a one-line
+loader that imports its bundle from jsDelivr at a pinned commit, so update a
+function by rebuilding, committing, and redeploying the loader with the new
+commit hash.
+
 ## Background grading, audio and payments (migrations 0007–0010)
 
 **Grading.** Submitting a whole attempt marks Listening and Reading at once

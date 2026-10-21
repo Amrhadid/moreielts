@@ -18,7 +18,8 @@
     "sitemap": "esbuild scripts/generate-sitemap.ts --bundle --platform=node --format=esm --alias:~=./src --outfile=node_modules/.cache/sitemap.mjs --log-level=error && node node_modules/.cache/sitemap.mjs",
     "test:e2e": "node tests/e2e/smoke.mjs",
     "practice:audio": "esbuild scripts/generate-practice-audio.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/practice-audio.mjs --log-level=error && node node_modules/.cache/practice-audio.mjs",
-    "functions:build": "bash scripts/build-functions.sh"
+    "functions:build": "bash scripts/build-functions.sh",
+    "mock:audio": "esbuild scripts/generate-mock-audio.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/mock-audio.mjs --log-level=error && node node_modules/.cache/mock-audio.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

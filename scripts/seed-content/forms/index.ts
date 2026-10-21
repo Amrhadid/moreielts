@@ -5,10 +5,27 @@ import { academic3 } from "./academic-3";
 import { academic4 } from "./academic-4";
 import { general1 } from "./general-1";
 import { general2 } from "./general-2";
+import { mockAcademic1 } from "./mock-academic-1";
+import { mockAcademic2 } from "./mock-academic-2";
+import { mockGeneral1 } from "./mock-general-1";
+import { mockGeneral2 } from "./mock-general-2";
 
 /**
  * Every authored form, in catalogue order. Add a form by creating a folder
  * next to academic-1 and listing its export here; `npm run seed:validate`
  * checks it and `npm run seed:generate` writes it into supabase/seed.sql.
  */
-export const FORMS: SeedForm[] = [academic1, academic2, academic3, academic4, general1, general2];
+export const FORMS: SeedForm[] = [
+  // Skill-practice content (drills, writing prompts).
+  academic1,
+  academic2,
+  academic3,
+  academic4,
+  general1,
+  general2,
+  // Full mock exams, shown only on the Mock Test page.
+  mockAcademic1,
+  mockAcademic2,
+  mockGeneral1,
+  mockGeneral2,
+];

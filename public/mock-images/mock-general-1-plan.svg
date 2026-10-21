@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" font-family="Inter, system-ui, sans-serif" role="img" aria-labelledby="t">
+  <title id="t">Plan of Greenhaven City Farm with eight lettered places, A to H</title>
+  <rect width="640" height="480" fill="#ffffff"/>
+  <g transform="translate(600 46)" fill="#3c4552" font-size="13" font-weight="700" text-anchor="middle">
+    <path d="M0-24 8 0H-8Z" fill="#0875c9"/><text y="-28">N</text>
+  </g>
+  <rect x="20" y="20" width="560" height="420" rx="14" fill="#f4f8ef" stroke="#a9c9a1" stroke-width="2"/>
+  <!-- paths -->
+  <g fill="none" stroke="#cfccc5" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M320 450V110Q320 80 290 80H200"/>
+    <path d="M320 110V60"/>
+    <path d="M90 240H550"/>
+    <path d="M430 220V150"/>
+  </g>
+  <!-- pond -->
+  <ellipse cx="430" cy="240" rx="58" ry="34" fill="#cfe6fa" stroke="#0875c9"/>
+  <text x="430" y="245" text-anchor="middle" font-size="14" fill="#075ea2">Pond</text>
+  <!-- visitor centre & entrance -->
+  <rect x="150" y="380" width="130" height="46" rx="6" fill="#d8ebff" stroke="#0875c9"/>
+  <text x="215" y="408" text-anchor="middle" font-size="14" fill="#075ea2">Visitor centre</text>
+  <text x="320" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#14181f">Main entrance</text>
+  <text x="328" y="222" font-size="12" fill="#6b7482">Crossroads</text>
+  <!-- lettered places -->
+  <g font-size="20" font-weight="700" text-anchor="middle" fill="#14181f">
+    <rect x="345" y="385" width="70" height="42" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="380" y="413">A</text>
+    <rect x="200" y="280" width="70" height="42" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="235" y="308">B</text>
+    <rect x="40" y="215" width="60" height="50" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="70" y="247">C</text>
+    <rect x="120" y="55" width="76" height="46" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="158" y="85">D</text>
+    <rect x="285" y="28" width="70" height="36" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="320" y="53">E</text>
+    <rect x="395" y="100" width="70" height="46" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="430" y="130">F</text>
+    <rect x="515" y="215" width="60" height="50" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="545" y="247">G</text>
+    <rect x="345" y="290" width="110" height="60" rx="6" fill="#fff" stroke="#14181f" stroke-width="2"/><text x="400" y="327">H</text>
+  </g>
+</svg>

@@ -7,7 +7,7 @@
  * reports an error; `--check` validates without writing.
  */
 import { createHash } from "node:crypto";
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { FORMS } from "./seed-content/forms";
 import { validateForms } from "./seed-content/validate";
 import type { SeedForm } from "../src/types/content";
@@ -52,9 +52,9 @@ function formSql(form: SeedForm): string[] {
 
   const lines = [
     `-- ${form.title} (${form.slug})`,
-    `insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, scoring_version)`,
-    `values (${q(formId)}, ${q(form.slug)}, ${q(form.title)}, ${q(form.description)}, ${q(form.variant)}, 'computer', true, ${form.isPremium}, ${q(form.difficulty)}, 'v1')`,
-    "on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty;",
+    `insert into public.ielts_test_forms (id, slug, title, description, variant, delivery_mode, is_published, is_premium, difficulty, purpose, scoring_version)`,
+    `values (${q(formId)}, ${q(form.slug)}, ${q(form.title)}, ${q(form.description)}, ${q(form.variant)}, 'computer', true, true, ${q(form.difficulty)}, ${q(form.purpose ?? "practice")}, 'v1')`,
+    "on conflict (id) do update set slug = excluded.slug, title = excluded.title, description = excluded.description, is_published = excluded.is_published, is_premium = excluded.is_premium, difficulty = excluded.difficulty, purpose = excluded.purpose;",
     "",
   ];
 
@@ -69,6 +69,12 @@ function formSql(form: SeedForm): string[] {
 
     section.itemGroups.forEach((group, groupIndex) => {
       const groupId = uuidFor(name(`group:${section.code}:${group.id}`));
+      // Listening parts are narrated by scripts/generate-mock-audio.ts into
+      // public/audio/<mock|forms>; the site serves those files directly.
+      const narrated = `/audio/${form.purpose === "mock" ? "mock" : "forms"}/${form.slug}-part-${group.partNumber}.mp3`;
+      const audioUrl =
+        group.audioUrl ??
+        (section.code === "listening" && existsSync(`public${narrated}`) ? narrated : undefined);
       const metadata = JSON.stringify({
         ...(group.imageCaption ? { image_caption: group.imageCaption } : {}),
         title: group.title,
@@ -78,7 +84,7 @@ function formSql(form: SeedForm): string[] {
       // update keeps a stored audio_url over the authored placeholder.
       lines.push(
         `insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)`,
-        `values (${q(groupId)}, ${q(sectionId)}, ${group.partNumber}, ${q(group.passageText)}, ${q(group.audioUrl)}, ${q(group.imageUrl)}, ${q(group.instructions)}, ${q(metadata)}::jsonb, ${groupIndex})`,
+        `values (${q(groupId)}, ${q(sectionId)}, ${group.partNumber}, ${q(group.passageText)}, ${q(audioUrl)}, ${q(group.imageUrl)}, ${q(group.instructions)}, ${q(metadata)}::jsonb, ${groupIndex})`,
         "on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions, image_url = excluded.image_url, metadata = excluded.metadata, audio_url = coalesce(public.ielts_item_groups.audio_url, excluded.audio_url);",
         "",
       );

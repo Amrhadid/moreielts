@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 480" width="760" height="480" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="Bar chart: average hours per week spent on four leisure activities by age group, 2023">
+<rect width="760" height="480" fill="#ffffff"/>
+<text x="380.0" y="30" text-anchor="middle" font-size="17" font-weight="bold" fill="#222">Average hours per week spent on leisure activities, by age group (2023)</text>
+<line x1="70" y1="400.0" x2="600" y2="400.0" stroke="#ddd"/><text x="60" y="405.0" text-anchor="end" font-size="13" fill="#444">0</text>
+<line x1="70" y1="332.0" x2="600" y2="332.0" stroke="#ddd"/><text x="60" y="337.0" text-anchor="end" font-size="13" fill="#444">5</text>
+<line x1="70" y1="264.0" x2="600" y2="264.0" stroke="#ddd"/><text x="60" y="269.0" text-anchor="end" font-size="13" fill="#444">10</text>
+<line x1="70" y1="196.0" x2="600" y2="196.0" stroke="#ddd"/><text x="60" y="201.0" text-anchor="end" font-size="13" fill="#444">15</text>
+<line x1="70" y1="128.0" x2="600" y2="128.0" stroke="#ddd"/><text x="60" y="133.0" text-anchor="end" font-size="13" fill="#444">20</text>
+<line x1="70" y1="60.0" x2="600" y2="60.0" stroke="#ddd"/><text x="60" y="65.0" text-anchor="end" font-size="13" fill="#444">25</text>
+<line x1="70" y1="400" x2="600" y2="400" stroke="#333"/><line x1="70" y1="60" x2="70" y2="400" stroke="#333"/>
+<text x="22" y="230.0" text-anchor="middle" font-size="13" fill="#444" transform="rotate(-90 22 230.0)">Hours per week</text>
+<rect x="85.2" y="291.2" width="24" height="108.8" fill="#4e79a7"/><text x="97.2" y="287.2" text-anchor="middle" font-size="11" fill="#333">8</text>
+<rect x="111.2" y="168.8" width="24" height="231.2" fill="#f28e2b"/><text x="123.2" y="164.8" text-anchor="middle" font-size="11" fill="#333">17</text>
+<rect x="137.2" y="318.4" width="24" height="81.6" fill="#59a14f"/><text x="149.2" y="314.4" text-anchor="middle" font-size="11" fill="#333">6</text>
+<rect x="163.2" y="372.8" width="24" height="27.2" fill="#b07aa1"/><text x="175.2" y="368.8" text-anchor="middle" font-size="11" fill="#333">2</text>
+<text x="136.2" y="422" text-anchor="middle" font-size="13" fill="#444">16-24</text>
+<rect x="217.8" y="250.4" width="24" height="149.6" fill="#4e79a7"/><text x="229.8" y="246.4" text-anchor="middle" font-size="11" fill="#333">11</text>
+<rect x="243.8" y="264.0" width="24" height="136.0" fill="#f28e2b"/><text x="255.8" y="260.0" text-anchor="middle" font-size="11" fill="#333">10</text>
+<rect x="269.8" y="345.6" width="24" height="54.4" fill="#59a14f"/><text x="281.8" y="341.6" text-anchor="middle" font-size="11" fill="#333">4</text>
+<rect x="295.8" y="359.2" width="24" height="40.8" fill="#b07aa1"/><text x="307.8" y="355.2" text-anchor="middle" font-size="11" fill="#333">3</text>
+<text x="268.8" y="422" text-anchor="middle" font-size="13" fill="#444">25-44</text>
+<rect x="350.2" y="182.4" width="24" height="217.6" fill="#4e79a7"/><text x="362.2" y="178.4" text-anchor="middle" font-size="11" fill="#333">16</text>
+<rect x="376.2" y="332.0" width="24" height="68.0" fill="#f28e2b"/><text x="388.2" y="328.0" text-anchor="middle" font-size="11" fill="#333">5</text>
+<rect x="402.2" y="359.2" width="24" height="40.8" fill="#59a14f"/><text x="414.2" y="355.2" text-anchor="middle" font-size="11" fill="#333">3</text>
+<rect x="428.2" y="332.0" width="24" height="68.0" fill="#b07aa1"/><text x="440.2" y="328.0" text-anchor="middle" font-size="11" fill="#333">5</text>
+<text x="401.2" y="422" text-anchor="middle" font-size="13" fill="#444">45-64</text>
+<rect x="482.8" y="100.8" width="24" height="299.2" fill="#4e79a7"/><text x="494.8" y="96.8" text-anchor="middle" font-size="11" fill="#333">22</text>
+<rect x="508.8" y="372.8" width="24" height="27.2" fill="#f28e2b"/><text x="520.8" y="368.8" text-anchor="middle" font-size="11" fill="#333">2</text>
+<rect x="534.8" y="345.6" width="24" height="54.4" fill="#59a14f"/><text x="546.8" y="341.6" text-anchor="middle" font-size="11" fill="#333">4</text>
+<rect x="560.8" y="291.2" width="24" height="108.8" fill="#b07aa1"/><text x="572.8" y="287.2" text-anchor="middle" font-size="11" fill="#333">8</text>
+<text x="533.8" y="422" text-anchor="middle" font-size="13" fill="#444">65+</text>
+<text x="335.0" y="448" text-anchor="middle" font-size="13" fill="#444">Age group (years)</text>
+<rect x="620" y="108" width="16" height="16" fill="#4e79a7"/><text x="644" y="121" font-size="13" fill="#333">Watching TV</text>
+<rect x="620" y="136" width="16" height="16" fill="#f28e2b"/><text x="644" y="149" font-size="13" fill="#333">Social media</text>
+<rect x="620" y="164" width="16" height="16" fill="#59a14f"/><text x="644" y="177" font-size="13" fill="#333">Sport &amp; exercise</text>
+<rect x="620" y="192" width="16" height="16" fill="#b07aa1"/><text x="644" y="205" font-size="13" fill="#333">Reading</text>
+</svg>
