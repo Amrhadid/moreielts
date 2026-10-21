@@ -29,7 +29,7 @@ export function PlayerHeader({
           <p className="truncate text-sm font-semibold">{sectionName}</p>
           <p className="truncate text-xs text-muted">{contextLabel}</p>
         </div>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ms-auto flex items-center gap-3">
           {right}
           <div
             aria-live="polite"

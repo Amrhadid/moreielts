@@ -73,7 +73,7 @@ function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="relative overflow-hidden border-brand-100 sm:col-span-2">
           <CardBody className="pt-5">
-            <span className="pointer-events-none absolute -right-16 -top-16 z-0 h-32 w-32 rounded-full bg-brand-50/70" aria-hidden />
+            <span className="pointer-events-none absolute -end-16 -top-16 z-0 h-32 w-32 rounded-full bg-brand-50/70" aria-hidden />
             <div className="relative z-10 flex flex-wrap items-end gap-8">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -237,7 +237,7 @@ function Dashboard() {
                     </p>
                   </div>
                   <Badge tone="brand">Mock</Badge>
-                  <span className="w-12 text-right text-lg font-semibold tabular-nums">
+                  <span className="w-12 text-end text-lg font-semibold tabular-nums">
                     {attempt.attempt_scores?.overall_band
                       ? formatBand(Number(attempt.attempt_scores.overall_band))
                       : "—"}

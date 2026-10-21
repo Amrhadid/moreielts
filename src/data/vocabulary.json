@@ -1,0 +1,5316 @@
+{
+  "topics": [
+    {
+      "slug": "environment",
+      "name": "Environment",
+      "name_ar": "البيئة",
+      "words": [
+        {
+          "slug": "mitigate",
+          "word": "mitigate",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to make something less harmful or serious",
+          "meaning_ar": "يخفّف",
+          "example": "Governments must act quickly to mitigate the effects of rising sea levels.",
+          "collocations": [
+            "mitigate the impact",
+            "mitigate risk"
+          ]
+        },
+        {
+          "slug": "pollution",
+          "word": "pollution",
+          "pos": "noun",
+          "band": 5,
+          "definition": "harmful substances in air, water or soil",
+          "meaning_ar": "التلوث",
+          "example": "Air pollution in large cities has become a serious threat to public health.",
+          "collocations": [
+            "air pollution",
+            "reduce pollution"
+          ]
+        },
+        {
+          "slug": "emissions",
+          "word": "emissions",
+          "pos": "noun",
+          "band": 6,
+          "definition": "gases released into the air, especially by vehicles or factories",
+          "meaning_ar": "الانبعاثات",
+          "example": "Many countries have pledged to cut carbon emissions by half before 2040.",
+          "collocations": [
+            "carbon emissions",
+            "cut emissions"
+          ]
+        },
+        {
+          "slug": "renewable",
+          "word": "renewable",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "able to be replaced naturally and used without running out",
+          "meaning_ar": "متجدد",
+          "example": "Investment in renewable energy such as wind and solar power has grown rapidly.",
+          "collocations": [
+            "renewable energy",
+            "renewable resources"
+          ]
+        },
+        {
+          "slug": "sustainable",
+          "word": "sustainable",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "able to continue without damaging the environment",
+          "meaning_ar": "مستدام",
+          "example": "Farmers are being encouraged to adopt more sustainable methods of production.",
+          "collocations": [
+            "sustainable development",
+            "sustainable growth"
+          ]
+        },
+        {
+          "slug": "deforestation",
+          "word": "deforestation",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the cutting down of large areas of forest",
+          "meaning_ar": "إزالة الغابات",
+          "example": "Deforestation in the Amazon has accelerated the loss of countless animal species.",
+          "collocations": [
+            "tropical deforestation",
+            "halt deforestation"
+          ]
+        },
+        {
+          "slug": "biodiversity",
+          "word": "biodiversity",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the variety of plant and animal life in an area",
+          "meaning_ar": "التنوع البيولوجي",
+          "example": "Protecting biodiversity is essential for maintaining healthy and resilient ecosystems.",
+          "collocations": [
+            "loss of biodiversity",
+            "protect biodiversity"
+          ]
+        },
+        {
+          "slug": "ecosystem",
+          "word": "ecosystem",
+          "pos": "noun",
+          "band": 6,
+          "definition": "all living things in an area and how they interact",
+          "meaning_ar": "نظام بيئي",
+          "example": "The introduction of foreign species can seriously disrupt a fragile ecosystem.",
+          "collocations": [
+            "fragile ecosystem",
+            "marine ecosystem"
+          ]
+        },
+        {
+          "slug": "conservation",
+          "word": "conservation",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the protection of nature and natural resources",
+          "meaning_ar": "الحفاظ على البيئة",
+          "example": "Wildlife conservation programmes depend heavily on government funding and public support.",
+          "collocations": [
+            "wildlife conservation",
+            "conservation efforts"
+          ]
+        },
+        {
+          "slug": "habitat",
+          "word": "habitat",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the natural home of an animal or plant",
+          "meaning_ar": "موطن طبيعي",
+          "example": "Urban expansion has destroyed the natural habitat of many endangered birds.",
+          "collocations": [
+            "natural habitat",
+            "habitat loss"
+          ]
+        },
+        {
+          "slug": "endangered",
+          "word": "endangered",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "at risk of no longer existing",
+          "meaning_ar": "مهدد بالانقراض",
+          "example": "Several endangered species have recovered thanks to strict international hunting bans.",
+          "collocations": [
+            "endangered species",
+            "critically endangered"
+          ]
+        },
+        {
+          "slug": "extinction",
+          "word": "extinction",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the state of no longer existing as a species",
+          "meaning_ar": "الانقراض",
+          "example": "Scientists warn that thousands of species face extinction within the next century.",
+          "collocations": [
+            "face extinction",
+            "mass extinction"
+          ]
+        },
+        {
+          "slug": "degradation",
+          "word": "degradation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the process of something becoming worse in quality",
+          "meaning_ar": "تدهور",
+          "example": "Overgrazing has led to severe land degradation in parts of the region.",
+          "collocations": [
+            "environmental degradation",
+            "land degradation"
+          ]
+        },
+        {
+          "slug": "contaminate",
+          "word": "contaminate",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to make something dirty or poisonous",
+          "meaning_ar": "يلوّث",
+          "example": "Industrial waste continues to contaminate rivers that millions of people depend on.",
+          "collocations": [
+            "contaminate water",
+            "contaminated soil"
+          ]
+        },
+        {
+          "slug": "depletion",
+          "word": "depletion",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the reduction of something until little remains",
+          "meaning_ar": "استنزاف",
+          "example": "The depletion of fossil fuels makes alternative energy sources increasingly important.",
+          "collocations": [
+            "ozone depletion",
+            "resource depletion"
+          ]
+        },
+        {
+          "slug": "drought",
+          "word": "drought",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a long period without rain",
+          "meaning_ar": "الجفاف",
+          "example": "Prolonged drought has caused crop failures across much of East Africa.",
+          "collocations": [
+            "severe drought",
+            "prolonged drought"
+          ]
+        },
+        {
+          "slug": "emit",
+          "word": "emit",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to send out gas, heat or light",
+          "meaning_ar": "يُطلق",
+          "example": "Older vehicles emit far more harmful gases than modern electric cars.",
+          "collocations": [
+            "emit carbon dioxide",
+            "emit gases"
+          ]
+        },
+        {
+          "slug": "footprint",
+          "word": "footprint",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the amount of carbon a person or activity produces",
+          "meaning_ar": "البصمة الكربونية",
+          "example": "Individuals can reduce their carbon footprint by flying less and eating locally.",
+          "collocations": [
+            "carbon footprint",
+            "reduce your footprint"
+          ]
+        },
+        {
+          "slug": "irreversible",
+          "word": "irreversible",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "impossible to change back to a previous state",
+          "meaning_ar": "لا رجعة فيه",
+          "example": "Experts fear that some damage to coral reefs may already be irreversible.",
+          "collocations": [
+            "irreversible damage",
+            "irreversible change"
+          ]
+        },
+        {
+          "slug": "landfill",
+          "word": "landfill",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a place where waste is buried under the ground",
+          "meaning_ar": "مكب النفايات",
+          "example": "Most household rubbish still ends up in landfill rather than being recycled.",
+          "collocations": [
+            "landfill site",
+            "send to landfill"
+          ]
+        },
+        {
+          "slug": "preservation",
+          "word": "preservation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "keeping something in its original state",
+          "meaning_ar": "صون",
+          "example": "The preservation of wetlands helps to prevent flooding in nearby towns.",
+          "collocations": [
+            "environmental preservation",
+            "preservation of nature"
+          ]
+        },
+        {
+          "slug": "ecological",
+          "word": "ecological",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to living things and their environment",
+          "meaning_ar": "بيئي",
+          "example": "The oil spill was described as an ecological disaster for the coastline.",
+          "collocations": [
+            "ecological balance",
+            "ecological damage"
+          ]
+        },
+        {
+          "slug": "detrimental",
+          "word": "detrimental",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "causing harm or damage",
+          "meaning_ar": "ضار",
+          "example": "Excessive use of pesticides has a detrimental effect on bees and other insects.",
+          "collocations": [
+            "detrimental effect",
+            "detrimental to health"
+          ]
+        },
+        {
+          "slug": "exacerbate",
+          "word": "exacerbate",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to make a bad situation worse",
+          "meaning_ar": "يفاقم",
+          "example": "Rapid population growth may exacerbate existing shortages of clean drinking water.",
+          "collocations": [
+            "exacerbate the problem",
+            "exacerbate tensions"
+          ]
+        },
+        {
+          "slug": "phase-out",
+          "word": "phase out",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "to gradually stop using something",
+          "meaning_ar": "يلغي تدريجيا",
+          "example": "The government plans to phase out petrol cars over the next decade.",
+          "collocations": [
+            "phase out coal",
+            "gradually phase out"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "education",
+      "name": "Education",
+      "name_ar": "التعليم",
+      "words": [
+        {
+          "slug": "curriculum",
+          "word": "curriculum",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the subjects taught in a school or course",
+          "meaning_ar": "المنهج الدراسي",
+          "example": "Many educators argue that the national curriculum should include practical life skills.",
+          "collocations": [
+            "national curriculum",
+            "school curriculum"
+          ]
+        },
+        {
+          "slug": "literacy",
+          "word": "literacy",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the ability to read and write",
+          "meaning_ar": "محو الأمية",
+          "example": "Adult literacy rates have improved significantly across the developing world.",
+          "collocations": [
+            "literacy rate",
+            "digital literacy"
+          ]
+        },
+        {
+          "slug": "tuition",
+          "word": "tuition",
+          "pos": "noun",
+          "band": 6,
+          "definition": "teaching, or the money paid for it",
+          "meaning_ar": "الرسوم الدراسية",
+          "example": "Rising tuition fees discourage many talented students from attending university.",
+          "collocations": [
+            "tuition fees",
+            "private tuition"
+          ]
+        },
+        {
+          "slug": "compulsory",
+          "word": "compulsory",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "required by law or a rule",
+          "meaning_ar": "إلزامي",
+          "example": "In most countries, education is compulsory until the age of sixteen.",
+          "collocations": [
+            "compulsory education",
+            "compulsory subject"
+          ]
+        },
+        {
+          "slug": "vocational",
+          "word": "vocational",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to skills needed for a particular job",
+          "meaning_ar": "مهني",
+          "example": "Vocational training can offer young people a direct route into skilled employment.",
+          "collocations": [
+            "vocational training",
+            "vocational course"
+          ]
+        },
+        {
+          "slug": "academic",
+          "word": "academic",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "relating to schools, colleges and study",
+          "meaning_ar": "أكاديمي",
+          "example": "Academic success is not always the best predictor of achievement in later life.",
+          "collocations": [
+            "academic performance",
+            "academic qualifications"
+          ]
+        },
+        {
+          "slug": "qualification",
+          "word": "qualification",
+          "pos": "noun",
+          "band": 6,
+          "definition": "an official record that you have passed a course",
+          "meaning_ar": "مؤهل",
+          "example": "Employers increasingly expect a degree as the minimum qualification for office jobs.",
+          "collocations": [
+            "academic qualification",
+            "professional qualification"
+          ]
+        },
+        {
+          "slug": "discipline",
+          "word": "discipline",
+          "pos": "noun",
+          "band": 6,
+          "definition": "training people to obey rules and control behaviour",
+          "meaning_ar": "الانضباط",
+          "example": "Some parents believe that strict discipline in schools improves academic results.",
+          "collocations": [
+            "strict discipline",
+            "school discipline"
+          ]
+        },
+        {
+          "slug": "assessment",
+          "word": "assessment",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the process of judging a student's work or ability",
+          "meaning_ar": "التقييم",
+          "example": "Continuous assessment may reduce the stress that final examinations place on students.",
+          "collocations": [
+            "continuous assessment",
+            "formal assessment"
+          ]
+        },
+        {
+          "slug": "rote-learning",
+          "word": "rote learning",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "learning by repetition rather than understanding",
+          "meaning_ar": "الحفظ الصمّ",
+          "example": "Critics claim that rote learning fails to develop students' ability to think independently.",
+          "collocations": [
+            "rely on rote learning",
+            "rote learning methods"
+          ]
+        },
+        {
+          "slug": "critical-thinking",
+          "word": "critical thinking",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the ability to analyse and judge information carefully",
+          "meaning_ar": "التفكير النقدي",
+          "example": "Universities should place greater emphasis on developing critical thinking among undergraduates.",
+          "collocations": [
+            "develop critical thinking",
+            "critical thinking skills"
+          ]
+        },
+        {
+          "slug": "pedagogy",
+          "word": "pedagogy",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the methods and theory of teaching",
+          "meaning_ar": "علم التربية",
+          "example": "Modern pedagogy encourages teachers to act as guides rather than lecturers.",
+          "collocations": [
+            "modern pedagogy",
+            "effective pedagogy"
+          ]
+        },
+        {
+          "slug": "enrol",
+          "word": "enrol",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to officially join a course or school",
+          "meaning_ar": "يلتحق",
+          "example": "More women than men now enrol in higher education in many countries.",
+          "collocations": [
+            "enrol in a course",
+            "enrol at university"
+          ]
+        },
+        {
+          "slug": "dropout",
+          "word": "dropout",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a person who leaves school before finishing",
+          "meaning_ar": "متسرّب من الدراسة",
+          "example": "Poverty is one of the main reasons for high dropout rates in rural areas.",
+          "collocations": [
+            "dropout rate",
+            "school dropout"
+          ]
+        },
+        {
+          "slug": "scholarship",
+          "word": "scholarship",
+          "pos": "noun",
+          "band": 6,
+          "definition": "money given to a student to pay for study",
+          "meaning_ar": "منحة دراسية",
+          "example": "She won a scholarship that covered all her tuition and living costs.",
+          "collocations": [
+            "win a scholarship",
+            "full scholarship"
+          ]
+        },
+        {
+          "slug": "undergraduate",
+          "word": "undergraduate",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a university student studying for a first degree",
+          "meaning_ar": "طالب جامعي",
+          "example": "Undergraduates are often expected to complete a research project in their final year.",
+          "collocations": [
+            "undergraduate degree",
+            "undergraduate students"
+          ]
+        },
+        {
+          "slug": "extracurricular",
+          "word": "extracurricular",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "done at school but outside normal lessons",
+          "meaning_ar": "لاصفّي",
+          "example": "Extracurricular activities such as sport and drama help students build confidence.",
+          "collocations": [
+            "extracurricular activities",
+            "extracurricular clubs"
+          ]
+        },
+        {
+          "slug": "lifelong-learning",
+          "word": "lifelong learning",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "continuing to learn throughout one's life",
+          "meaning_ar": "التعلم مدى الحياة",
+          "example": "Rapid technological change has made lifelong learning a necessity for most workers.",
+          "collocations": [
+            "promote lifelong learning",
+            "culture of lifelong learning"
+          ]
+        },
+        {
+          "slug": "aptitude",
+          "word": "aptitude",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a natural ability to do something well",
+          "meaning_ar": "استعداد فطري",
+          "example": "Some children show a remarkable aptitude for languages from a very early age.",
+          "collocations": [
+            "natural aptitude",
+            "aptitude test"
+          ]
+        },
+        {
+          "slug": "mentor",
+          "word": "mentor",
+          "pos": "noun",
+          "band": 6,
+          "definition": "an experienced person who advises someone less experienced",
+          "meaning_ar": "مرشد",
+          "example": "Having a mentor can help new teachers cope with the pressures of the classroom.",
+          "collocations": [
+            "act as a mentor",
+            "mentor programme"
+          ]
+        },
+        {
+          "slug": "cognitive",
+          "word": "cognitive",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to thinking, learning and memory",
+          "meaning_ar": "معرفي",
+          "example": "Learning a musical instrument may boost children's cognitive development considerably.",
+          "collocations": [
+            "cognitive skills",
+            "cognitive development"
+          ]
+        },
+        {
+          "slug": "proficiency",
+          "word": "proficiency",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a high level of skill or ability",
+          "meaning_ar": "إتقان",
+          "example": "Applicants must demonstrate proficiency in English before being admitted to the programme.",
+          "collocations": [
+            "language proficiency",
+            "level of proficiency"
+          ]
+        },
+        {
+          "slug": "standardised",
+          "word": "standardised",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "made the same for everyone, such as a test",
+          "meaning_ar": "موحّد",
+          "example": "Standardised tests may not accurately measure the full range of a student's abilities.",
+          "collocations": [
+            "standardised testing",
+            "standardised curriculum"
+          ]
+        },
+        {
+          "slug": "distance-learning",
+          "word": "distance learning",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "studying from home rather than attending classes in person",
+          "meaning_ar": "التعلم عن بعد",
+          "example": "Distance learning allows working adults to gain qualifications without leaving their jobs.",
+          "collocations": [
+            "distance learning course",
+            "offer distance learning"
+          ]
+        },
+        {
+          "slug": "tertiary",
+          "word": "tertiary",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "relating to education at college or university level",
+          "meaning_ar": "عالي (جامعي)",
+          "example": "Access to tertiary education remains limited for students from low-income families.",
+          "collocations": [
+            "tertiary education",
+            "tertiary institutions"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "technology",
+      "name": "Technology",
+      "name_ar": "التكنولوجيا",
+      "words": [
+        {
+          "slug": "innovation",
+          "word": "innovation",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a new idea, method or invention",
+          "meaning_ar": "ابتكار",
+          "example": "Technological innovation has transformed the way people communicate and do business.",
+          "collocations": [
+            "technological innovation",
+            "drive innovation"
+          ]
+        },
+        {
+          "slug": "automation",
+          "word": "automation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the use of machines to do work previously done by people",
+          "meaning_ar": "الأتمتة",
+          "example": "Automation is expected to replace many routine jobs in manufacturing and retail.",
+          "collocations": [
+            "increased automation",
+            "automation of jobs"
+          ]
+        },
+        {
+          "slug": "artificial-intelligence",
+          "word": "artificial intelligence",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "computer systems that can perform tasks needing human intelligence",
+          "meaning_ar": "الذكاء الاصطناعي",
+          "example": "Artificial intelligence is already being used to diagnose certain diseases more accurately.",
+          "collocations": [
+            "advances in artificial intelligence",
+            "artificial intelligence systems"
+          ]
+        },
+        {
+          "slug": "obsolete",
+          "word": "obsolete",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "no longer used because something newer exists",
+          "meaning_ar": "متقادم",
+          "example": "Many skills that were valuable twenty years ago are now completely obsolete.",
+          "collocations": [
+            "become obsolete",
+            "obsolete technology"
+          ]
+        },
+        {
+          "slug": "cutting-edge",
+          "word": "cutting-edge",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "the most modern and advanced",
+          "meaning_ar": "متطور جدا",
+          "example": "The hospital has invested in cutting-edge equipment for treating heart disease.",
+          "collocations": [
+            "cutting-edge technology",
+            "cutting-edge research"
+          ]
+        },
+        {
+          "slug": "device",
+          "word": "device",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a machine or tool made for a particular purpose",
+          "meaning_ar": "جهاز",
+          "example": "Children now spend several hours a day using electronic devices of various kinds.",
+          "collocations": [
+            "electronic device",
+            "mobile device"
+          ]
+        },
+        {
+          "slug": "digital",
+          "word": "digital",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "using computer technology",
+          "meaning_ar": "رقمي",
+          "example": "The digital revolution has changed how people read, shop and work.",
+          "collocations": [
+            "digital age",
+            "digital skills"
+          ]
+        },
+        {
+          "slug": "privacy",
+          "word": "privacy",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the right to keep personal information secret",
+          "meaning_ar": "الخصوصية",
+          "example": "Social media companies have been criticised for failing to protect users' privacy.",
+          "collocations": [
+            "invasion of privacy",
+            "data privacy"
+          ]
+        },
+        {
+          "slug": "surveillance",
+          "word": "surveillance",
+          "pos": "noun",
+          "band": 7,
+          "definition": "careful watching of people, often by authorities",
+          "meaning_ar": "المراقبة",
+          "example": "The spread of surveillance cameras raises difficult questions about personal freedom.",
+          "collocations": [
+            "mass surveillance",
+            "surveillance cameras"
+          ]
+        },
+        {
+          "slug": "cybersecurity",
+          "word": "cybersecurity",
+          "pos": "noun",
+          "band": 7,
+          "definition": "protection of computer systems from attack",
+          "meaning_ar": "الأمن السيبراني",
+          "example": "Banks spend billions each year on cybersecurity to protect customers' accounts.",
+          "collocations": [
+            "cybersecurity threats",
+            "improve cybersecurity"
+          ]
+        },
+        {
+          "slug": "breakthrough",
+          "word": "breakthrough",
+          "pos": "noun",
+          "band": 6,
+          "definition": "an important new discovery or development",
+          "meaning_ar": "إنجاز كبير",
+          "example": "The invention of the smartphone was a major breakthrough in personal communication.",
+          "collocations": [
+            "major breakthrough",
+            "technological breakthrough"
+          ]
+        },
+        {
+          "slug": "gadget",
+          "word": "gadget",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a small useful machine or tool",
+          "meaning_ar": "أداة إلكترونية",
+          "example": "Many consumers feel pressure to buy the latest gadgets as soon as they appear.",
+          "collocations": [
+            "latest gadget",
+            "electronic gadget"
+          ]
+        },
+        {
+          "slug": "connectivity",
+          "word": "connectivity",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the ability to connect to the internet or other systems",
+          "meaning_ar": "الاتصال بالشبكة",
+          "example": "Poor connectivity in rural areas prevents many students from studying online.",
+          "collocations": [
+            "internet connectivity",
+            "improve connectivity"
+          ]
+        },
+        {
+          "slug": "addictive",
+          "word": "addictive",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "making people unable to stop using something",
+          "meaning_ar": "يسبب الإدمان",
+          "example": "Some researchers argue that social media apps are deliberately designed to be addictive.",
+          "collocations": [
+            "highly addictive",
+            "addictive behaviour"
+          ]
+        },
+        {
+          "slug": "user-friendly",
+          "word": "user-friendly",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "easy for people to use or understand",
+          "meaning_ar": "سهل الاستخدام",
+          "example": "Older people are more likely to adopt technology that is simple and user-friendly.",
+          "collocations": [
+            "user-friendly interface",
+            "user-friendly design"
+          ]
+        },
+        {
+          "slug": "interactive",
+          "word": "interactive",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "allowing two-way communication between a user and a computer",
+          "meaning_ar": "تفاعلي",
+          "example": "Interactive whiteboards have made many lessons more engaging for young learners.",
+          "collocations": [
+            "interactive learning",
+            "interactive features"
+          ]
+        },
+        {
+          "slug": "encryption",
+          "word": "encryption",
+          "pos": "noun",
+          "band": 8,
+          "definition": "changing information into a code to keep it secret",
+          "meaning_ar": "التشفير",
+          "example": "Strong encryption ensures that private messages cannot be read by third parties.",
+          "collocations": [
+            "data encryption",
+            "end-to-end encryption"
+          ]
+        },
+        {
+          "slug": "disruptive",
+          "word": "disruptive",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "causing major change to an industry or market",
+          "meaning_ar": "مُحدِث للتغيير الجذري",
+          "example": "Streaming services have been highly disruptive to the traditional television industry.",
+          "collocations": [
+            "disruptive technology",
+            "disruptive innovation"
+          ]
+        },
+        {
+          "slug": "algorithm",
+          "word": "algorithm",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a set of rules a computer follows to solve a problem",
+          "meaning_ar": "خوارزمية",
+          "example": "Online platforms use an algorithm to decide which posts each user sees first.",
+          "collocations": [
+            "search algorithm",
+            "complex algorithm"
+          ]
+        },
+        {
+          "slug": "virtual",
+          "word": "virtual",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "created by computers rather than existing physically",
+          "meaning_ar": "افتراضي",
+          "example": "Virtual meetings have become a normal part of working life since the pandemic.",
+          "collocations": [
+            "virtual reality",
+            "virtual meeting"
+          ]
+        },
+        {
+          "slug": "digital-divide",
+          "word": "digital divide",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "the gap between people with and without technology access",
+          "meaning_ar": "الفجوة الرقمية",
+          "example": "Governments must address the digital divide so that poorer families are not left behind.",
+          "collocations": [
+            "bridge the digital divide",
+            "widen the digital divide"
+          ]
+        },
+        {
+          "slug": "dependence",
+          "word": "dependence",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the state of needing something too much",
+          "meaning_ar": "الاعتماد",
+          "example": "Growing dependence on smartphones may weaken people's ability to concentrate for long.",
+          "collocations": [
+            "dependence on technology",
+            "heavy dependence"
+          ]
+        },
+        {
+          "slug": "harness",
+          "word": "harness",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to control and use something for a purpose",
+          "meaning_ar": "يسخّر",
+          "example": "Developing nations should harness technology to improve healthcare and education services.",
+          "collocations": [
+            "harness technology",
+            "harness the power"
+          ]
+        },
+        {
+          "slug": "upgrade",
+          "word": "upgrade",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to improve a machine or system by adding new parts",
+          "meaning_ar": "يحدّث",
+          "example": "Companies must regularly upgrade their software to protect it from new threats.",
+          "collocations": [
+            "upgrade software",
+            "upgrade equipment"
+          ]
+        },
+        {
+          "slug": "streamline",
+          "word": "streamline",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to make a process simpler and more efficient",
+          "meaning_ar": "يبسّط",
+          "example": "Online banking has helped streamline many tasks that once required a visit in person.",
+          "collocations": [
+            "streamline the process",
+            "streamline operations"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "health",
+      "name": "Health",
+      "name_ar": "الصحة",
+      "words": [
+        {
+          "slug": "sedentary",
+          "word": "sedentary",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "involving a lot of sitting and little exercise",
+          "meaning_ar": "خامل (قليل الحركة)",
+          "example": "A sedentary lifestyle increases the risk of obesity and heart disease.",
+          "collocations": [
+            "sedentary lifestyle",
+            "sedentary job"
+          ]
+        },
+        {
+          "slug": "obesity",
+          "word": "obesity",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the condition of being very overweight",
+          "meaning_ar": "السمنة",
+          "example": "Childhood obesity has risen sharply as diets have come to rely on processed food.",
+          "collocations": [
+            "childhood obesity",
+            "obesity rates"
+          ]
+        },
+        {
+          "slug": "nutrition",
+          "word": "nutrition",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the process of getting the right food for good health",
+          "meaning_ar": "التغذية",
+          "example": "Good nutrition in early childhood is vital for physical and mental development.",
+          "collocations": [
+            "poor nutrition",
+            "balanced nutrition"
+          ]
+        },
+        {
+          "slug": "epidemic",
+          "word": "epidemic",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a disease that spreads quickly among many people",
+          "meaning_ar": "وباء",
+          "example": "The government launched a campaign to tackle the growing epidemic of diabetes.",
+          "collocations": [
+            "global epidemic",
+            "obesity epidemic"
+          ]
+        },
+        {
+          "slug": "chronic",
+          "word": "chronic",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "lasting for a long time, especially of an illness",
+          "meaning_ar": "مزمن",
+          "example": "Chronic illnesses such as asthma place a heavy burden on public health systems.",
+          "collocations": [
+            "chronic illness",
+            "chronic pain"
+          ]
+        },
+        {
+          "slug": "preventive",
+          "word": "preventive",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "intended to stop something bad from happening",
+          "meaning_ar": "وقائي",
+          "example": "Spending on preventive medicine can save money on expensive treatments later.",
+          "collocations": [
+            "preventive medicine",
+            "preventive measures"
+          ]
+        },
+        {
+          "slug": "life-expectancy",
+          "word": "life expectancy",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the average number of years a person is expected to live",
+          "meaning_ar": "متوسط العمر المتوقع",
+          "example": "Life expectancy has increased dramatically over the last century thanks to better healthcare.",
+          "collocations": [
+            "average life expectancy",
+            "increase life expectancy"
+          ]
+        },
+        {
+          "slug": "well-being",
+          "word": "well-being",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the state of being healthy and happy",
+          "meaning_ar": "الرفاهية",
+          "example": "Regular exercise contributes greatly to both physical health and mental well-being.",
+          "collocations": [
+            "mental well-being",
+            "sense of well-being"
+          ]
+        },
+        {
+          "slug": "diagnosis",
+          "word": "diagnosis",
+          "pos": "noun",
+          "band": 7,
+          "definition": "identifying an illness by examining someone",
+          "meaning_ar": "تشخيص",
+          "example": "Early diagnosis of cancer greatly improves a patient's chances of survival.",
+          "collocations": [
+            "early diagnosis",
+            "accurate diagnosis"
+          ]
+        },
+        {
+          "slug": "symptom",
+          "word": "symptom",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a sign that someone has an illness",
+          "meaning_ar": "عَرَض",
+          "example": "Fatigue is a common symptom of many illnesses, including depression and anaemia.",
+          "collocations": [
+            "common symptom",
+            "show symptoms"
+          ]
+        },
+        {
+          "slug": "vaccination",
+          "word": "vaccination",
+          "pos": "noun",
+          "band": 6,
+          "definition": "giving people a substance to protect them from disease",
+          "meaning_ar": "التطعيم",
+          "example": "Mass vaccination programmes have almost eliminated several deadly childhood diseases.",
+          "collocations": [
+            "vaccination programme",
+            "compulsory vaccination"
+          ]
+        },
+        {
+          "slug": "infectious",
+          "word": "infectious",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "able to spread from one person to another",
+          "meaning_ar": "معدٍ",
+          "example": "Infectious diseases spread more rapidly in crowded cities with poor sanitation.",
+          "collocations": [
+            "infectious disease",
+            "highly infectious"
+          ]
+        },
+        {
+          "slug": "sanitation",
+          "word": "sanitation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "systems for clean water and removing waste",
+          "meaning_ar": "الصرف الصحي",
+          "example": "Improved sanitation has done more for public health than almost any medicine.",
+          "collocations": [
+            "poor sanitation",
+            "access to sanitation"
+          ]
+        },
+        {
+          "slug": "healthcare",
+          "word": "healthcare",
+          "pos": "noun",
+          "band": 5,
+          "definition": "the service of looking after people's health",
+          "meaning_ar": "الرعاية الصحية",
+          "example": "Access to affordable healthcare should be considered a basic human right.",
+          "collocations": [
+            "healthcare system",
+            "universal healthcare"
+          ]
+        },
+        {
+          "slug": "cure",
+          "word": "cure",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a medicine or treatment that makes an illness go away",
+          "meaning_ar": "علاج شافٍ",
+          "example": "Despite decades of research, there is still no cure for the common cold.",
+          "collocations": [
+            "find a cure",
+            "cure for cancer"
+          ]
+        },
+        {
+          "slug": "mental-health",
+          "word": "mental health",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the condition of a person's mind and emotions",
+          "meaning_ar": "الصحة النفسية",
+          "example": "Schools are paying more attention to students' mental health than ever before.",
+          "collocations": [
+            "mental health problems",
+            "mental health services"
+          ]
+        },
+        {
+          "slug": "stress-related",
+          "word": "stress-related",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "caused by too much pressure or worry",
+          "meaning_ar": "مرتبط بالتوتر",
+          "example": "Stress-related illnesses are a leading cause of absence from work in many countries.",
+          "collocations": [
+            "stress-related illness",
+            "stress-related conditions"
+          ]
+        },
+        {
+          "slug": "overweight",
+          "word": "overweight",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "heavier than is healthy",
+          "meaning_ar": "زائد الوزن",
+          "example": "Nearly two thirds of adults in some Western countries are now overweight.",
+          "collocations": [
+            "seriously overweight",
+            "overweight children"
+          ]
+        },
+        {
+          "slug": "malnutrition",
+          "word": "malnutrition",
+          "pos": "noun",
+          "band": 7,
+          "definition": "poor health caused by not having enough good food",
+          "meaning_ar": "سوء التغذية",
+          "example": "Malnutrition remains a leading cause of child deaths in the poorest regions.",
+          "collocations": [
+            "suffer from malnutrition",
+            "severe malnutrition"
+          ]
+        },
+        {
+          "slug": "side-effect",
+          "word": "side effect",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "an unwanted extra effect of a drug",
+          "meaning_ar": "أثر جانبي",
+          "example": "Patients should be informed of every possible side effect before starting a new treatment.",
+          "collocations": [
+            "serious side effect",
+            "have side effects"
+          ]
+        },
+        {
+          "slug": "pharmaceutical",
+          "word": "pharmaceutical",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "relating to the making and selling of medicines",
+          "meaning_ar": "دوائي",
+          "example": "Pharmaceutical companies spend enormous sums developing and testing new drugs.",
+          "collocations": [
+            "pharmaceutical company",
+            "pharmaceutical industry"
+          ]
+        },
+        {
+          "slug": "susceptible",
+          "word": "susceptible",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "easily affected or harmed by something",
+          "meaning_ar": "عرضة",
+          "example": "Elderly people are more susceptible to infections during the winter months.",
+          "collocations": [
+            "susceptible to disease",
+            "highly susceptible"
+          ]
+        },
+        {
+          "slug": "ailment",
+          "word": "ailment",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a minor illness",
+          "meaning_ar": "علة",
+          "example": "Many minor ailments can be treated at home without visiting a doctor.",
+          "collocations": [
+            "minor ailment",
+            "common ailments"
+          ]
+        },
+        {
+          "slug": "outbreak",
+          "word": "outbreak",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the sudden start of a disease spreading",
+          "meaning_ar": "تفشٍّ",
+          "example": "An outbreak of measles forced several schools to close temporarily last spring.",
+          "collocations": [
+            "outbreak of disease",
+            "sudden outbreak"
+          ]
+        },
+        {
+          "slug": "holistic",
+          "word": "holistic",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "treating the whole person rather than just symptoms",
+          "meaning_ar": "شمولي",
+          "example": "A holistic approach to health considers diet, sleep and emotional well-being together.",
+          "collocations": [
+            "holistic approach",
+            "holistic care"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "work-and-careers",
+      "name": "Work and Careers",
+      "name_ar": "العمل والمهن",
+      "words": [
+        {
+          "slug": "unemployment",
+          "word": "unemployment",
+          "pos": "noun",
+          "band": 5,
+          "definition": "the state of not having a job",
+          "meaning_ar": "البطالة",
+          "example": "Youth unemployment remains stubbornly high in many parts of southern Europe.",
+          "collocations": [
+            "youth unemployment",
+            "unemployment rate"
+          ]
+        },
+        {
+          "slug": "promotion",
+          "word": "promotion",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a move to a higher position at work",
+          "meaning_ar": "ترقية",
+          "example": "Hard work and reliability are often rewarded with promotion to a senior role.",
+          "collocations": [
+            "get a promotion",
+            "promotion prospects"
+          ]
+        },
+        {
+          "slug": "job-satisfaction",
+          "word": "job satisfaction",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the pleasure people get from their work",
+          "meaning_ar": "الرضا الوظيفي",
+          "example": "Studies show that job satisfaction depends more on recognition than on salary.",
+          "collocations": [
+            "high job satisfaction",
+            "improve job satisfaction"
+          ]
+        },
+        {
+          "slug": "work-life-balance",
+          "word": "work-life balance",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a healthy division of time between work and private life",
+          "meaning_ar": "التوازن بين العمل والحياة",
+          "example": "Flexible hours can help employees achieve a better work-life balance.",
+          "collocations": [
+            "healthy work-life balance",
+            "achieve a work-life balance"
+          ]
+        },
+        {
+          "slug": "remote-working",
+          "word": "remote working",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "working from home or away from the office",
+          "meaning_ar": "العمل عن بعد",
+          "example": "Remote working has reduced commuting time for millions of office employees.",
+          "collocations": [
+            "shift to remote working",
+            "remote working policy"
+          ]
+        },
+        {
+          "slug": "employee",
+          "word": "employee",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a person who works for a company",
+          "meaning_ar": "موظف",
+          "example": "Companies that invest in their employees tend to enjoy lower staff turnover.",
+          "collocations": [
+            "full-time employee",
+            "employee benefits"
+          ]
+        },
+        {
+          "slug": "colleague",
+          "word": "colleague",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a person you work with",
+          "meaning_ar": "زميل",
+          "example": "Good relationships with colleagues can make even a demanding job feel rewarding.",
+          "collocations": [
+            "close colleague",
+            "former colleague"
+          ]
+        },
+        {
+          "slug": "redundancy",
+          "word": "redundancy",
+          "pos": "noun",
+          "band": 7,
+          "definition": "losing your job because it is no longer needed",
+          "meaning_ar": "الاستغناء عن العمالة",
+          "example": "The factory closure led to the redundancy of over two thousand workers.",
+          "collocations": [
+            "voluntary redundancy",
+            "face redundancy"
+          ]
+        },
+        {
+          "slug": "incentive",
+          "word": "incentive",
+          "pos": "noun",
+          "band": 7,
+          "definition": "something that encourages a person to do something",
+          "meaning_ar": "حافز",
+          "example": "Bonuses provide a strong incentive for staff to meet their sales targets.",
+          "collocations": [
+            "financial incentive",
+            "provide an incentive"
+          ]
+        },
+        {
+          "slug": "productivity",
+          "word": "productivity",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the rate at which work is produced",
+          "meaning_ar": "الإنتاجية",
+          "example": "Some studies suggest a four-day week could actually increase productivity.",
+          "collocations": [
+            "boost productivity",
+            "labour productivity"
+          ]
+        },
+        {
+          "slug": "workforce",
+          "word": "workforce",
+          "pos": "noun",
+          "band": 6,
+          "definition": "all the people who work in a company or country",
+          "meaning_ar": "القوى العاملة",
+          "example": "An ageing workforce presents serious challenges for countries with low birth rates.",
+          "collocations": [
+            "skilled workforce",
+            "ageing workforce"
+          ]
+        },
+        {
+          "slug": "entrepreneur",
+          "word": "entrepreneur",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person who starts their own business",
+          "meaning_ar": "رائد أعمال",
+          "example": "Young entrepreneurs often struggle to obtain loans from traditional banks.",
+          "collocations": [
+            "successful entrepreneur",
+            "young entrepreneur"
+          ]
+        },
+        {
+          "slug": "recruit",
+          "word": "recruit",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to find new people to join an organisation",
+          "meaning_ar": "يوظّف",
+          "example": "Technology firms compete fiercely to recruit the most talented software engineers.",
+          "collocations": [
+            "recruit staff",
+            "recruit graduates"
+          ]
+        },
+        {
+          "slug": "freelance",
+          "word": "freelance",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "working for several employers rather than one company",
+          "meaning_ar": "مستقل",
+          "example": "Freelance designers enjoy flexibility but often lack a stable monthly income.",
+          "collocations": [
+            "freelance work",
+            "freelance writer"
+          ]
+        },
+        {
+          "slug": "burnout",
+          "word": "burnout",
+          "pos": "noun",
+          "band": 7,
+          "definition": "extreme tiredness caused by working too hard",
+          "meaning_ar": "الإرهاق المهني",
+          "example": "Long working hours without proper breaks can quickly lead to burnout among nurses.",
+          "collocations": [
+            "suffer from burnout",
+            "risk of burnout"
+          ]
+        },
+        {
+          "slug": "wage",
+          "word": "wage",
+          "pos": "noun",
+          "band": 5,
+          "definition": "money paid regularly for work",
+          "meaning_ar": "أجر",
+          "example": "Raising the minimum wage could lift many families out of poverty.",
+          "collocations": [
+            "minimum wage",
+            "wage increase"
+          ]
+        },
+        {
+          "slug": "pension",
+          "word": "pension",
+          "pos": "noun",
+          "band": 6,
+          "definition": "money paid regularly to a retired person",
+          "meaning_ar": "معاش تقاعدي",
+          "example": "Many young workers worry that their pension will not be enough to live on.",
+          "collocations": [
+            "state pension",
+            "pension scheme"
+          ]
+        },
+        {
+          "slug": "retirement",
+          "word": "retirement",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the time when a person stops working permanently",
+          "meaning_ar": "التقاعد",
+          "example": "Some governments have raised the age of retirement to reduce pressure on public finances.",
+          "collocations": [
+            "early retirement",
+            "retirement age"
+          ]
+        },
+        {
+          "slug": "flexible",
+          "word": "flexible",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "able to change easily to suit different situations",
+          "meaning_ar": "مرن",
+          "example": "Flexible working arrangements are particularly valued by parents with young children.",
+          "collocations": [
+            "flexible hours",
+            "flexible working"
+          ]
+        },
+        {
+          "slug": "occupation",
+          "word": "occupation",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person's job or profession",
+          "meaning_ar": "مهنة",
+          "example": "Teaching remains one of the most respected occupations in many Asian countries.",
+          "collocations": [
+            "main occupation",
+            "skilled occupation"
+          ]
+        },
+        {
+          "slug": "manual",
+          "word": "manual",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "using the hands or physical strength",
+          "meaning_ar": "يدوي",
+          "example": "Manual jobs in construction are often better paid than many office positions.",
+          "collocations": [
+            "manual labour",
+            "manual worker"
+          ]
+        },
+        {
+          "slug": "gig-economy",
+          "word": "gig economy",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "work made of short-term jobs rather than permanent employment",
+          "meaning_ar": "اقتصاد العمل الحر",
+          "example": "The gig economy offers flexibility but provides few protections for workers.",
+          "collocations": [
+            "rise of the gig economy",
+            "gig economy workers"
+          ]
+        },
+        {
+          "slug": "morale",
+          "word": "morale",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the confidence and enthusiasm of a group of people",
+          "meaning_ar": "الروح المعنوية",
+          "example": "Repeated pay cuts have had a damaging effect on staff morale.",
+          "collocations": [
+            "staff morale",
+            "boost morale"
+          ]
+        },
+        {
+          "slug": "lucrative",
+          "word": "lucrative",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "producing a lot of money",
+          "meaning_ar": "مربح",
+          "example": "Many graduates choose lucrative careers in finance over lower-paid public service roles.",
+          "collocations": [
+            "lucrative career",
+            "lucrative contract"
+          ]
+        },
+        {
+          "slug": "hierarchy",
+          "word": "hierarchy",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a system where people are ranked by importance",
+          "meaning_ar": "التسلسل الهرمي",
+          "example": "Start-ups often have a flatter hierarchy than large traditional corporations.",
+          "collocations": [
+            "corporate hierarchy",
+            "rigid hierarchy"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cities-and-urbanisation",
+      "name": "Cities and Urbanisation",
+      "name_ar": "المدن والتحضّر",
+      "words": [
+        {
+          "slug": "urbanisation",
+          "word": "urbanisation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the movement of people from the countryside to cities",
+          "meaning_ar": "التحضّر",
+          "example": "Rapid urbanisation has created huge pressure on housing and public services.",
+          "collocations": [
+            "rapid urbanisation",
+            "process of urbanisation"
+          ]
+        },
+        {
+          "slug": "infrastructure",
+          "word": "infrastructure",
+          "pos": "noun",
+          "band": 7,
+          "definition": "basic systems such as roads, water and power",
+          "meaning_ar": "البنية التحتية",
+          "example": "Developing cities must invest heavily in infrastructure to support their growing populations.",
+          "collocations": [
+            "transport infrastructure",
+            "invest in infrastructure"
+          ]
+        },
+        {
+          "slug": "congestion",
+          "word": "congestion",
+          "pos": "noun",
+          "band": 7,
+          "definition": "too much traffic in a place",
+          "meaning_ar": "الازدحام",
+          "example": "Traffic congestion costs the economy billions in lost working hours every year.",
+          "collocations": [
+            "traffic congestion",
+            "reduce congestion"
+          ]
+        },
+        {
+          "slug": "overcrowding",
+          "word": "overcrowding",
+          "pos": "noun",
+          "band": 7,
+          "definition": "too many people in one place",
+          "meaning_ar": "الاكتظاظ",
+          "example": "Overcrowding in city apartments can have serious effects on family health.",
+          "collocations": [
+            "severe overcrowding",
+            "overcrowding in prisons"
+          ]
+        },
+        {
+          "slug": "suburb",
+          "word": "suburb",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a residential area on the edge of a city",
+          "meaning_ar": "ضاحية",
+          "example": "Many families move to the suburbs in search of larger homes and gardens.",
+          "collocations": [
+            "leafy suburb",
+            "live in the suburbs"
+          ]
+        },
+        {
+          "slug": "metropolitan",
+          "word": "metropolitan",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to a large city",
+          "meaning_ar": "حضري (متعلق بالعاصمة)",
+          "example": "The metropolitan area now houses more than twenty million inhabitants.",
+          "collocations": [
+            "metropolitan area",
+            "metropolitan region"
+          ]
+        },
+        {
+          "slug": "residential",
+          "word": "residential",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "containing mainly homes rather than offices or shops",
+          "meaning_ar": "سكني",
+          "example": "New residential developments are often built far from public transport links.",
+          "collocations": [
+            "residential area",
+            "residential development"
+          ]
+        },
+        {
+          "slug": "affordable-housing",
+          "word": "affordable housing",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "homes that people on average incomes can afford",
+          "meaning_ar": "السكن الميسور",
+          "example": "The lack of affordable housing forces many young workers to leave the capital.",
+          "collocations": [
+            "shortage of affordable housing",
+            "provide affordable housing"
+          ]
+        },
+        {
+          "slug": "sprawl",
+          "word": "sprawl",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the uncontrolled spread of a city into the countryside",
+          "meaning_ar": "الزحف العمراني",
+          "example": "Urban sprawl increases car dependence and destroys valuable farmland.",
+          "collocations": [
+            "urban sprawl",
+            "suburban sprawl"
+          ]
+        },
+        {
+          "slug": "slum",
+          "word": "slum",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a very poor and crowded area of a city",
+          "meaning_ar": "حي فقير",
+          "example": "Nearly a billion people worldwide live in slums without clean water.",
+          "collocations": [
+            "urban slum",
+            "slum dwellers"
+          ]
+        },
+        {
+          "slug": "inhabitant",
+          "word": "inhabitant",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person who lives in a place",
+          "meaning_ar": "ساكن",
+          "example": "The city's inhabitants were asked to conserve water during the summer heatwave.",
+          "collocations": [
+            "local inhabitants",
+            "original inhabitants"
+          ]
+        },
+        {
+          "slug": "amenities",
+          "word": "amenities",
+          "pos": "noun",
+          "band": 7,
+          "definition": "useful facilities such as shops, parks and libraries",
+          "meaning_ar": "المرافق",
+          "example": "New housing estates should provide basic amenities such as schools and clinics.",
+          "collocations": [
+            "local amenities",
+            "public amenities"
+          ]
+        },
+        {
+          "slug": "skyscraper",
+          "word": "skyscraper",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a very tall building in a city",
+          "meaning_ar": "ناطحة سحاب",
+          "example": "Skyscrapers allow cities to house more people on a limited amount of land.",
+          "collocations": [
+            "modern skyscraper",
+            "tallest skyscraper"
+          ]
+        },
+        {
+          "slug": "pedestrian",
+          "word": "pedestrian",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person walking rather than travelling in a vehicle",
+          "meaning_ar": "مشاة",
+          "example": "Several European cities have closed their centres to cars and reserved them for pedestrians.",
+          "collocations": [
+            "pedestrian zone",
+            "pedestrian crossing"
+          ]
+        },
+        {
+          "slug": "regeneration",
+          "word": "regeneration",
+          "pos": "noun",
+          "band": 8,
+          "definition": "improving a run-down area by investment",
+          "meaning_ar": "التجديد العمراني",
+          "example": "Urban regeneration projects have transformed former industrial areas into thriving neighbourhoods.",
+          "collocations": [
+            "urban regeneration",
+            "regeneration project"
+          ]
+        },
+        {
+          "slug": "gentrification",
+          "word": "gentrification",
+          "pos": "noun",
+          "band": 8,
+          "definition": "richer people moving into a poor area, changing it",
+          "meaning_ar": "التحسين الحضري",
+          "example": "Gentrification often pushes long-term residents out as rents rise sharply.",
+          "collocations": [
+            "process of gentrification",
+            "effects of gentrification"
+          ]
+        },
+        {
+          "slug": "municipal",
+          "word": "municipal",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "relating to a city or town government",
+          "meaning_ar": "بلدي",
+          "example": "Municipal authorities are responsible for collecting rubbish and maintaining local parks.",
+          "collocations": [
+            "municipal council",
+            "municipal services"
+          ]
+        },
+        {
+          "slug": "densely-populated",
+          "word": "densely populated",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "having many people living in a small area",
+          "meaning_ar": "مكتظ بالسكان",
+          "example": "Densely populated cities face particular challenges in controlling the spread of disease.",
+          "collocations": [
+            "densely populated area",
+            "densely populated city"
+          ]
+        },
+        {
+          "slug": "green-space",
+          "word": "green space",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "an area of grass and trees in a town",
+          "meaning_ar": "مساحة خضراء",
+          "example": "Access to green space has been linked to lower stress levels among city dwellers.",
+          "collocations": [
+            "public green space",
+            "lack of green space"
+          ]
+        },
+        {
+          "slug": "housing-shortage",
+          "word": "housing shortage",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "not enough homes for the people who need them",
+          "meaning_ar": "أزمة السكن",
+          "example": "The housing shortage has driven property prices far beyond the reach of most buyers.",
+          "collocations": [
+            "severe housing shortage",
+            "tackle the housing shortage"
+          ]
+        },
+        {
+          "slug": "rural",
+          "word": "rural",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "relating to the countryside",
+          "meaning_ar": "ريفي",
+          "example": "Young people often leave rural villages to find better job opportunities elsewhere.",
+          "collocations": [
+            "rural areas",
+            "rural community"
+          ]
+        },
+        {
+          "slug": "cosmopolitan",
+          "word": "cosmopolitan",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "containing people from many different countries",
+          "meaning_ar": "متعدد الثقافات",
+          "example": "London is famous for its cosmopolitan atmosphere and wide variety of cuisines.",
+          "collocations": [
+            "cosmopolitan city",
+            "cosmopolitan atmosphere"
+          ]
+        },
+        {
+          "slug": "noise-pollution",
+          "word": "noise pollution",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "unpleasant loud noise from traffic or industry",
+          "meaning_ar": "التلوث الضوضائي",
+          "example": "Residents near the airport complain constantly about noise pollution at night.",
+          "collocations": [
+            "reduce noise pollution",
+            "levels of noise pollution"
+          ]
+        },
+        {
+          "slug": "derelict",
+          "word": "derelict",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "empty and in very bad condition",
+          "meaning_ar": "متهالك مهجور",
+          "example": "The council plans to convert derelict warehouses into affordable apartments for young families.",
+          "collocations": [
+            "derelict building",
+            "derelict land"
+          ]
+        },
+        {
+          "slug": "urban-planning",
+          "word": "urban planning",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "designing how land in towns is used",
+          "meaning_ar": "التخطيط العمراني",
+          "example": "Careful urban planning can reduce both traffic and air pollution in growing cities.",
+          "collocations": [
+            "poor urban planning",
+            "urban planning policy"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "crime-and-law",
+      "name": "Crime and Law",
+      "name_ar": "الجريمة والقانون",
+      "words": [
+        {
+          "slug": "deterrent",
+          "word": "deterrent",
+          "pos": "noun",
+          "band": 7,
+          "definition": "something that discourages people from doing something",
+          "meaning_ar": "رادع",
+          "example": "Many people believe that long prison sentences act as an effective deterrent.",
+          "collocations": [
+            "effective deterrent",
+            "act as a deterrent"
+          ]
+        },
+        {
+          "slug": "rehabilitation",
+          "word": "rehabilitation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "helping offenders return to normal life",
+          "meaning_ar": "إعادة التأهيل",
+          "example": "Prison education programmes focus on rehabilitation rather than simple punishment.",
+          "collocations": [
+            "rehabilitation programme",
+            "rehabilitation of offenders"
+          ]
+        },
+        {
+          "slug": "offender",
+          "word": "offender",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person who has committed a crime",
+          "meaning_ar": "مجرم (جانٍ)",
+          "example": "Young offenders are more likely to reoffend if they are sent to adult prisons.",
+          "collocations": [
+            "young offender",
+            "repeat offender"
+          ]
+        },
+        {
+          "slug": "juvenile",
+          "word": "juvenile",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to young people under the legal adult age",
+          "meaning_ar": "أحداث",
+          "example": "Juvenile crime is often linked to poverty and a lack of parental supervision.",
+          "collocations": [
+            "juvenile crime",
+            "juvenile delinquency"
+          ]
+        },
+        {
+          "slug": "sentence",
+          "word": "sentence",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the punishment given by a court",
+          "meaning_ar": "حكم قضائي",
+          "example": "The judge handed down a sentence of ten years for armed robbery.",
+          "collocations": [
+            "prison sentence",
+            "life sentence"
+          ]
+        },
+        {
+          "slug": "legislation",
+          "word": "legislation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "laws, or the process of making laws",
+          "meaning_ar": "التشريعات",
+          "example": "New legislation has made it illegal to use a mobile phone while driving.",
+          "collocations": [
+            "introduce legislation",
+            "new legislation"
+          ]
+        },
+        {
+          "slug": "enforce",
+          "word": "enforce",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to make sure that people obey a law",
+          "meaning_ar": "يطبّق",
+          "example": "Police find it difficult to enforce speed limits on rural roads.",
+          "collocations": [
+            "enforce the law",
+            "strictly enforce"
+          ]
+        },
+        {
+          "slug": "punishment",
+          "word": "punishment",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a penalty for doing something wrong",
+          "meaning_ar": "العقوبة",
+          "example": "Some argue that harsher punishment does little to reduce violent crime.",
+          "collocations": [
+            "capital punishment",
+            "harsh punishment"
+          ]
+        },
+        {
+          "slug": "reoffend",
+          "word": "reoffend",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to commit another crime after being punished",
+          "meaning_ar": "يعود إلى الإجرام",
+          "example": "Prisoners who learn a trade are far less likely to reoffend after release.",
+          "collocations": [
+            "likely to reoffend",
+            "risk of reoffending"
+          ]
+        },
+        {
+          "slug": "victim",
+          "word": "victim",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a person harmed by a crime",
+          "meaning_ar": "ضحية",
+          "example": "Victims of crime often need long-term emotional support as well as compensation.",
+          "collocations": [
+            "crime victim",
+            "innocent victim"
+          ]
+        },
+        {
+          "slug": "community-service",
+          "word": "community service",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "unpaid work given as a punishment instead of prison",
+          "meaning_ar": "الخدمة المجتمعية",
+          "example": "Minor offenders could be ordered to do community service rather than go to jail.",
+          "collocations": [
+            "do community service",
+            "hours of community service"
+          ]
+        },
+        {
+          "slug": "capital-punishment",
+          "word": "capital punishment",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "punishment by death",
+          "meaning_ar": "عقوبة الإعدام",
+          "example": "Capital punishment has been abolished in most European countries.",
+          "collocations": [
+            "abolish capital punishment",
+            "oppose capital punishment"
+          ]
+        },
+        {
+          "slug": "fraud",
+          "word": "fraud",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the crime of cheating people to get money",
+          "meaning_ar": "احتيال",
+          "example": "Online fraud has grown rapidly as more people shop and bank on the internet.",
+          "collocations": [
+            "online fraud",
+            "commit fraud"
+          ]
+        },
+        {
+          "slug": "cybercrime",
+          "word": "cybercrime",
+          "pos": "noun",
+          "band": 7,
+          "definition": "crime committed using computers or the internet",
+          "meaning_ar": "الجرائم الإلكترونية",
+          "example": "Cybercrime costs businesses worldwide an estimated trillion dollars every year.",
+          "collocations": [
+            "tackle cybercrime",
+            "rise in cybercrime"
+          ]
+        },
+        {
+          "slug": "illegal",
+          "word": "illegal",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "not allowed by law",
+          "meaning_ar": "غير قانوني",
+          "example": "Selling alcohol to anyone under eighteen is illegal in many countries.",
+          "collocations": [
+            "illegal drugs",
+            "illegal activity"
+          ]
+        },
+        {
+          "slug": "convict",
+          "word": "convict",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to officially decide in court that someone is guilty",
+          "meaning_ar": "يدين",
+          "example": "There was not enough evidence to convict him of the robbery.",
+          "collocations": [
+            "convicted of murder",
+            "convict a criminal"
+          ]
+        },
+        {
+          "slug": "prosecute",
+          "word": "prosecute",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to accuse someone officially of a crime in court",
+          "meaning_ar": "يقاضي",
+          "example": "The company was prosecuted for dumping toxic waste into the river.",
+          "collocations": [
+            "prosecute offenders",
+            "be prosecuted for"
+          ]
+        },
+        {
+          "slug": "custody",
+          "word": "custody",
+          "pos": "noun",
+          "band": 8,
+          "definition": "being kept in prison, especially before a trial",
+          "meaning_ar": "الحبس الاحتياطي",
+          "example": "The suspect has been held in custody while police continue their investigation.",
+          "collocations": [
+            "in custody",
+            "police custody"
+          ]
+        },
+        {
+          "slug": "vandalism",
+          "word": "vandalism",
+          "pos": "noun",
+          "band": 6,
+          "definition": "deliberate damage to public or private property",
+          "meaning_ar": "التخريب",
+          "example": "Vandalism in parks is often blamed on a lack of facilities for teenagers.",
+          "collocations": [
+            "acts of vandalism",
+            "reduce vandalism"
+          ]
+        },
+        {
+          "slug": "law-abiding",
+          "word": "law-abiding",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "obeying the law",
+          "meaning_ar": "ملتزم بالقانون",
+          "example": "The vast majority of citizens are law-abiding and pay their taxes on time.",
+          "collocations": [
+            "law-abiding citizen",
+            "law-abiding people"
+          ]
+        },
+        {
+          "slug": "surveillance-camera",
+          "word": "surveillance camera",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a camera that records activity in public places",
+          "meaning_ar": "كاميرا مراقبة",
+          "example": "The installation of surveillance cameras in the station has reduced theft considerably.",
+          "collocations": [
+            "install surveillance cameras",
+            "CCTV surveillance camera"
+          ]
+        },
+        {
+          "slug": "penalty",
+          "word": "penalty",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a punishment for breaking a rule or law",
+          "meaning_ar": "غرامة",
+          "example": "Heavier penalties for drink-driving have helped to cut road deaths significantly.",
+          "collocations": [
+            "heavy penalty",
+            "death penalty"
+          ]
+        },
+        {
+          "slug": "incarceration",
+          "word": "incarceration",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the state of being kept in prison",
+          "meaning_ar": "السجن",
+          "example": "The cost of mass incarceration places a heavy burden on taxpayers.",
+          "collocations": [
+            "mass incarceration",
+            "rate of incarceration"
+          ]
+        },
+        {
+          "slug": "delinquency",
+          "word": "delinquency",
+          "pos": "noun",
+          "band": 8,
+          "definition": "bad or criminal behaviour, especially by young people",
+          "meaning_ar": "جنوح",
+          "example": "Strong family ties can protect teenagers against delinquency and substance abuse.",
+          "collocations": [
+            "juvenile delinquency",
+            "teenage delinquency"
+          ]
+        },
+        {
+          "slug": "lenient",
+          "word": "lenient",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "not as strict or severe as expected",
+          "meaning_ar": "متساهل",
+          "example": "Critics complained that the sentence was far too lenient for such a violent crime.",
+          "collocations": [
+            "lenient sentence",
+            "too lenient"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "media-and-advertising",
+      "name": "Media and Advertising",
+      "name_ar": "الإعلام والإعلان",
+      "words": [
+        {
+          "slug": "consumerism",
+          "word": "consumerism",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the belief that buying goods is very important",
+          "meaning_ar": "النزعة الاستهلاكية",
+          "example": "Advertising is often blamed for encouraging consumerism among young people.",
+          "collocations": [
+            "rise of consumerism",
+            "culture of consumerism"
+          ]
+        },
+        {
+          "slug": "commercial",
+          "word": "commercial",
+          "pos": "noun",
+          "band": 6,
+          "definition": "an advertisement on television or radio",
+          "meaning_ar": "إعلان تجاري",
+          "example": "Commercials aimed at children are banned during certain hours in some countries.",
+          "collocations": [
+            "television commercial",
+            "run a commercial"
+          ]
+        },
+        {
+          "slug": "endorse",
+          "word": "endorse",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to publicly support a product or person",
+          "meaning_ar": "يروّج لـ",
+          "example": "Famous athletes are paid millions to endorse sportswear and energy drinks.",
+          "collocations": [
+            "endorse a product",
+            "celebrity endorse"
+          ]
+        },
+        {
+          "slug": "misleading",
+          "word": "misleading",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "giving a false idea of something",
+          "meaning_ar": "مضلل",
+          "example": "Misleading claims about health benefits should be prohibited in food advertising.",
+          "collocations": [
+            "misleading information",
+            "misleading advertising"
+          ]
+        },
+        {
+          "slug": "manipulate",
+          "word": "manipulate",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to influence someone in a clever, unfair way",
+          "meaning_ar": "يتلاعب",
+          "example": "Some critics say advertisers manipulate people into buying things they do not need.",
+          "collocations": [
+            "manipulate consumers",
+            "manipulate public opinion"
+          ]
+        },
+        {
+          "slug": "censorship",
+          "word": "censorship",
+          "pos": "noun",
+          "band": 7,
+          "definition": "controlling what can be published or broadcast",
+          "meaning_ar": "الرقابة",
+          "example": "Strict censorship prevents citizens from accessing independent news sources.",
+          "collocations": [
+            "media censorship",
+            "government censorship"
+          ]
+        },
+        {
+          "slug": "broadcast",
+          "word": "broadcast",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to send out a programme on television or radio",
+          "meaning_ar": "يبث",
+          "example": "The final match was broadcast live to an audience of over a billion viewers.",
+          "collocations": [
+            "broadcast live",
+            "broadcast news"
+          ]
+        },
+        {
+          "slug": "journalism",
+          "word": "journalism",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the work of collecting and reporting news",
+          "meaning_ar": "الصحافة",
+          "example": "Investigative journalism plays a vital role in exposing corruption.",
+          "collocations": [
+            "investigative journalism",
+            "quality journalism"
+          ]
+        },
+        {
+          "slug": "tabloid",
+          "word": "tabloid",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a newspaper with short stories about celebrities and scandal",
+          "meaning_ar": "صحيفة شعبية",
+          "example": "Tabloids often invade the privacy of public figures in pursuit of sensational stories.",
+          "collocations": [
+            "tabloid press",
+            "tabloid newspaper"
+          ]
+        },
+        {
+          "slug": "sensationalism",
+          "word": "sensationalism",
+          "pos": "noun",
+          "band": 8,
+          "definition": "presenting news in a shocking way to attract attention",
+          "meaning_ar": "الإثارة الإعلامية",
+          "example": "Media sensationalism can create unnecessary panic about relatively minor risks.",
+          "collocations": [
+            "media sensationalism",
+            "accused of sensationalism"
+          ]
+        },
+        {
+          "slug": "bias",
+          "word": "bias",
+          "pos": "noun",
+          "band": 7,
+          "definition": "unfair preference for one side",
+          "meaning_ar": "انحياز",
+          "example": "Viewers should be aware of political bias in the news channels they watch.",
+          "collocations": [
+            "political bias",
+            "media bias"
+          ]
+        },
+        {
+          "slug": "fake-news",
+          "word": "fake news",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "false stories presented as real news",
+          "meaning_ar": "الأخبار الكاذبة",
+          "example": "Fake news spreads quickly on social media and can influence election results.",
+          "collocations": [
+            "spread fake news",
+            "combat fake news"
+          ]
+        },
+        {
+          "slug": "target-audience",
+          "word": "target audience",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the group of people a product or message is aimed at",
+          "meaning_ar": "الجمهور المستهدف",
+          "example": "The advertisement's target audience is teenagers who play online games.",
+          "collocations": [
+            "reach the target audience",
+            "identify the target audience"
+          ]
+        },
+        {
+          "slug": "persuasive",
+          "word": "persuasive",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "able to make people believe or do something",
+          "meaning_ar": "مقنع",
+          "example": "Persuasive advertising can make even ordinary products appear essential.",
+          "collocations": [
+            "persuasive message",
+            "highly persuasive"
+          ]
+        },
+        {
+          "slug": "brand",
+          "word": "brand",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a product name made by a particular company",
+          "meaning_ar": "علامة تجارية",
+          "example": "Young consumers often show strong loyalty to a particular brand of trainers.",
+          "collocations": [
+            "brand loyalty",
+            "global brand"
+          ]
+        },
+        {
+          "slug": "publicity",
+          "word": "publicity",
+          "pos": "noun",
+          "band": 6,
+          "definition": "attention given to someone or something by the media",
+          "meaning_ar": "الدعاية",
+          "example": "The scandal generated a great deal of negative publicity for the company.",
+          "collocations": [
+            "negative publicity",
+            "attract publicity"
+          ]
+        },
+        {
+          "slug": "influencer",
+          "word": "influencer",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person who affects others' buying decisions online",
+          "meaning_ar": "مؤثّر",
+          "example": "Companies increasingly pay social media influencers to promote their products.",
+          "collocations": [
+            "social media influencer",
+            "fashion influencer"
+          ]
+        },
+        {
+          "slug": "mass-media",
+          "word": "mass media",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "television, radio and newspapers that reach many people",
+          "meaning_ar": "وسائل الإعلام",
+          "example": "The mass media has enormous power to shape public attitudes towards immigration.",
+          "collocations": [
+            "role of the mass media",
+            "influence of the mass media"
+          ]
+        },
+        {
+          "slug": "coverage",
+          "word": "coverage",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the reporting of news on a particular subject",
+          "meaning_ar": "التغطية الإعلامية",
+          "example": "Media coverage of the disaster helped to raise millions for the victims.",
+          "collocations": [
+            "media coverage",
+            "extensive coverage"
+          ]
+        },
+        {
+          "slug": "gullible",
+          "word": "gullible",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "easily tricked into believing something",
+          "meaning_ar": "ساذج",
+          "example": "Gullible consumers may believe exaggerated claims about miracle weight-loss products.",
+          "collocations": [
+            "gullible consumers",
+            "gullible people"
+          ]
+        },
+        {
+          "slug": "materialistic",
+          "word": "materialistic",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "caring too much about money and possessions",
+          "meaning_ar": "مادي",
+          "example": "Advertising may make children more materialistic and less satisfied with what they own.",
+          "collocations": [
+            "materialistic society",
+            "materialistic values"
+          ]
+        },
+        {
+          "slug": "press-freedom",
+          "word": "press freedom",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "the right of journalists to report without control",
+          "meaning_ar": "حرية الصحافة",
+          "example": "Press freedom is widely regarded as a cornerstone of any democratic society.",
+          "collocations": [
+            "threat to press freedom",
+            "defend press freedom"
+          ]
+        },
+        {
+          "slug": "viral",
+          "word": "viral",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "spreading quickly online among many people",
+          "meaning_ar": "منتشر بسرعة",
+          "example": "The video went viral and was viewed millions of times within a single day.",
+          "collocations": [
+            "go viral",
+            "viral video"
+          ]
+        },
+        {
+          "slug": "subscription",
+          "word": "subscription",
+          "pos": "noun",
+          "band": 6,
+          "definition": "money paid regularly to receive a service",
+          "meaning_ar": "اشتراك",
+          "example": "Many newspapers now rely on digital subscriptions rather than advertising revenue.",
+          "collocations": [
+            "monthly subscription",
+            "subscription service"
+          ]
+        },
+        {
+          "slug": "editorial",
+          "word": "editorial",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a newspaper article giving the editor's opinion",
+          "meaning_ar": "مقال افتتاحي",
+          "example": "The newspaper's editorial strongly criticised the government's new immigration policy.",
+          "collocations": [
+            "newspaper editorial",
+            "editorial board"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "globalisation-and-economy",
+      "name": "Globalisation and Economy",
+      "name_ar": "العولمة والاقتصاد",
+      "words": [
+        {
+          "slug": "globalisation",
+          "word": "globalisation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the increasing connection of the world's economies and cultures",
+          "meaning_ar": "العولمة",
+          "example": "Globalisation has brought cheaper goods but has also threatened local industries.",
+          "collocations": [
+            "effects of globalisation",
+            "economic globalisation"
+          ]
+        },
+        {
+          "slug": "multinational",
+          "word": "multinational",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "operating in several different countries",
+          "meaning_ar": "متعدد الجنسيات",
+          "example": "Multinational corporations often move production to countries with lower labour costs.",
+          "collocations": [
+            "multinational company",
+            "multinational corporation"
+          ]
+        },
+        {
+          "slug": "outsource",
+          "word": "outsource",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to pay another company, often abroad, to do work",
+          "meaning_ar": "يستعين بمصادر خارجية",
+          "example": "Many firms outsource their customer service operations to cheaper locations.",
+          "collocations": [
+            "outsource jobs",
+            "outsource production"
+          ]
+        },
+        {
+          "slug": "inflation",
+          "word": "inflation",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a general rise in prices",
+          "meaning_ar": "التضخم",
+          "example": "High inflation reduces the value of savings and hurts people on fixed incomes.",
+          "collocations": [
+            "rate of inflation",
+            "high inflation"
+          ]
+        },
+        {
+          "slug": "recession",
+          "word": "recession",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a period when economic activity falls",
+          "meaning_ar": "الركود الاقتصادي",
+          "example": "Unemployment rose sharply during the recession that followed the financial crisis.",
+          "collocations": [
+            "economic recession",
+            "global recession"
+          ]
+        },
+        {
+          "slug": "gdp",
+          "word": "GDP",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the total value of goods and services a country produces",
+          "meaning_ar": "الناتج المحلي الإجمالي",
+          "example": "The country's GDP grew by almost five percent in the last financial year.",
+          "collocations": [
+            "GDP growth",
+            "per capita GDP"
+          ]
+        },
+        {
+          "slug": "trade",
+          "word": "trade",
+          "pos": "noun",
+          "band": 5,
+          "definition": "the buying and selling of goods between countries",
+          "meaning_ar": "التجارة",
+          "example": "International trade has lifted millions of people in Asia out of poverty.",
+          "collocations": [
+            "international trade",
+            "free trade"
+          ]
+        },
+        {
+          "slug": "tariff",
+          "word": "tariff",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a tax on goods coming into a country",
+          "meaning_ar": "تعريفة جمركية",
+          "example": "Raising tariffs on imported steel may protect local jobs but increase prices.",
+          "collocations": [
+            "impose tariffs",
+            "import tariff"
+          ]
+        },
+        {
+          "slug": "import",
+          "word": "import",
+          "pos": "verb",
+          "band": 5,
+          "definition": "to bring goods into a country to sell",
+          "meaning_ar": "يستورد",
+          "example": "Japan has to import most of the energy that it consumes.",
+          "collocations": [
+            "import goods",
+            "imported food"
+          ]
+        },
+        {
+          "slug": "export",
+          "word": "export",
+          "pos": "noun",
+          "band": 5,
+          "definition": "goods sold to another country",
+          "meaning_ar": "صادرات",
+          "example": "Oil accounts for most of the country's export earnings.",
+          "collocations": [
+            "export market",
+            "major export"
+          ]
+        },
+        {
+          "slug": "consumer",
+          "word": "consumer",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a person who buys goods or services",
+          "meaning_ar": "المستهلك",
+          "example": "Consumers increasingly choose products that have been ethically produced.",
+          "collocations": [
+            "consumer spending",
+            "consumer goods"
+          ]
+        },
+        {
+          "slug": "prosperity",
+          "word": "prosperity",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the state of being successful and rich",
+          "meaning_ar": "الازدهار",
+          "example": "Free trade is often credited with increasing global prosperity since the 1950s.",
+          "collocations": [
+            "economic prosperity",
+            "bring prosperity"
+          ]
+        },
+        {
+          "slug": "inequality",
+          "word": "inequality",
+          "pos": "noun",
+          "band": 7,
+          "definition": "an unfair difference between groups in wealth or rights",
+          "meaning_ar": "عدم المساواة",
+          "example": "Income inequality has widened in many developed countries over recent decades.",
+          "collocations": [
+            "income inequality",
+            "social inequality"
+          ]
+        },
+        {
+          "slug": "poverty",
+          "word": "poverty",
+          "pos": "noun",
+          "band": 5,
+          "definition": "the state of being very poor",
+          "meaning_ar": "الفقر",
+          "example": "Education is widely seen as the most effective route out of poverty.",
+          "collocations": [
+            "live in poverty",
+            "reduce poverty"
+          ]
+        },
+        {
+          "slug": "cultural-homogenisation",
+          "word": "cultural homogenisation",
+          "pos": "phrase",
+          "band": 8,
+          "definition": "cultures becoming more similar because of global influence",
+          "meaning_ar": "التجانس الثقافي",
+          "example": "Critics argue that globalisation leads to cultural homogenisation and the loss of local traditions.",
+          "collocations": [
+            "fear of cultural homogenisation",
+            "lead to cultural homogenisation"
+          ]
+        },
+        {
+          "slug": "interdependent",
+          "word": "interdependent",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "depending on each other",
+          "meaning_ar": "مترابط",
+          "example": "National economies have become so interdependent that a crisis spreads rapidly worldwide.",
+          "collocations": [
+            "increasingly interdependent",
+            "interdependent economies"
+          ]
+        },
+        {
+          "slug": "investment",
+          "word": "investment",
+          "pos": "noun",
+          "band": 6,
+          "definition": "money put into something to make a profit",
+          "meaning_ar": "استثمار",
+          "example": "Foreign investment has created thousands of new jobs in the manufacturing sector.",
+          "collocations": [
+            "foreign investment",
+            "attract investment"
+          ]
+        },
+        {
+          "slug": "revenue",
+          "word": "revenue",
+          "pos": "noun",
+          "band": 7,
+          "definition": "income received by a company or government",
+          "meaning_ar": "الإيرادات",
+          "example": "Tourism generates a significant share of government revenue in many island nations.",
+          "collocations": [
+            "tax revenue",
+            "generate revenue"
+          ]
+        },
+        {
+          "slug": "sector",
+          "word": "sector",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a part of the economy",
+          "meaning_ar": "قطاع",
+          "example": "The service sector now employs more people than manufacturing and agriculture combined.",
+          "collocations": [
+            "private sector",
+            "public sector"
+          ]
+        },
+        {
+          "slug": "economic-growth",
+          "word": "economic growth",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "an increase in the amount of goods and services produced",
+          "meaning_ar": "النمو الاقتصادي",
+          "example": "Rapid economic growth has transformed China into a global manufacturing power.",
+          "collocations": [
+            "sustained economic growth",
+            "boost economic growth"
+          ]
+        },
+        {
+          "slug": "exploitation",
+          "word": "exploitation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "unfair treatment of people for profit",
+          "meaning_ar": "الاستغلال",
+          "example": "The exploitation of cheap labour in some factories has been widely condemned.",
+          "collocations": [
+            "labour exploitation",
+            "exploitation of workers"
+          ]
+        },
+        {
+          "slug": "subsidy",
+          "word": "subsidy",
+          "pos": "noun",
+          "band": 7,
+          "definition": "money a government gives to help reduce costs",
+          "meaning_ar": "دعم حكومي",
+          "example": "Government subsidies keep the price of bread low for poorer families.",
+          "collocations": [
+            "government subsidy",
+            "farm subsidies"
+          ]
+        },
+        {
+          "slug": "fluctuate",
+          "word": "fluctuate",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to change frequently in level or amount",
+          "meaning_ar": "يتذبذب",
+          "example": "Oil prices fluctuate widely depending on political events in producing regions.",
+          "collocations": [
+            "fluctuate wildly",
+            "prices fluctuate"
+          ]
+        },
+        {
+          "slug": "free-market",
+          "word": "free market",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "an economy where prices are set by supply and demand",
+          "meaning_ar": "السوق الحرة",
+          "example": "Supporters of the free market argue that competition encourages efficiency and innovation.",
+          "collocations": [
+            "free market economy",
+            "free market principles"
+          ]
+        },
+        {
+          "slug": "protectionism",
+          "word": "protectionism",
+          "pos": "noun",
+          "band": 8,
+          "definition": "protecting home industries by taxing foreign goods",
+          "meaning_ar": "الحمائية",
+          "example": "A return to protectionism could slow global growth and raise prices for consumers.",
+          "collocations": [
+            "economic protectionism",
+            "rise of protectionism"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "travel-and-tourism",
+      "name": "Travel and Tourism",
+      "name_ar": "السفر والسياحة",
+      "words": [
+        {
+          "slug": "destination",
+          "word": "destination",
+          "pos": "noun",
+          "band": 5,
+          "definition": "the place someone is travelling to",
+          "meaning_ar": "وجهة",
+          "example": "Thailand has become one of the most popular tourist destinations in Asia.",
+          "collocations": [
+            "tourist destination",
+            "holiday destination"
+          ]
+        },
+        {
+          "slug": "ecotourism",
+          "word": "ecotourism",
+          "pos": "noun",
+          "band": 7,
+          "definition": "tourism that protects nature and helps local people",
+          "meaning_ar": "السياحة البيئية",
+          "example": "Ecotourism can provide income for local communities while protecting wildlife.",
+          "collocations": [
+            "promote ecotourism",
+            "ecotourism projects"
+          ]
+        },
+        {
+          "slug": "mass-tourism",
+          "word": "mass tourism",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "tourism involving very large numbers of people",
+          "meaning_ar": "السياحة الجماعية",
+          "example": "Mass tourism has damaged many historic city centres and beaches.",
+          "collocations": [
+            "effects of mass tourism",
+            "rise of mass tourism"
+          ]
+        },
+        {
+          "slug": "itinerary",
+          "word": "itinerary",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a detailed plan of a journey",
+          "meaning_ar": "خط سير الرحلة",
+          "example": "Our itinerary included three days in Rome and a short visit to Florence.",
+          "collocations": [
+            "travel itinerary",
+            "detailed itinerary"
+          ]
+        },
+        {
+          "slug": "accommodation",
+          "word": "accommodation",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a place to stay, such as a hotel",
+          "meaning_ar": "السكن (الإقامة)",
+          "example": "The price of accommodation in the city centre rises sharply during festivals.",
+          "collocations": [
+            "hotel accommodation",
+            "cheap accommodation"
+          ]
+        },
+        {
+          "slug": "heritage",
+          "word": "heritage",
+          "pos": "noun",
+          "band": 6,
+          "definition": "buildings and traditions passed down from the past",
+          "meaning_ar": "التراث",
+          "example": "Tourism revenue can help preserve a country's cultural heritage sites.",
+          "collocations": [
+            "cultural heritage",
+            "heritage site"
+          ]
+        },
+        {
+          "slug": "landmark",
+          "word": "landmark",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a famous building or place that is easily recognised",
+          "meaning_ar": "معلم بارز",
+          "example": "The Eiffel Tower is perhaps the most recognisable landmark in the world.",
+          "collocations": [
+            "famous landmark",
+            "historic landmark"
+          ]
+        },
+        {
+          "slug": "souvenir",
+          "word": "souvenir",
+          "pos": "noun",
+          "band": 5,
+          "definition": "an object bought to remember a place",
+          "meaning_ar": "تذكار",
+          "example": "Many visitors buy handmade souvenirs to support local craftspeople.",
+          "collocations": [
+            "buy a souvenir",
+            "souvenir shop"
+          ]
+        },
+        {
+          "slug": "hospitality",
+          "word": "hospitality",
+          "pos": "noun",
+          "band": 6,
+          "definition": "friendly treatment of guests, or the hotel industry",
+          "meaning_ar": "الضيافة",
+          "example": "The hospitality industry employs millions of people in tourist regions.",
+          "collocations": [
+            "hospitality industry",
+            "warm hospitality"
+          ]
+        },
+        {
+          "slug": "off-the-beaten-track",
+          "word": "off the beaten track",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "far away from places most tourists visit",
+          "meaning_ar": "بعيد عن المسارات المألوفة",
+          "example": "Adventurous travellers prefer villages off the beaten track to crowded resorts.",
+          "collocations": [
+            "go off the beaten track",
+            "places off the beaten track"
+          ]
+        },
+        {
+          "slug": "backpacker",
+          "word": "backpacker",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a person who travels cheaply carrying a backpack",
+          "meaning_ar": "رحّالة بحقيبة ظهر",
+          "example": "Hostels in the old town are full of young backpackers during the summer.",
+          "collocations": [
+            "budget backpacker",
+            "backpacker hostel"
+          ]
+        },
+        {
+          "slug": "exotic",
+          "word": "exotic",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "unusual and exciting because it comes from far away",
+          "meaning_ar": "غريب (أجنبي)",
+          "example": "Many tourists are attracted by the exotic food and culture of distant countries.",
+          "collocations": [
+            "exotic location",
+            "exotic food"
+          ]
+        },
+        {
+          "slug": "picturesque",
+          "word": "picturesque",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "attractive in appearance, especially in an old way",
+          "meaning_ar": "خلّاب",
+          "example": "The picturesque fishing village attracts thousands of photographers every year.",
+          "collocations": [
+            "picturesque village",
+            "picturesque scenery"
+          ]
+        },
+        {
+          "slug": "influx",
+          "word": "influx",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the arrival of large numbers of people",
+          "meaning_ar": "تدفق",
+          "example": "The sudden influx of tourists has pushed up rents for local residents.",
+          "collocations": [
+            "influx of tourists",
+            "sudden influx"
+          ]
+        },
+        {
+          "slug": "authentic",
+          "word": "authentic",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "real and true to the original",
+          "meaning_ar": "أصيل",
+          "example": "Travellers increasingly seek authentic experiences rather than packaged holidays.",
+          "collocations": [
+            "authentic experience",
+            "authentic culture"
+          ]
+        },
+        {
+          "slug": "culture-shock",
+          "word": "culture shock",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "confusion felt when visiting a very different culture",
+          "meaning_ar": "الصدمة الثقافية",
+          "example": "Students moving abroad often experience culture shock in their first few months.",
+          "collocations": [
+            "experience culture shock",
+            "suffer from culture shock"
+          ]
+        },
+        {
+          "slug": "peak-season",
+          "word": "peak season",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the busiest time of year for tourism",
+          "meaning_ar": "موسم الذروة",
+          "example": "Flights and hotels can cost twice as much during peak season.",
+          "collocations": [
+            "during peak season",
+            "peak season prices"
+          ]
+        },
+        {
+          "slug": "resort",
+          "word": "resort",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a place where people go on holiday",
+          "meaning_ar": "منتجع",
+          "example": "The coastal resort is especially popular with families from northern Europe.",
+          "collocations": [
+            "seaside resort",
+            "ski resort"
+          ]
+        },
+        {
+          "slug": "sightseeing",
+          "word": "sightseeing",
+          "pos": "noun",
+          "band": 5,
+          "definition": "visiting interesting places as a tourist",
+          "meaning_ar": "مشاهدة المعالم",
+          "example": "We spent the whole afternoon sightseeing in the old part of the city.",
+          "collocations": [
+            "go sightseeing",
+            "sightseeing tour"
+          ]
+        },
+        {
+          "slug": "broaden-horizons",
+          "word": "broaden horizons",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "to increase one's experience and understanding",
+          "meaning_ar": "يوسّع المدارك",
+          "example": "Travelling abroad can broaden horizons and make young people more tolerant.",
+          "collocations": [
+            "broaden your horizons",
+            "help broaden horizons"
+          ]
+        },
+        {
+          "slug": "overtourism",
+          "word": "overtourism",
+          "pos": "noun",
+          "band": 8,
+          "definition": "too many tourists visiting a place, damaging it",
+          "meaning_ar": "السياحة المفرطة",
+          "example": "Venice has introduced entry fees for day visitors to combat overtourism.",
+          "collocations": [
+            "tackle overtourism",
+            "effects of overtourism"
+          ]
+        },
+        {
+          "slug": "jet-lag",
+          "word": "jet lag",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "tiredness after flying across time zones",
+          "meaning_ar": "إرهاق السفر",
+          "example": "Long-haul travellers often suffer from jet lag for several days after arriving.",
+          "collocations": [
+            "suffer from jet lag",
+            "severe jet lag"
+          ]
+        },
+        {
+          "slug": "commercialised",
+          "word": "commercialised",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "changed in order to make as much profit as possible",
+          "meaning_ar": "مُسلّع (تجاري)",
+          "example": "Some argue that traditional festivals have become too commercialised to be meaningful.",
+          "collocations": [
+            "highly commercialised",
+            "become commercialised"
+          ]
+        },
+        {
+          "slug": "excursion",
+          "word": "excursion",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a short trip, usually for pleasure",
+          "meaning_ar": "رحلة قصيرة",
+          "example": "The hotel organises daily excursions to the nearby desert and ancient ruins.",
+          "collocations": [
+            "day excursion",
+            "go on an excursion"
+          ]
+        },
+        {
+          "slug": "leisure",
+          "word": "leisure",
+          "pos": "noun",
+          "band": 6,
+          "definition": "free time when you are not working",
+          "meaning_ar": "وقت الفراغ",
+          "example": "Rising incomes mean that more people can afford to travel for leisure.",
+          "collocations": [
+            "leisure activities",
+            "leisure time"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "science-and-research",
+      "name": "Science and Research",
+      "name_ar": "العلوم والبحث العلمي",
+      "words": [
+        {
+          "slug": "hypothesis",
+          "word": "hypothesis",
+          "pos": "noun",
+          "band": 7,
+          "definition": "an idea that is tested through experiments",
+          "meaning_ar": "فرضية",
+          "example": "The researchers designed a series of experiments to test their hypothesis.",
+          "collocations": [
+            "test a hypothesis",
+            "support the hypothesis"
+          ]
+        },
+        {
+          "slug": "empirical",
+          "word": "empirical",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "based on observation or experiment rather than theory",
+          "meaning_ar": "تجريبي",
+          "example": "There is little empirical evidence that the new teaching method improves results.",
+          "collocations": [
+            "empirical evidence",
+            "empirical study"
+          ]
+        },
+        {
+          "slug": "experiment",
+          "word": "experiment",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a scientific test to discover something",
+          "meaning_ar": "تجربة",
+          "example": "Many people object to experiments carried out on animals for cosmetic products.",
+          "collocations": [
+            "conduct an experiment",
+            "scientific experiment"
+          ]
+        },
+        {
+          "slug": "phenomenon",
+          "word": "phenomenon",
+          "pos": "noun",
+          "band": 7,
+          "definition": "something that happens or exists, often unusual",
+          "meaning_ar": "ظاهرة",
+          "example": "Global warming is a phenomenon that affects every region of the planet.",
+          "collocations": [
+            "natural phenomenon",
+            "global phenomenon"
+          ]
+        },
+        {
+          "slug": "funding",
+          "word": "funding",
+          "pos": "noun",
+          "band": 6,
+          "definition": "money provided for a particular purpose",
+          "meaning_ar": "التمويل",
+          "example": "Scientific research depends heavily on government funding and private donations.",
+          "collocations": [
+            "research funding",
+            "secure funding"
+          ]
+        },
+        {
+          "slug": "findings",
+          "word": "findings",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the results of research",
+          "meaning_ar": "النتائج",
+          "example": "The findings of the study suggest a link between sleep and memory.",
+          "collocations": [
+            "research findings",
+            "publish findings"
+          ]
+        },
+        {
+          "slug": "ethical",
+          "word": "ethical",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to whether something is morally right",
+          "meaning_ar": "أخلاقي",
+          "example": "Genetic engineering raises difficult ethical questions about the limits of science.",
+          "collocations": [
+            "ethical issues",
+            "ethical concerns"
+          ]
+        },
+        {
+          "slug": "genetic",
+          "word": "genetic",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "relating to genes and heredity",
+          "meaning_ar": "وراثي",
+          "example": "Some genetic diseases can now be detected long before birth.",
+          "collocations": [
+            "genetic engineering",
+            "genetic modification"
+          ]
+        },
+        {
+          "slug": "peer-review",
+          "word": "peer review",
+          "pos": "phrase",
+          "band": 8,
+          "definition": "evaluation of research by other experts before publication",
+          "meaning_ar": "مراجعة الأقران",
+          "example": "All articles in the journal must pass peer review before they are published.",
+          "collocations": [
+            "undergo peer review",
+            "peer review process"
+          ]
+        },
+        {
+          "slug": "laboratory",
+          "word": "laboratory",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a room where scientific experiments are done",
+          "meaning_ar": "مختبر",
+          "example": "The samples were sent to a laboratory for further analysis.",
+          "collocations": [
+            "research laboratory",
+            "laboratory tests"
+          ]
+        },
+        {
+          "slug": "innovative",
+          "word": "innovative",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "using new methods or ideas",
+          "meaning_ar": "مبتكر",
+          "example": "The university is famous for its innovative approach to medical research.",
+          "collocations": [
+            "innovative approach",
+            "innovative solution"
+          ]
+        },
+        {
+          "slug": "space-exploration",
+          "word": "space exploration",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the investigation of space using spacecraft",
+          "meaning_ar": "استكشاف الفضاء",
+          "example": "Critics say money spent on space exploration should be used to solve problems on Earth.",
+          "collocations": [
+            "fund space exploration",
+            "space exploration programme"
+          ]
+        },
+        {
+          "slug": "data",
+          "word": "data",
+          "pos": "noun",
+          "band": 5,
+          "definition": "facts and numbers collected for analysis",
+          "meaning_ar": "بيانات",
+          "example": "Scientists collected data from over ten thousand patients across five countries.",
+          "collocations": [
+            "collect data",
+            "analyse data"
+          ]
+        },
+        {
+          "slug": "methodology",
+          "word": "methodology",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the methods used in a particular piece of research",
+          "meaning_ar": "منهجية",
+          "example": "The study was criticised for its flawed methodology and small sample size.",
+          "collocations": [
+            "research methodology",
+            "flawed methodology"
+          ]
+        },
+        {
+          "slug": "correlation",
+          "word": "correlation",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a connection between two things that change together",
+          "meaning_ar": "ارتباط",
+          "example": "There is a strong correlation between education level and average income.",
+          "collocations": [
+            "strong correlation",
+            "positive correlation"
+          ]
+        },
+        {
+          "slug": "proportion",
+          "word": "proportion",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a part of a total, compared with the whole",
+          "meaning_ar": "نسبة",
+          "example": "The proportion of elderly people in the population rose steadily between 1990 and 2020.",
+          "collocations": [
+            "large proportion",
+            "proportion of the population"
+          ]
+        },
+        {
+          "slug": "fluctuation",
+          "word": "fluctuation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a frequent change in amount or level",
+          "meaning_ar": "تذبذب",
+          "example": "The graph shows considerable fluctuation in sales figures throughout the year.",
+          "collocations": [
+            "sharp fluctuation",
+            "seasonal fluctuation"
+          ]
+        },
+        {
+          "slug": "plummet",
+          "word": "plummet",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to fall suddenly and by a large amount",
+          "meaning_ar": "يهبط بشدة",
+          "example": "The number of visitors plummeted from two million to just half a million.",
+          "collocations": [
+            "plummet dramatically",
+            "prices plummet"
+          ]
+        },
+        {
+          "slug": "surge",
+          "word": "surge",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a sudden large increase",
+          "meaning_ar": "ارتفاع حاد",
+          "example": "There was a surge in online sales during the final quarter of the year.",
+          "collocations": [
+            "sudden surge",
+            "surge in demand"
+          ]
+        },
+        {
+          "slug": "plateau",
+          "word": "plateau",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to stay at the same level after a period of change",
+          "meaning_ar": "يستقر",
+          "example": "Unemployment rose steadily until 2015 and then plateaued at around eight percent.",
+          "collocations": [
+            "plateau at",
+            "begin to plateau"
+          ]
+        },
+        {
+          "slug": "peak",
+          "word": "peak",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to reach the highest level",
+          "meaning_ar": "يبلغ الذروة",
+          "example": "Electricity consumption peaked at nine in the evening before declining overnight.",
+          "collocations": [
+            "peak at",
+            "peak in"
+          ]
+        },
+        {
+          "slug": "marginally",
+          "word": "marginally",
+          "pos": "adverb",
+          "band": 7,
+          "definition": "by a very small amount",
+          "meaning_ar": "بشكل طفيف",
+          "example": "The figure for France was marginally higher than that for Germany in 2010.",
+          "collocations": [
+            "marginally higher",
+            "marginally lower"
+          ]
+        },
+        {
+          "slug": "respectively",
+          "word": "respectively",
+          "pos": "adverb",
+          "band": 7,
+          "definition": "in the same order as the things mentioned",
+          "meaning_ar": "على التوالي",
+          "example": "Rice and wheat accounted for forty and thirty percent of production respectively.",
+          "collocations": [
+            "figures respectively",
+            "and respectively"
+          ]
+        },
+        {
+          "slug": "breakthrough-discovery",
+          "word": "breakthrough discovery",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "a sudden important scientific finding",
+          "meaning_ar": "اكتشاف ثوري",
+          "example": "The breakthrough discovery of penicillin changed the course of modern medicine.",
+          "collocations": [
+            "make a breakthrough discovery",
+            "major breakthrough discovery"
+          ]
+        },
+        {
+          "slug": "cloning",
+          "word": "cloning",
+          "pos": "noun",
+          "band": 7,
+          "definition": "making an exact genetic copy of a living thing",
+          "meaning_ar": "الاستنساخ",
+          "example": "Human cloning remains illegal in most countries because of serious ethical concerns.",
+          "collocations": [
+            "human cloning",
+            "animal cloning"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "family-and-society",
+      "name": "Family and Society",
+      "name_ar": "الأسرة والمجتمع",
+      "words": [
+        {
+          "slug": "upbringing",
+          "word": "upbringing",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the way a child is cared for and taught while growing up",
+          "meaning_ar": "التنشئة",
+          "example": "A strict upbringing does not always produce well-behaved adults.",
+          "collocations": [
+            "strict upbringing",
+            "religious upbringing"
+          ]
+        },
+        {
+          "slug": "nuclear-family",
+          "word": "nuclear family",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a family of two parents and their children",
+          "meaning_ar": "الأسرة النووية",
+          "example": "The nuclear family has replaced the extended family in many urban societies.",
+          "collocations": [
+            "traditional nuclear family",
+            "rise of the nuclear family"
+          ]
+        },
+        {
+          "slug": "extended-family",
+          "word": "extended family",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a family including grandparents, aunts, uncles and cousins",
+          "meaning_ar": "الأسرة الممتدة",
+          "example": "In many Arab countries, the extended family still plays a central role in daily life.",
+          "collocations": [
+            "live with the extended family",
+            "extended family network"
+          ]
+        },
+        {
+          "slug": "generation-gap",
+          "word": "generation gap",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "differences in attitudes between young and old people",
+          "meaning_ar": "فجوة الأجيال",
+          "example": "Technology has widened the generation gap between teenagers and their grandparents.",
+          "collocations": [
+            "bridge the generation gap",
+            "widening generation gap"
+          ]
+        },
+        {
+          "slug": "elderly",
+          "word": "elderly",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "old, used politely about people",
+          "meaning_ar": "المسنّون",
+          "example": "Caring for elderly relatives places a heavy burden on working adults.",
+          "collocations": [
+            "elderly people",
+            "elderly parents"
+          ]
+        },
+        {
+          "slug": "ageing-population",
+          "word": "ageing population",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "a population with a rising proportion of old people",
+          "meaning_ar": "شيخوخة السكان",
+          "example": "An ageing population will increase demand for healthcare and pensions.",
+          "collocations": [
+            "cope with an ageing population",
+            "rapidly ageing population"
+          ]
+        },
+        {
+          "slug": "sibling",
+          "word": "sibling",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a brother or sister",
+          "meaning_ar": "شقيق",
+          "example": "Children with siblings may develop social skills earlier than only children.",
+          "collocations": [
+            "older sibling",
+            "sibling rivalry"
+          ]
+        },
+        {
+          "slug": "parenting",
+          "word": "parenting",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the process of raising children",
+          "meaning_ar": "تربية الأبناء",
+          "example": "Good parenting involves setting clear limits while showing warmth and support.",
+          "collocations": [
+            "parenting skills",
+            "parenting style"
+          ]
+        },
+        {
+          "slug": "discipline-children",
+          "word": "discipline children",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "to train children to follow rules",
+          "meaning_ar": "تأديب الأطفال",
+          "example": "Parents disagree about the best way to discipline children who misbehave.",
+          "collocations": [
+            "how to discipline children",
+            "discipline children strictly"
+          ]
+        },
+        {
+          "slug": "role-model",
+          "word": "role model",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a person others look up to and copy",
+          "meaning_ar": "قدوة",
+          "example": "Sports stars should behave responsibly because they are role models for young fans.",
+          "collocations": [
+            "positive role model",
+            "act as a role model"
+          ]
+        },
+        {
+          "slug": "peer-pressure",
+          "word": "peer pressure",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "influence from people of the same age to behave like them",
+          "meaning_ar": "ضغط الأقران",
+          "example": "Teenagers often start smoking because of peer pressure from their friends.",
+          "collocations": [
+            "give in to peer pressure",
+            "resist peer pressure"
+          ]
+        },
+        {
+          "slug": "gender-equality",
+          "word": "gender equality",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "equal rights and opportunities for men and women",
+          "meaning_ar": "المساواة بين الجنسين",
+          "example": "Gender equality in the workplace remains an important goal in many countries.",
+          "collocations": [
+            "promote gender equality",
+            "achieve gender equality"
+          ]
+        },
+        {
+          "slug": "breadwinner",
+          "word": "breadwinner",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the family member who earns the money",
+          "meaning_ar": "معيل الأسرة",
+          "example": "Women are increasingly the main breadwinner in many modern households.",
+          "collocations": [
+            "main breadwinner",
+            "sole breadwinner"
+          ]
+        },
+        {
+          "slug": "childcare",
+          "word": "childcare",
+          "pos": "noun",
+          "band": 6,
+          "definition": "care of children while parents work",
+          "meaning_ar": "رعاية الأطفال",
+          "example": "The high cost of childcare prevents many mothers from returning to work.",
+          "collocations": [
+            "affordable childcare",
+            "childcare costs"
+          ]
+        },
+        {
+          "slug": "single-parent",
+          "word": "single-parent",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "having only one parent living in the home",
+          "meaning_ar": "أحادي الوالد",
+          "example": "Single-parent families are more likely to experience financial difficulties.",
+          "collocations": [
+            "single-parent family",
+            "single-parent household"
+          ]
+        },
+        {
+          "slug": "divorce-rate",
+          "word": "divorce rate",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the proportion of marriages that end legally",
+          "meaning_ar": "معدل الطلاق",
+          "example": "The divorce rate has risen steadily in many countries since the 1970s.",
+          "collocations": [
+            "rising divorce rate",
+            "high divorce rate"
+          ]
+        },
+        {
+          "slug": "cohesion",
+          "word": "cohesion",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the state of a group being united",
+          "meaning_ar": "التماسك",
+          "example": "Community events can strengthen social cohesion in diverse neighbourhoods.",
+          "collocations": [
+            "social cohesion",
+            "community cohesion"
+          ]
+        },
+        {
+          "slug": "marginalised",
+          "word": "marginalised",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "treated as unimportant and excluded from society",
+          "meaning_ar": "مهمّش",
+          "example": "Marginalised groups often lack access to good education and healthcare.",
+          "collocations": [
+            "marginalised groups",
+            "marginalised communities"
+          ]
+        },
+        {
+          "slug": "welfare",
+          "word": "welfare",
+          "pos": "noun",
+          "band": 7,
+          "definition": "help given by the state to people in need",
+          "meaning_ar": "الرعاية الاجتماعية",
+          "example": "The welfare system provides financial support for the unemployed and disabled.",
+          "collocations": [
+            "welfare state",
+            "social welfare"
+          ]
+        },
+        {
+          "slug": "volunteer",
+          "word": "volunteer",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to offer to do work without being paid",
+          "meaning_ar": "يتطوّع",
+          "example": "Many retired people volunteer at local charities and hospitals.",
+          "collocations": [
+            "volunteer at",
+            "volunteer for"
+          ]
+        },
+        {
+          "slug": "norm",
+          "word": "norm",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a usual or accepted way of behaving",
+          "meaning_ar": "عرف اجتماعي",
+          "example": "Social norms regarding marriage have changed dramatically over the last century.",
+          "collocations": [
+            "social norm",
+            "cultural norm"
+          ]
+        },
+        {
+          "slug": "nurture",
+          "word": "nurture",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to care for and encourage the growth of someone",
+          "meaning_ar": "يرعى",
+          "example": "Parents should nurture their children's natural curiosity and creativity.",
+          "collocations": [
+            "nurture talent",
+            "nurture a child"
+          ]
+        },
+        {
+          "slug": "birth-rate",
+          "word": "birth rate",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "the number of births in a population over time",
+          "meaning_ar": "معدل المواليد",
+          "example": "A falling birth rate could lead to labour shortages in the future.",
+          "collocations": [
+            "declining birth rate",
+            "low birth rate"
+          ]
+        },
+        {
+          "slug": "dysfunctional",
+          "word": "dysfunctional",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "not working normally or healthily",
+          "meaning_ar": "مفكّك",
+          "example": "Children from dysfunctional families may struggle at school.",
+          "collocations": [
+            "dysfunctional family",
+            "dysfunctional relationship"
+          ]
+        },
+        {
+          "slug": "inherit",
+          "word": "inherit",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to receive money or property after someone dies",
+          "meaning_ar": "يرث",
+          "example": "She inherited a large house from her grandparents.",
+          "collocations": [
+            "inherit wealth",
+            "inherit property"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "government-and-politics",
+      "name": "Government and Politics",
+      "name_ar": "الحكومة والسياسة",
+      "words": [
+        {
+          "slug": "democracy",
+          "word": "democracy",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a system where people choose their government by voting",
+          "meaning_ar": "الديمقراطية",
+          "example": "A free press is essential for a healthy democracy.",
+          "collocations": [
+            "parliamentary democracy",
+            "functioning democracy"
+          ]
+        },
+        {
+          "slug": "policy",
+          "word": "policy",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a plan of action agreed by a government",
+          "meaning_ar": "سياسة",
+          "example": "The government introduced a new policy to reduce youth unemployment.",
+          "collocations": [
+            "government policy",
+            "implement a policy"
+          ]
+        },
+        {
+          "slug": "legislate",
+          "word": "legislate",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to make laws",
+          "meaning_ar": "يشرّع",
+          "example": "Parliament has been slow to legislate on the use of personal data.",
+          "collocations": [
+            "legislate against",
+            "legislate for"
+          ]
+        },
+        {
+          "slug": "taxation",
+          "word": "taxation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the system of collecting taxes",
+          "meaning_ar": "الضرائب",
+          "example": "Higher taxation on cigarettes has reduced smoking among young people.",
+          "collocations": [
+            "high taxation",
+            "progressive taxation"
+          ]
+        },
+        {
+          "slug": "public-spending",
+          "word": "public spending",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "money spent by the government on services",
+          "meaning_ar": "الإنفاق العام",
+          "example": "Cuts in public spending have led to longer waiting lists in hospitals.",
+          "collocations": [
+            "cut public spending",
+            "increase public spending"
+          ]
+        },
+        {
+          "slug": "allocate",
+          "word": "allocate",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to give money or resources for a particular purpose",
+          "meaning_ar": "يخصّص",
+          "example": "The government should allocate more funds to mental health services.",
+          "collocations": [
+            "allocate funds",
+            "allocate resources"
+          ]
+        },
+        {
+          "slug": "corruption",
+          "word": "corruption",
+          "pos": "noun",
+          "band": 7,
+          "definition": "dishonest behaviour by people in power",
+          "meaning_ar": "الفساد",
+          "example": "Corruption undermines public trust in politicians and state institutions.",
+          "collocations": [
+            "political corruption",
+            "tackle corruption"
+          ]
+        },
+        {
+          "slug": "accountable",
+          "word": "accountable",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "responsible for actions and expected to explain them",
+          "meaning_ar": "خاضع للمساءلة",
+          "example": "Elected officials must be held accountable for the way public money is spent.",
+          "collocations": [
+            "hold accountable",
+            "accountable to"
+          ]
+        },
+        {
+          "slug": "bureaucracy",
+          "word": "bureaucracy",
+          "pos": "noun",
+          "band": 8,
+          "definition": "complicated official rules and processes",
+          "meaning_ar": "البيروقراطية",
+          "example": "Excessive bureaucracy often discourages small businesses from expanding into new markets.",
+          "collocations": [
+            "government bureaucracy",
+            "cut bureaucracy"
+          ]
+        },
+        {
+          "slug": "election",
+          "word": "election",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a vote to choose a representative or government",
+          "meaning_ar": "انتخابات",
+          "example": "Turnout at the last general election was the lowest in fifty years.",
+          "collocations": [
+            "general election",
+            "win an election"
+          ]
+        },
+        {
+          "slug": "citizen",
+          "word": "citizen",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a legal member of a country",
+          "meaning_ar": "مواطن",
+          "example": "Every citizen has the right to vote once they turn eighteen.",
+          "collocations": [
+            "ordinary citizen",
+            "fellow citizen"
+          ]
+        },
+        {
+          "slug": "regulation",
+          "word": "regulation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "an official rule controlling an activity",
+          "meaning_ar": "لائحة تنظيمية",
+          "example": "Stricter regulation of the banking sector could prevent another financial crisis.",
+          "collocations": [
+            "strict regulation",
+            "government regulation"
+          ]
+        },
+        {
+          "slug": "initiative",
+          "word": "initiative",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a new plan to solve a problem",
+          "meaning_ar": "مبادرة",
+          "example": "The government launched an initiative to plant one million trees.",
+          "collocations": [
+            "government initiative",
+            "launch an initiative"
+          ]
+        },
+        {
+          "slug": "ban",
+          "word": "ban",
+          "pos": "verb",
+          "band": 5,
+          "definition": "to officially forbid something",
+          "meaning_ar": "يحظر",
+          "example": "Several countries have decided to ban plastic bags in supermarkets.",
+          "collocations": [
+            "ban smoking",
+            "ban the sale"
+          ]
+        },
+        {
+          "slug": "impose",
+          "word": "impose",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to force a rule or tax on people",
+          "meaning_ar": "يفرض",
+          "example": "The city plans to impose a charge on vehicles entering the centre.",
+          "collocations": [
+            "impose a tax",
+            "impose restrictions"
+          ]
+        },
+        {
+          "slug": "welfare-state",
+          "word": "welfare state",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "a system where government pays for social services",
+          "meaning_ar": "دولة الرعاية",
+          "example": "The welfare state guarantees basic healthcare and income for all citizens.",
+          "collocations": [
+            "modern welfare state",
+            "expand the welfare state"
+          ]
+        },
+        {
+          "slug": "authority",
+          "word": "authority",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the power to make decisions, or an official body",
+          "meaning_ar": "سلطة",
+          "example": "Local authorities are responsible for maintaining roads and street lighting.",
+          "collocations": [
+            "local authority",
+            "government authority"
+          ]
+        },
+        {
+          "slug": "intervene",
+          "word": "intervene",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to become involved in order to change a situation",
+          "meaning_ar": "يتدخّل",
+          "example": "Governments sometimes need to intervene in markets to protect consumers.",
+          "collocations": [
+            "intervene in",
+            "government intervene"
+          ]
+        },
+        {
+          "slug": "grassroots",
+          "word": "grassroots",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "involving ordinary people rather than leaders",
+          "meaning_ar": "شعبي (قاعدي)",
+          "example": "The campaign began as a grassroots movement organised by local parents.",
+          "collocations": [
+            "grassroots movement",
+            "grassroots support"
+          ]
+        },
+        {
+          "slug": "referendum",
+          "word": "referendum",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a vote by all citizens on a single question",
+          "meaning_ar": "استفتاء",
+          "example": "The decision to leave the union was made in a national referendum.",
+          "collocations": [
+            "hold a referendum",
+            "national referendum"
+          ]
+        },
+        {
+          "slug": "diplomacy",
+          "word": "diplomacy",
+          "pos": "noun",
+          "band": 7,
+          "definition": "managing relations between countries",
+          "meaning_ar": "الدبلوماسية",
+          "example": "Diplomacy is usually far less costly than military conflict.",
+          "collocations": [
+            "international diplomacy",
+            "through diplomacy"
+          ]
+        },
+        {
+          "slug": "sovereignty",
+          "word": "sovereignty",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a country's power to govern itself",
+          "meaning_ar": "السيادة",
+          "example": "Some people fear that international agreements reduce national sovereignty.",
+          "collocations": [
+            "national sovereignty",
+            "threat to sovereignty"
+          ]
+        },
+        {
+          "slug": "transparency",
+          "word": "transparency",
+          "pos": "noun",
+          "band": 7,
+          "definition": "openness about decisions and activities",
+          "meaning_ar": "الشفافية",
+          "example": "Greater transparency in government spending would help reduce corruption.",
+          "collocations": [
+            "lack of transparency",
+            "increase transparency"
+          ]
+        },
+        {
+          "slug": "incumbent",
+          "word": "incumbent",
+          "pos": "noun",
+          "band": 8,
+          "definition": "the person currently holding an official position",
+          "meaning_ar": "شاغل المنصب",
+          "example": "The incumbent was defeated after serving two terms as mayor.",
+          "collocations": [
+            "defeat the incumbent",
+            "incumbent president"
+          ]
+        },
+        {
+          "slug": "fund",
+          "word": "fund",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to provide money for something",
+          "meaning_ar": "يموّل",
+          "example": "Public libraries are funded mainly through local taxes.",
+          "collocations": [
+            "fund research",
+            "publicly funded"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "culture-and-arts",
+      "name": "Culture and Arts",
+      "name_ar": "الثقافة والفنون",
+      "words": [
+        {
+          "slug": "tradition",
+          "word": "tradition",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a custom or belief passed down over time",
+          "meaning_ar": "تقليد",
+          "example": "Many families still follow the tradition of eating together on Fridays.",
+          "collocations": [
+            "cultural tradition",
+            "long tradition"
+          ]
+        },
+        {
+          "slug": "identity",
+          "word": "identity",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the qualities that make a person or group distinct",
+          "meaning_ar": "الهوية",
+          "example": "Language is a key part of a nation's cultural identity.",
+          "collocations": [
+            "cultural identity",
+            "national identity"
+          ]
+        },
+        {
+          "slug": "preserve",
+          "word": "preserve",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to keep something in its original state",
+          "meaning_ar": "يحافظ على",
+          "example": "Governments should preserve historic buildings for future generations.",
+          "collocations": [
+            "preserve heritage",
+            "preserve traditions"
+          ]
+        },
+        {
+          "slug": "museum",
+          "word": "museum",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a building where important objects are displayed",
+          "meaning_ar": "متحف",
+          "example": "Free entry to museums encourages more young people to learn about history.",
+          "collocations": [
+            "art museum",
+            "visit a museum"
+          ]
+        },
+        {
+          "slug": "exhibition",
+          "word": "exhibition",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a public show of art or objects",
+          "meaning_ar": "معرض",
+          "example": "The gallery held an exhibition of contemporary Arab photography.",
+          "collocations": [
+            "art exhibition",
+            "hold an exhibition"
+          ]
+        },
+        {
+          "slug": "contemporary",
+          "word": "contemporary",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "belonging to the present time",
+          "meaning_ar": "معاصر",
+          "example": "Contemporary art is often difficult for ordinary visitors to understand.",
+          "collocations": [
+            "contemporary art",
+            "contemporary music"
+          ]
+        },
+        {
+          "slug": "aesthetic",
+          "word": "aesthetic",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "relating to beauty and artistic taste",
+          "meaning_ar": "جمالي",
+          "example": "The new bridge has little aesthetic appeal but is very practical.",
+          "collocations": [
+            "aesthetic appeal",
+            "aesthetic value"
+          ]
+        },
+        {
+          "slug": "masterpiece",
+          "word": "masterpiece",
+          "pos": "noun",
+          "band": 6,
+          "definition": "an excellent work of art",
+          "meaning_ar": "تحفة فنية",
+          "example": "The painting is considered a masterpiece of Renaissance art.",
+          "collocations": [
+            "great masterpiece",
+            "literary masterpiece"
+          ]
+        },
+        {
+          "slug": "diversity",
+          "word": "diversity",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the existence of many different kinds",
+          "meaning_ar": "التنوع",
+          "example": "Cultural diversity enriches city life through food, music and festivals.",
+          "collocations": [
+            "cultural diversity",
+            "ethnic diversity"
+          ]
+        },
+        {
+          "slug": "customs",
+          "word": "customs",
+          "pos": "noun",
+          "band": 6,
+          "definition": "traditional ways of behaving in a society",
+          "meaning_ar": "عادات",
+          "example": "Visitors should respect local customs when travelling abroad.",
+          "collocations": [
+            "local customs",
+            "social customs"
+          ]
+        },
+        {
+          "slug": "indigenous",
+          "word": "indigenous",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "originally living in a particular place",
+          "meaning_ar": "أصلي (من السكان الأصليين)",
+          "example": "Many indigenous languages are at risk of disappearing completely.",
+          "collocations": [
+            "indigenous people",
+            "indigenous culture"
+          ]
+        },
+        {
+          "slug": "assimilate",
+          "word": "assimilate",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to become part of a different society",
+          "meaning_ar": "يندمج",
+          "example": "Immigrants often feel pressure to assimilate into the dominant culture.",
+          "collocations": [
+            "assimilate into",
+            "fully assimilate"
+          ]
+        },
+        {
+          "slug": "creativity",
+          "word": "creativity",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the ability to produce new and original ideas",
+          "meaning_ar": "الإبداع",
+          "example": "Art classes help children develop creativity and self-expression.",
+          "collocations": [
+            "encourage creativity",
+            "foster creativity"
+          ]
+        },
+        {
+          "slug": "performing-arts",
+          "word": "performing arts",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "arts such as music, dance and theatre",
+          "meaning_ar": "الفنون الأدائية",
+          "example": "Government grants support the performing arts in smaller towns.",
+          "collocations": [
+            "study the performing arts",
+            "performing arts centre"
+          ]
+        },
+        {
+          "slug": "patron",
+          "word": "patron",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a person who gives money to support art",
+          "meaning_ar": "راعٍ للفنون",
+          "example": "Wealthy patrons funded many of the greatest artists in history.",
+          "collocations": [
+            "patron of the arts",
+            "wealthy patron"
+          ]
+        },
+        {
+          "slug": "craftsmanship",
+          "word": "craftsmanship",
+          "pos": "noun",
+          "band": 8,
+          "definition": "skill in making things by hand",
+          "meaning_ar": "الحرفية",
+          "example": "The furniture shows remarkable craftsmanship and attention to detail.",
+          "collocations": [
+            "fine craftsmanship",
+            "traditional craftsmanship"
+          ]
+        },
+        {
+          "slug": "folk",
+          "word": "folk",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "traditional to ordinary people of a region",
+          "meaning_ar": "شعبي",
+          "example": "Folk music is still performed at weddings in many rural villages.",
+          "collocations": [
+            "folk music",
+            "folk tales"
+          ]
+        },
+        {
+          "slug": "ritual",
+          "word": "ritual",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a set of actions performed in the same way regularly",
+          "meaning_ar": "طقس",
+          "example": "Wedding rituals vary considerably between different regions of the country.",
+          "collocations": [
+            "religious ritual",
+            "ancient ritual"
+          ]
+        },
+        {
+          "slug": "artefact",
+          "word": "artefact",
+          "pos": "noun",
+          "band": 8,
+          "definition": "an object made by people in the past",
+          "meaning_ar": "قطعة أثرية",
+          "example": "The museum displays artefacts from ancient Egyptian tombs.",
+          "collocations": [
+            "ancient artefact",
+            "historical artefact"
+          ]
+        },
+        {
+          "slug": "sculpture",
+          "word": "sculpture",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a piece of art made by shaping stone, wood or metal",
+          "meaning_ar": "منحوتة",
+          "example": "A large bronze sculpture stands at the entrance to the park.",
+          "collocations": [
+            "bronze sculpture",
+            "modern sculpture"
+          ]
+        },
+        {
+          "slug": "censor",
+          "word": "censor",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to remove parts of a work considered unacceptable",
+          "meaning_ar": "يحذف رقابيا",
+          "example": "Some governments censor films that criticise their political leaders.",
+          "collocations": [
+            "censor films",
+            "heavily censored"
+          ]
+        },
+        {
+          "slug": "cultural-exchange",
+          "word": "cultural exchange",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "sharing ideas and customs between countries",
+          "meaning_ar": "التبادل الثقافي",
+          "example": "Student exchange programmes promote cultural exchange and mutual understanding.",
+          "collocations": [
+            "promote cultural exchange",
+            "cultural exchange programme"
+          ]
+        },
+        {
+          "slug": "inspire",
+          "word": "inspire",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to give someone the desire to create or achieve",
+          "meaning_ar": "يُلهم",
+          "example": "Great art can inspire people to see the world differently.",
+          "collocations": [
+            "inspire young people",
+            "inspire creativity"
+          ]
+        },
+        {
+          "slug": "heritage-listed",
+          "word": "heritage-listed",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "officially protected because of historical value",
+          "meaning_ar": "مُدرج ضمن التراث",
+          "example": "The heritage-listed building cannot be demolished without government permission.",
+          "collocations": [
+            "heritage-listed building",
+            "heritage-listed site"
+          ]
+        },
+        {
+          "slug": "mainstream",
+          "word": "mainstream",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "accepted by or popular with most people",
+          "meaning_ar": "سائد",
+          "example": "Hip-hop has moved from the margins into mainstream popular culture.",
+          "collocations": [
+            "mainstream culture",
+            "mainstream media"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "food-and-agriculture",
+      "name": "Food and Agriculture",
+      "name_ar": "الغذاء والزراعة",
+      "words": [
+        {
+          "slug": "organic",
+          "word": "organic",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "grown without artificial chemicals",
+          "meaning_ar": "عضوي",
+          "example": "Organic food is usually more expensive than conventionally grown produce.",
+          "collocations": [
+            "organic food",
+            "organic farming"
+          ]
+        },
+        {
+          "slug": "pesticide",
+          "word": "pesticide",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a chemical used to kill insects that damage crops",
+          "meaning_ar": "مبيد حشري",
+          "example": "Heavy pesticide use has been linked to a decline in bee populations.",
+          "collocations": [
+            "use pesticides",
+            "pesticide residue"
+          ]
+        },
+        {
+          "slug": "fertiliser",
+          "word": "fertiliser",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a substance added to soil to help plants grow",
+          "meaning_ar": "سماد",
+          "example": "Excessive fertiliser can wash into rivers and harm fish.",
+          "collocations": [
+            "chemical fertiliser",
+            "use fertiliser"
+          ]
+        },
+        {
+          "slug": "genetically-modified",
+          "word": "genetically modified",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "having genes changed artificially",
+          "meaning_ar": "معدّل وراثيا",
+          "example": "Genetically modified crops can resist drought and pests more effectively.",
+          "collocations": [
+            "genetically modified crops",
+            "genetically modified food"
+          ]
+        },
+        {
+          "slug": "crop",
+          "word": "crop",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a plant grown in large amounts for food",
+          "meaning_ar": "محصول",
+          "example": "Rice is the main crop in much of South-East Asia.",
+          "collocations": [
+            "crop yield",
+            "grow crops"
+          ]
+        },
+        {
+          "slug": "harvest",
+          "word": "harvest",
+          "pos": "noun",
+          "band": 6,
+          "definition": "the time when crops are collected",
+          "meaning_ar": "الحصاد",
+          "example": "A poor harvest can push up food prices across the whole region.",
+          "collocations": [
+            "good harvest",
+            "harvest season"
+          ]
+        },
+        {
+          "slug": "yield",
+          "word": "yield",
+          "pos": "noun",
+          "band": 7,
+          "definition": "the amount of crops produced",
+          "meaning_ar": "المردود",
+          "example": "Modern farming techniques have greatly increased crop yields per hectare.",
+          "collocations": [
+            "crop yield",
+            "high yield"
+          ]
+        },
+        {
+          "slug": "livestock",
+          "word": "livestock",
+          "pos": "noun",
+          "band": 7,
+          "definition": "farm animals such as cows and sheep",
+          "meaning_ar": "الماشية",
+          "example": "Raising livestock produces large amounts of greenhouse gases.",
+          "collocations": [
+            "raise livestock",
+            "livestock farming"
+          ]
+        },
+        {
+          "slug": "irrigation",
+          "word": "irrigation",
+          "pos": "noun",
+          "band": 7,
+          "definition": "supplying water to land for crops",
+          "meaning_ar": "الري",
+          "example": "Efficient irrigation is essential for farming in desert regions.",
+          "collocations": [
+            "irrigation system",
+            "drip irrigation"
+          ]
+        },
+        {
+          "slug": "food-security",
+          "word": "food security",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "reliable access to enough affordable food",
+          "meaning_ar": "الأمن الغذائي",
+          "example": "Climate change poses a serious threat to global food security.",
+          "collocations": [
+            "threaten food security",
+            "ensure food security"
+          ]
+        },
+        {
+          "slug": "processed-food",
+          "word": "processed food",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "food changed industrially, often with added chemicals",
+          "meaning_ar": "الأغذية المصنّعة",
+          "example": "Diets high in processed food are linked to obesity and heart disease.",
+          "collocations": [
+            "eat processed food",
+            "highly processed food"
+          ]
+        },
+        {
+          "slug": "famine",
+          "word": "famine",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a serious lack of food causing many deaths",
+          "meaning_ar": "مجاعة",
+          "example": "The famine was caused by years of drought and civil war.",
+          "collocations": [
+            "widespread famine",
+            "suffer famine"
+          ]
+        },
+        {
+          "slug": "staple",
+          "word": "staple",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a basic food eaten regularly",
+          "meaning_ar": "غذاء أساسي",
+          "example": "Bread remains a staple of the diet throughout the Middle East.",
+          "collocations": [
+            "staple food",
+            "staple diet"
+          ]
+        },
+        {
+          "slug": "vegetarian",
+          "word": "vegetarian",
+          "pos": "adjective",
+          "band": 5,
+          "definition": "not eating meat",
+          "meaning_ar": "نباتي",
+          "example": "A vegetarian diet can provide all the nutrients that the body needs.",
+          "collocations": [
+            "vegetarian diet",
+            "vegetarian food"
+          ]
+        },
+        {
+          "slug": "cultivate",
+          "word": "cultivate",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to prepare land and grow crops on it",
+          "meaning_ar": "يزرع",
+          "example": "Farmers in the valley cultivate dates, olives and citrus fruit.",
+          "collocations": [
+            "cultivate land",
+            "cultivate crops"
+          ]
+        },
+        {
+          "slug": "agricultural",
+          "word": "agricultural",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "relating to farming",
+          "meaning_ar": "زراعي",
+          "example": "Agricultural land is being lost to housing developments around the city.",
+          "collocations": [
+            "agricultural land",
+            "agricultural sector"
+          ]
+        },
+        {
+          "slug": "fast-food",
+          "word": "fast food",
+          "pos": "phrase",
+          "band": 5,
+          "definition": "cheap food prepared and served quickly",
+          "meaning_ar": "الوجبات السريعة",
+          "example": "The popularity of fast food has contributed to rising obesity among teenagers.",
+          "collocations": [
+            "fast food chain",
+            "eat fast food"
+          ]
+        },
+        {
+          "slug": "diet",
+          "word": "diet",
+          "pos": "noun",
+          "band": 5,
+          "definition": "the food a person usually eats",
+          "meaning_ar": "النظام الغذائي",
+          "example": "A balanced diet should include plenty of fruit and vegetables.",
+          "collocations": [
+            "balanced diet",
+            "healthy diet"
+          ]
+        },
+        {
+          "slug": "intensive-farming",
+          "word": "intensive farming",
+          "pos": "phrase",
+          "band": 8,
+          "definition": "farming that maximises output using chemicals and machines",
+          "meaning_ar": "الزراعة المكثفة",
+          "example": "Intensive farming produces cheap food but can damage soil quality.",
+          "collocations": [
+            "intensive farming methods",
+            "rise of intensive farming"
+          ]
+        },
+        {
+          "slug": "self-sufficient",
+          "word": "self-sufficient",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "able to produce everything needed without help",
+          "meaning_ar": "مكتفٍ ذاتيا",
+          "example": "Few countries are fully self-sufficient in food production.",
+          "collocations": [
+            "self-sufficient in food",
+            "become self-sufficient"
+          ]
+        },
+        {
+          "slug": "perishable",
+          "word": "perishable",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "likely to go bad quickly",
+          "meaning_ar": "سريع التلف",
+          "example": "Perishable goods such as milk must be transported in refrigerated lorries.",
+          "collocations": [
+            "perishable goods",
+            "perishable food"
+          ]
+        },
+        {
+          "slug": "food-miles",
+          "word": "food miles",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "the distance food travels from farm to consumer",
+          "meaning_ar": "أميال الغذاء",
+          "example": "Buying local produce reduces food miles and supports nearby farmers.",
+          "collocations": [
+            "reduce food miles",
+            "high food miles"
+          ]
+        },
+        {
+          "slug": "additive",
+          "word": "additive",
+          "pos": "noun",
+          "band": 7,
+          "definition": "a substance added to food to improve it or preserve it",
+          "meaning_ar": "مادة مضافة",
+          "example": "Some artificial additives have been linked to hyperactivity in children.",
+          "collocations": [
+            "food additive",
+            "artificial additive"
+          ]
+        },
+        {
+          "slug": "produce",
+          "word": "produce",
+          "pos": "noun",
+          "band": 6,
+          "definition": "food, especially fruit and vegetables, that is grown",
+          "meaning_ar": "المنتجات الزراعية",
+          "example": "Local markets sell fresh produce directly from surrounding farms.",
+          "collocations": [
+            "fresh produce",
+            "local produce"
+          ]
+        },
+        {
+          "slug": "arable",
+          "word": "arable",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "suitable for growing crops",
+          "meaning_ar": "صالح للزراعة",
+          "example": "Only a small percentage of the country's land is arable.",
+          "collocations": [
+            "arable land",
+            "arable farming"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "transport",
+      "name": "Transport",
+      "name_ar": "النقل والمواصلات",
+      "words": [
+        {
+          "slug": "public-transport",
+          "word": "public transport",
+          "pos": "phrase",
+          "band": 5,
+          "definition": "buses and trains available for everyone to use",
+          "meaning_ar": "النقل العام",
+          "example": "Cheaper public transport would encourage more people to leave their cars at home.",
+          "collocations": [
+            "use public transport",
+            "improve public transport"
+          ]
+        },
+        {
+          "slug": "commute",
+          "word": "commute",
+          "pos": "verb",
+          "band": 6,
+          "definition": "to travel regularly between home and work",
+          "meaning_ar": "يتنقّل يوميا",
+          "example": "Millions of people commute more than an hour each way to work.",
+          "collocations": [
+            "commute to work",
+            "daily commute"
+          ]
+        },
+        {
+          "slug": "rush-hour",
+          "word": "rush hour",
+          "pos": "phrase",
+          "band": 5,
+          "definition": "the busy time when people travel to and from work",
+          "meaning_ar": "ساعة الذروة",
+          "example": "Trains are extremely crowded during the morning rush hour.",
+          "collocations": [
+            "morning rush hour",
+            "during rush hour"
+          ]
+        },
+        {
+          "slug": "gridlock",
+          "word": "gridlock",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a traffic jam so severe that vehicles cannot move",
+          "meaning_ar": "شلل مروري",
+          "example": "The accident caused gridlock across the city centre for several hours.",
+          "collocations": [
+            "traffic gridlock",
+            "cause gridlock"
+          ]
+        },
+        {
+          "slug": "fuel",
+          "word": "fuel",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a substance such as petrol burned to produce power",
+          "meaning_ar": "وقود",
+          "example": "Rising fuel prices have made car ownership much more expensive.",
+          "collocations": [
+            "fossil fuel",
+            "fuel consumption"
+          ]
+        },
+        {
+          "slug": "electric-vehicle",
+          "word": "electric vehicle",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a vehicle powered by electricity instead of petrol",
+          "meaning_ar": "مركبة كهربائية",
+          "example": "Governments offer subsidies to encourage people to buy an electric vehicle.",
+          "collocations": [
+            "buy an electric vehicle",
+            "electric vehicle charging"
+          ]
+        },
+        {
+          "slug": "high-speed-rail",
+          "word": "high-speed rail",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "trains that travel much faster than normal trains",
+          "meaning_ar": "السكك الحديدية فائقة السرعة",
+          "example": "High-speed rail can be a greener alternative to short domestic flights.",
+          "collocations": [
+            "high-speed rail network",
+            "invest in high-speed rail"
+          ]
+        },
+        {
+          "slug": "road-safety",
+          "word": "road safety",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "preventing accidents on roads",
+          "meaning_ar": "السلامة المرورية",
+          "example": "Road safety campaigns have helped reduce deaths among young drivers.",
+          "collocations": [
+            "improve road safety",
+            "road safety campaign"
+          ]
+        },
+        {
+          "slug": "fatality",
+          "word": "fatality",
+          "pos": "noun",
+          "band": 8,
+          "definition": "a death caused by an accident",
+          "meaning_ar": "وفاة",
+          "example": "Road fatalities have fallen steadily since seatbelts became compulsory.",
+          "collocations": [
+            "road fatality",
+            "number of fatalities"
+          ]
+        },
+        {
+          "slug": "toll",
+          "word": "toll",
+          "pos": "noun",
+          "band": 7,
+          "definition": "money paid to use a road or bridge",
+          "meaning_ar": "رسوم عبور",
+          "example": "Drivers must pay a toll to cross the new bridge.",
+          "collocations": [
+            "road toll",
+            "pay a toll"
+          ]
+        },
+        {
+          "slug": "congestion-charge",
+          "word": "congestion charge",
+          "pos": "phrase",
+          "band": 7,
+          "definition": "a fee for driving into a busy city area",
+          "meaning_ar": "رسوم الازدحام",
+          "example": "London introduced a congestion charge to reduce traffic in the centre.",
+          "collocations": [
+            "introduce a congestion charge",
+            "pay the congestion charge"
+          ]
+        },
+        {
+          "slug": "car-sharing",
+          "word": "car-sharing",
+          "pos": "noun",
+          "band": 7,
+          "definition": "several people travelling together in one car",
+          "meaning_ar": "مشاركة السيارات",
+          "example": "Car-sharing schemes reduce the number of vehicles on the road at peak times.",
+          "collocations": [
+            "car-sharing scheme",
+            "encourage car-sharing"
+          ]
+        },
+        {
+          "slug": "cycle-lane",
+          "word": "cycle lane",
+          "pos": "phrase",
+          "band": 6,
+          "definition": "a part of the road reserved for bicycles",
+          "meaning_ar": "مسار الدراجات",
+          "example": "Building more cycle lanes would make cycling safer in busy cities.",
+          "collocations": [
+            "separate cycle lane",
+            "build cycle lanes"
+          ]
+        },
+        {
+          "slug": "vehicle",
+          "word": "vehicle",
+          "pos": "noun",
+          "band": 5,
+          "definition": "a machine such as a car or bus used for transport",
+          "meaning_ar": "مركبة",
+          "example": "The number of vehicles on the roads has doubled in twenty years.",
+          "collocations": [
+            "motor vehicle",
+            "private vehicle"
+          ]
+        },
+        {
+          "slug": "emission-free",
+          "word": "emission-free",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "producing no harmful gases",
+          "meaning_ar": "خالٍ من الانبعاثات",
+          "example": "The city aims to make all its buses emission-free by 2030.",
+          "collocations": [
+            "emission-free vehicles",
+            "emission-free transport"
+          ]
+        },
+        {
+          "slug": "subsidise",
+          "word": "subsidise",
+          "pos": "verb",
+          "band": 7,
+          "definition": "to pay part of the cost of something",
+          "meaning_ar": "يدعم ماليا",
+          "example": "Governments should subsidise rail fares to make them more affordable.",
+          "collocations": [
+            "subsidise public transport",
+            "heavily subsidised"
+          ]
+        },
+        {
+          "slug": "network",
+          "word": "network",
+          "pos": "noun",
+          "band": 6,
+          "definition": "a system of connected roads, lines or routes",
+          "meaning_ar": "شبكة",
+          "example": "The city has an extensive metro network that serves every district.",
+          "collocations": [
+            "transport network",
+            "rail network"
+          ]
+        },
+        {
+          "slug": "accessible",
+          "word": "accessible",
+          "pos": "adjective",
+          "band": 6,
+          "definition": "easy to reach or use",
+          "meaning_ar": "يسهل الوصول إليه",
+          "example": "Public transport should be accessible to people with disabilities.",
+          "collocations": [
+            "easily accessible",
+            "accessible to all"
+          ]
+        },
+        {
+          "slug": "reliance",
+          "word": "reliance",
+          "pos": "noun",
+          "band": 7,
+          "definition": "depending on something",
+          "meaning_ar": "الاعتماد على",
+          "example": "Our reliance on private cars contributes significantly to air pollution.",
+          "collocations": [
+            "reliance on cars",
+            "heavy reliance"
+          ]
+        },
+        {
+          "slug": "infrastructure-investment",
+          "word": "infrastructure investment",
+          "pos": "phrase",
+          "band": 8,
+          "definition": "spending on roads, railways and other basic systems",
+          "meaning_ar": "الاستثمار في البنية التحتية",
+          "example": "Major infrastructure investment is needed to modernise the country's ageing railways.",
+          "collocations": [
+            "large-scale infrastructure investment",
+            "infrastructure investment programme"
+          ]
+        },
+        {
+          "slug": "traffic-jam",
+          "word": "traffic jam",
+          "pos": "phrase",
+          "band": 5,
+          "definition": "a long line of vehicles that cannot move quickly",
+          "meaning_ar": "ازدحام مروري",
+          "example": "We were stuck in a traffic jam for nearly two hours.",
+          "collocations": [
+            "stuck in a traffic jam",
+            "heavy traffic jam"
+          ]
+        },
+        {
+          "slug": "pedestrianise",
+          "word": "pedestrianise",
+          "pos": "verb",
+          "band": 8,
+          "definition": "to close a street to traffic for walkers only",
+          "meaning_ar": "يخصّص للمشاة",
+          "example": "The council voted to pedestrianise the main shopping street.",
+          "collocations": [
+            "pedestrianise the city centre",
+            "pedestrianised street"
+          ]
+        },
+        {
+          "slug": "autonomous",
+          "word": "autonomous",
+          "pos": "adjective",
+          "band": 8,
+          "definition": "able to operate without human control",
+          "meaning_ar": "ذاتي القيادة",
+          "example": "Autonomous cars could reduce accidents caused by human error.",
+          "collocations": [
+            "autonomous vehicle",
+            "autonomous car"
+          ]
+        },
+        {
+          "slug": "long-haul",
+          "word": "long-haul",
+          "pos": "adjective",
+          "band": 7,
+          "definition": "travelling a long distance, especially by air",
+          "meaning_ar": "طويل المسافة",
+          "example": "Long-haul flights produce a large share of aviation emissions.",
+          "collocations": [
+            "long-haul flight",
+            "long-haul travel"
+          ]
+        },
+        {
+          "slug": "freight",
+          "word": "freight",
+          "pos": "noun",
+          "band": 7,
+          "definition": "goods carried by train, ship, lorry or plane",
+          "meaning_ar": "الشحن",
+          "example": "Moving freight from roads to railways would cut carbon emissions.",
+          "collocations": [
+            "rail freight",
+            "freight transport"
+          ]
+        }
+      ]
+    }
+  ]
+}

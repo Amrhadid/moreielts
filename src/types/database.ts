@@ -25,6 +25,10 @@ export interface ProfileRow {
   premium_expires_at: string | null;
   target_band: number | null;
   current_band: number | null;
+  exam_date: string | null;
+  daily_goal_minutes: number;
+  locale: "en" | "ar";
+  reminder_emails: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -46,6 +50,8 @@ export interface TestFormRow {
   delivery_mode: "computer" | "paper";
   is_published: boolean;
   is_premium: boolean;
+  slug: string | null;
+  difficulty: "foundation" | "standard" | "challenge";
   scoring_version: string;
   created_by: string | null;
   created_at: string;

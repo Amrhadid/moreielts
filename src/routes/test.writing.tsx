@@ -79,7 +79,7 @@ function WritingPlayer() {
               )}
             >
               {g.title}
-              <span className="ml-2 text-xs tabular-nums text-muted">{done} words</span>
+              <span className="ms-2 text-xs tabular-nums text-muted">{done} words</span>
             </button>
           );
         })}

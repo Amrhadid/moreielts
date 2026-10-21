@@ -19,6 +19,8 @@ interface AuthState {
   /** True until the initial session lookup settles. */
   loading: boolean;
   isAdmin: boolean;
+  /** Premium and not past premium_expires_at (the server checks the same). */
+  isPremium: boolean;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -27,6 +29,7 @@ const AuthContext = createContext<AuthState>({
   profile: null,
   loading: true,
   isAdmin: false,
+  isPremium: false,
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -77,6 +80,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile: profile ?? null,
       loading,
       isAdmin: profile?.role === "admin",
+      isPremium:
+        profile?.tier === "premium" &&
+        (!profile.premium_expires_at || new Date(profile.premium_expires_at) > new Date()),
     }),
     [session, profile, loading],
   );

@@ -33,7 +33,7 @@ function Students() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[44rem] text-sm">
-              <thead className="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+              <thead className="border-b border-line bg-paper text-start text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Email</th>

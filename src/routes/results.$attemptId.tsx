@@ -205,7 +205,7 @@ function CriteriaPanel({
                         {feedback.evidence.map((quote, j) => (
                           <li
                             key={j}
-                            className="border-l-2 border-line-strong pl-3 text-xs italic leading-relaxed text-muted"
+                            className="border-s-2 border-line-strong ps-3 text-xs italic leading-relaxed text-muted"
                           >
                             “{quote}”
                           </li>
@@ -381,7 +381,7 @@ function ResultPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[46rem] text-sm">
-              <thead className="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+              <thead className="border-b border-line bg-paper text-start text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 font-medium">#</th>
                   <th className="px-4 py-3 font-medium">Section</th>

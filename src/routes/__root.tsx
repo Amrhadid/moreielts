@@ -6,7 +6,8 @@ import {
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { AuthProvider } from "~/lib/auth";
+import { AuthProvider, useAuth } from "~/lib/auth";
+import { I18nProvider } from "~/lib/i18n";
 import appCss from "~/styles.css?url";
 
 export const Route = createRootRoute({
@@ -48,11 +49,22 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <LocaleFromProfile>{children}</LocaleFromProfile>
+          </AuthProvider>
         </QueryClientProvider>
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function LocaleFromProfile({ children }: { children: ReactNode }) {
+  const { profile, user } = useAuth();
+  return (
+    <I18nProvider profileLocale={profile?.locale ?? null} userId={user?.id ?? null}>
+      {children}
+    </I18nProvider>
   );
 }
 

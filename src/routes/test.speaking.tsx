@@ -145,12 +145,12 @@ function Recorder({
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         {state === "idle" && (
           <Button size="lg" onClick={start}>
-            <span aria-hidden className="mr-1">●</span> Record answer
+            <span aria-hidden className="me-1">●</span> Record answer
           </Button>
         )}
         {state === "recording" && (
           <Button size="lg" variant="danger" onClick={stop}>
-            <span aria-hidden className="mr-1">■</span> Stop
+            <span aria-hidden className="me-1">■</span> Stop
           </Button>
         )}
         {state === "uploading" && <p className="text-sm text-muted">Uploading…</p>}

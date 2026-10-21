@@ -22,7 +22,7 @@ function Codes() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[40rem] text-sm">
-              <thead className="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+              <thead className="border-b border-line bg-paper text-start text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 font-medium">Code</th>
                   <th className="px-4 py-3 font-medium">Grants</th>

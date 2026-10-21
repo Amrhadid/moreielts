@@ -37,8 +37,8 @@ export function Landing() {
   return (
     <AppShell withSidebar={false}>
       <section className="relative isolate grid min-h-[570px] items-center gap-10 overflow-hidden rounded-[2rem] border border-brand-100 bg-surface px-6 py-10 shadow-[0_24px_70px_rgba(20,75,120,.09)] md:grid-cols-[1.02fr_.98fr] md:px-12 lg:px-16">
-        <div className="pointer-events-none absolute -left-20 -top-24 -z-10 h-72 w-72 rounded-full bg-brand-50" />
-        <div className="pointer-events-none absolute bottom-8 left-[47%] -z-10 h-20 w-20 rounded-full border-[18px] border-warn-soft animate-breathe" />
+        <div className="pointer-events-none absolute -start-20 -top-24 -z-10 h-72 w-72 rounded-full bg-brand-50" />
+        <div className="pointer-events-none absolute bottom-8 start-[47%] -z-10 h-20 w-20 rounded-full border-[18px] border-warn-soft animate-breathe" />
         <div className="animate-rise">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[.14em] text-brand-700">
             <span className="h-2 w-2 rounded-full bg-good" /> IELTS Academic preparation
@@ -58,7 +58,7 @@ export function Landing() {
           </div>
         </div>
         <div className="relative animate-rise-delay">
-          <div className="absolute right-2 top-5 z-10 rounded-card border border-line bg-surface px-4 py-3 shadow-lg animate-float">
+          <div className="absolute end-2 top-5 z-10 rounded-card border border-line bg-surface px-4 py-3 shadow-lg animate-float">
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted">Target band</p>
             <p className="text-3xl font-extrabold tabular-nums text-warn">7.5</p>
           </div>
