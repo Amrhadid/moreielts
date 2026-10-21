@@ -38,6 +38,9 @@ create policy ielts_practice_results_insert_own on public.ielts_practice_results
   with check (user_id = auth.uid());
 
 -- No update or delete from the client: a result is a record of what happened.
+-- Supabase's default privileges grant authenticated everything on a new table,
+-- so revoke first and grant back only what the app uses.
 revoke all on public.ielts_practice_results from anon;
+revoke all on public.ielts_practice_results from authenticated;
 grant select, insert on public.ielts_practice_results to authenticated;
 grant all on public.ielts_practice_results to service_role;
