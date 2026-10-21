@@ -1,4 +1,4 @@
-import type { ItemGroup, Question, Section } from "../../src/types/content";
+import type { ItemGroup, Question, Section } from "../../../../src/types/content";
 
 /**
  * Academic Reading: 3 passages, 40 questions, 60 minutes.
@@ -105,7 +105,7 @@ Where these measures have been adopted and enforced, seabird bycatch has fallen 
     ...([
       ["How often can a successful breeding pair attempt to raise a chick?", ["every second year", "every two years", "biennially"]],
       ["What is added to fishing lines so that they sink more quickly?", ["weights", "weight"]],
-      ["By how much has bycatch fallen in some fisheries where measures are enforced?", ["more than ninety per cent", "90%", "ninety per cent", "over 90 per cent"]],
+      ["By how much has bycatch fallen in some fisheries where measures are enforced?", ["90%", "ninety per cent", "90 per cent"]],
     ] as const).map(
       ([prompt, answers], i): Question => ({
         id: `r-q${i + 11}`,

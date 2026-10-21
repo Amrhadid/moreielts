@@ -58,6 +58,11 @@ export interface Question {
    */
   renderer?: RendererKey;
   typeLabel?: string;
+  /**
+   * Why the answer is right, ideally quoting the passage or transcript line
+   * that proves it. Admin-only until the attempt or drill is submitted.
+   */
+  explanation?: string;
 }
 
 export type StimulusKind =
@@ -77,12 +82,19 @@ export interface ItemGroup {
   /** Passage prose or cue-card / writing-task body. Plain paragraphs. */
   passageText?: string;
   /** TODO(backend): replace with the R2 object URL for the part's audio. */
+  /** R2 object URL of the part's MP3 (written by generate-audio or an upload). */
   audioUrl?: string;
-  /** TODO(backend): replace with the uploaded chart/diagram object URL. */
+  /** R2 object URL, or a /public path, of the chart, map or diagram. */
   imageUrl?: string;
   imageCaption?: string;
   /** Shared rubric shown above every question in the group. */
   instructions: string;
+  /**
+   * Listening only: the full script. Stored admin-only (item_group_scripts),
+   * fed to text-to-speech, and released to the candidate after submission.
+   * Speaker turns are written "NAME: line" so TTS can assign voices.
+   */
+  transcript?: string;
   questions: Question[];
 }
 
@@ -106,3 +118,15 @@ export interface TestForm {
 
 /** answers[questionId] = string (single) | string[] (multi-select). */
 export type AnswerSheet = Record<string, string | string[]>;
+
+/** One complete form as authored in scripts/seed-content/forms. */
+export interface SeedForm {
+  /** Stable, unique slug. Seed uuids derive from it, so never rename one. */
+  slug: string;
+  title: string;
+  description: string;
+  variant: "academic" | "general_training";
+  difficulty: Difficulty;
+  isPremium: boolean;
+  sections: Section[];
+}
