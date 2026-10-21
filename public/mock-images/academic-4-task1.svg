@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" width="720" height="470" font-family="Arial, Helvetica, sans-serif">
+<rect width="720" height="470" fill="#ffffff"/>
+<text x="360.0" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#1f2933">Electricity generated from renewable sources, 2000-2025</text>
+<text x="18" y="220.0" transform="rotate(-90 18 220.0)" text-anchor="middle" font-size="13" fill="#3e4c59">Share of total electricity (%)</text>
+<line x1="70" y1="380.0" x2="670" y2="380.0" stroke="#e4e7eb"/><text x="62" y="384.0" text-anchor="end" font-size="12" fill="#52606d">0</text>
+<line x1="70" y1="316.0" x2="670" y2="316.0" stroke="#e4e7eb"/><text x="62" y="320.0" text-anchor="end" font-size="12" fill="#52606d">20</text>
+<line x1="70" y1="252.0" x2="670" y2="252.0" stroke="#e4e7eb"/><text x="62" y="256.0" text-anchor="end" font-size="12" fill="#52606d">40</text>
+<line x1="70" y1="188.0" x2="670" y2="188.0" stroke="#e4e7eb"/><text x="62" y="192.0" text-anchor="end" font-size="12" fill="#52606d">60</text>
+<line x1="70" y1="124.0" x2="670" y2="124.0" stroke="#e4e7eb"/><text x="62" y="128.0" text-anchor="end" font-size="12" fill="#52606d">80</text>
+<line x1="70" y1="60.0" x2="670" y2="60.0" stroke="#e4e7eb"/><text x="62" y="64.0" text-anchor="end" font-size="12" fill="#52606d">100</text>
+<text x="70.0" y="400" text-anchor="middle" font-size="12" fill="#1f2933">2000</text>
+<text x="190.0" y="400" text-anchor="middle" font-size="12" fill="#1f2933">2005</text>
+<text x="310.0" y="400" text-anchor="middle" font-size="12" fill="#1f2933">2010</text>
+<text x="430.0" y="400" text-anchor="middle" font-size="12" fill="#1f2933">2015</text>
+<text x="550.0" y="400" text-anchor="middle" font-size="12" fill="#1f2933">2020</text>
+<text x="670.0" y="400" text-anchor="middle" font-size="12" fill="#1f2933">2025</text>
+<line x1="70" y1="380" x2="670" y2="380" stroke="#52606d"/>
+<polyline points="70.0,332.0 190.0,290.4 310.0,236.0 430.0,181.6 550.0,143.2 670.0,117.6" fill="none" stroke="#2f6fb0" stroke-width="2.5"/>
+<circle cx="70.0" cy="332.0" r="3.5" fill="#2f6fb0"/><text x="70.0" y="324.0" text-anchor="middle" font-size="10" fill="#2f6fb0">15</text>
+<circle cx="190.0" cy="290.4" r="3.5" fill="#2f6fb0"/><text x="190.0" y="282.4" text-anchor="middle" font-size="10" fill="#2f6fb0">28</text>
+<circle cx="310.0" cy="236.0" r="3.5" fill="#2f6fb0"/><text x="310.0" y="228.0" text-anchor="middle" font-size="10" fill="#2f6fb0">45</text>
+<circle cx="430.0" cy="181.6" r="3.5" fill="#2f6fb0"/><text x="430.0" y="173.6" text-anchor="middle" font-size="10" fill="#2f6fb0">62</text>
+<circle cx="550.0" cy="143.2" r="3.5" fill="#2f6fb0"/><text x="550.0" y="135.2" text-anchor="middle" font-size="10" fill="#2f6fb0">74</text>
+<circle cx="670.0" cy="117.6" r="3.5" fill="#2f6fb0"/><text x="670.0" y="109.6" text-anchor="middle" font-size="10" fill="#2f6fb0">82</text>
+<polyline points="70.0,325.6 190.0,319.2 310.0,274.4 430.0,261.6 550.0,239.2 670.0,204.0" fill="none" stroke="#e08a1e" stroke-width="2.5"/>
+<circle cx="70.0" cy="325.6" r="3.5" fill="#e08a1e"/><text x="70.0" y="317.6" text-anchor="middle" font-size="10" fill="#e08a1e">17</text>
+<circle cx="190.0" cy="319.2" r="3.5" fill="#e08a1e"/><text x="190.0" y="311.2" text-anchor="middle" font-size="10" fill="#e08a1e">19</text>
+<circle cx="310.0" cy="274.4" r="3.5" fill="#e08a1e"/><text x="310.0" y="266.4" text-anchor="middle" font-size="10" fill="#e08a1e">33</text>
+<circle cx="430.0" cy="261.6" r="3.5" fill="#e08a1e"/><text x="430.0" y="253.6" text-anchor="middle" font-size="10" fill="#e08a1e">37</text>
+<circle cx="550.0" cy="239.2" r="3.5" fill="#e08a1e"/><text x="550.0" y="231.2" text-anchor="middle" font-size="10" fill="#e08a1e">44</text>
+<circle cx="670.0" cy="204.0" r="3.5" fill="#e08a1e"/><text x="670.0" y="196.0" text-anchor="middle" font-size="10" fill="#e08a1e">55</text>
+<polyline points="70.0,351.2 190.0,348.0 310.0,344.8 430.0,328.8 550.0,312.8 670.0,293.6" fill="none" stroke="#3b9c5a" stroke-width="2.5"/>
+<circle cx="70.0" cy="351.2" r="3.5" fill="#3b9c5a"/><text x="70.0" y="343.2" text-anchor="middle" font-size="10" fill="#3b9c5a">9</text>
+<circle cx="190.0" cy="348.0" r="3.5" fill="#3b9c5a"/><text x="190.0" y="340.0" text-anchor="middle" font-size="10" fill="#3b9c5a">10</text>
+<circle cx="310.0" cy="344.8" r="3.5" fill="#3b9c5a"/><text x="310.0" y="336.8" text-anchor="middle" font-size="10" fill="#3b9c5a">11</text>
+<circle cx="430.0" cy="328.8" r="3.5" fill="#3b9c5a"/><text x="430.0" y="320.8" text-anchor="middle" font-size="10" fill="#3b9c5a">16</text>
+<circle cx="550.0" cy="312.8" r="3.5" fill="#3b9c5a"/><text x="550.0" y="304.8" text-anchor="middle" font-size="10" fill="#3b9c5a">21</text>
+<circle cx="670.0" cy="293.6" r="3.5" fill="#3b9c5a"/><text x="670.0" y="285.6" text-anchor="middle" font-size="10" fill="#3b9c5a">27</text>
+<polyline points="70.0,188.0 190.0,181.6 310.0,178.4 430.0,172.0 550.0,165.6 670.0,162.4" fill="none" stroke="#b0413e" stroke-width="2.5"/>
+<circle cx="70.0" cy="188.0" r="3.5" fill="#b0413e"/><text x="70.0" y="180.0" text-anchor="middle" font-size="10" fill="#b0413e">60</text>
+<circle cx="190.0" cy="181.6" r="3.5" fill="#b0413e"/><text x="190.0" y="173.6" text-anchor="middle" font-size="10" fill="#b0413e">62</text>
+<circle cx="310.0" cy="178.4" r="3.5" fill="#b0413e"/><text x="310.0" y="170.4" text-anchor="middle" font-size="10" fill="#b0413e">63</text>
+<circle cx="430.0" cy="172.0" r="3.5" fill="#b0413e"/><text x="430.0" y="164.0" text-anchor="middle" font-size="10" fill="#b0413e">65</text>
+<circle cx="550.0" cy="165.6" r="3.5" fill="#b0413e"/><text x="550.0" y="157.6" text-anchor="middle" font-size="10" fill="#b0413e">67</text>
+<circle cx="670.0" cy="162.4" r="3.5" fill="#b0413e"/><text x="670.0" y="154.4" text-anchor="middle" font-size="10" fill="#b0413e">68</text>
+<rect x="130.0" y="430" width="14" height="14" fill="#2f6fb0"/><text x="150.0" y="442" font-size="13" fill="#1f2933">Denmark</text>
+<rect x="250.0" y="430" width="14" height="14" fill="#e08a1e"/><text x="270.0" y="442" font-size="13" fill="#1f2933">Spain</text>
+<rect x="370.0" y="430" width="14" height="14" fill="#3b9c5a"/><text x="390.0" y="442" font-size="13" fill="#1f2933">Japan</text>
+<rect x="490.0" y="430" width="14" height="14" fill="#b0413e"/><text x="510.0" y="442" font-size="13" fill="#1f2933">Canada</text>
+</svg>

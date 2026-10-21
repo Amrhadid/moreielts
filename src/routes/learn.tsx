@@ -1,18 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
-import { Protected } from "~/lib/auth";
-import { useQuestionTypes } from "~/lib/queries";
+import { QUESTION_GUIDES } from "~/data/question-guides";
 
 export const Route = createFileRoute("/learn")({ component: LearnRoute });
 
+// Public: the format facts and strategy links are useful before signing up.
 function LearnRoute() {
-  return (
-    <Protected>
-      <Learn />
-    </Protected>
-  );
+  return <Learn />;
 }
 
 const FORMAT_FACTS = [
@@ -25,7 +21,6 @@ const FORMAT_FACTS = [
 ];
 
 function Learn() {
-  const { data: types, isLoading } = useQuestionTypes();
 
   return (
     <AppShell>
@@ -52,28 +47,24 @@ function Learn() {
         Every question type
       </h2>
       <Card className="overflow-hidden">
-        {isLoading ? (
-          <div className="px-5 py-10 text-center text-sm text-muted">Loading…</div>
-        ) : (
-          <ul className="divide-y divide-line">
-            {(types ?? []).map((type) => (
-              <li key={type.code} className="flex flex-wrap items-center gap-3 px-5 py-4">
+        <ul className="divide-y divide-line">
+          {QUESTION_GUIDES.map((guide) => (
+            <li key={guide.slug}>
+              <Link
+                to="/guides/$slug"
+                params={{ slug: guide.slug }}
+                className="flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-paper"
+              >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium">{type.label}</p>
-                  <p className="mt-0.5 text-xs text-muted">
-                    Answered with the {type.renderer.replace("_", " ")} control
-                    {type.default_word_limit > 0
-                      ? `, up to ${type.default_word_limit} words`
-                      : ""}
-                    .
-                  </p>
+                  <p className="text-sm font-medium">{guide.name}</p>
+                  <p className="mt-0.5 text-xs text-muted">{guide.summary}</p>
                 </div>
-                <span className="text-xs capitalize text-muted">{type.section}</span>
-                <Badge tone="neutral">{type.renderer}</Badge>
-              </li>
-            ))}
-          </ul>
-        )}
+                <span className="text-xs capitalize text-muted">{guide.sections.join(" · ")}</span>
+                <Badge tone="neutral">Strategy</Badge>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </Card>
     </AppShell>
   );

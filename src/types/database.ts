@@ -25,6 +25,24 @@ export interface ProfileRow {
   premium_expires_at: string | null;
   target_band: number | null;
   current_band: number | null;
+  exam_date: string | null;
+  daily_goal_minutes: number;
+  locale: "en" | "ar";
+  reminder_emails: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/** public.ielts_learners: the IELTS-specific half of a learner's profile. */
+export interface LearnerRow {
+  user_id: string;
+  premium_expires_at: string | null;
+  target_band: number | null;
+  current_band: number | null;
+  exam_date: string | null;
+  daily_goal_minutes: number;
+  locale: "en" | "ar";
+  reminder_emails: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -46,6 +64,10 @@ export interface TestFormRow {
   delivery_mode: "computer" | "paper";
   is_published: boolean;
   is_premium: boolean;
+  slug: string | null;
+  difficulty: "foundation" | "standard" | "challenge";
+  /** "practice" feeds the skill sections; "mock" forms are full exams. */
+  purpose: "practice" | "mock";
   scoring_version: string;
   created_by: string | null;
   created_at: string;

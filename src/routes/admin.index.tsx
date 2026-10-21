@@ -58,7 +58,7 @@ function AdminForms() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[48rem] text-sm">
-              <thead className="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+              <thead className="border-b border-line bg-paper text-start text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
                   <th className="px-4 py-3 font-medium">Variant</th>
@@ -88,7 +88,7 @@ function AdminForms() {
                     <td className="px-4 py-3 text-muted">
                       {new Date(form.updated_at).toLocaleDateString("en-GB")}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-end">
                       <Link
                         to="/admin/forms/$formId"
                         params={{ formId: form.id }}

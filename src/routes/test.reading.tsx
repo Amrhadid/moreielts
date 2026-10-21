@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { PassageHighlighter } from "~/components/player/PassageHighlighter";
 import { PlayerHeader } from "~/components/player/PlayerHeader";
 import { PlayerStatus } from "~/components/player/PlayerStatus";
 import { QuestionBlock } from "~/components/player/QuestionBlock";
@@ -7,16 +8,20 @@ import { QuestionNavigator } from "~/components/player/QuestionNavigator";
 import { SubmitDialog } from "~/components/player/SubmitDialog";
 import { Button } from "~/components/ui/Button";
 import { cn } from "~/lib/cn";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/reading")({ component: ReadingRoute });
+export const Route = createFileRoute("/test/reading")({
+  validateSearch: (s: Record<string, unknown>): { form?: string } =>
+    typeof s.form === "string" ? { form: s.form } : {},
+  component: ReadingRoute,
+});
 
 function ReadingRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <ReadingPlayer />
-    </Protected>
+    </PremiumGate>
   );
 }
 
@@ -24,6 +29,15 @@ function ReadingPlayer() {
   const player = usePlayerAttempt("reading");
   const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
   const [current, setCurrent] = useState(1);
+  const [flagged, setFlagged] = useState<Set<number>>(new Set());
+  const toggleFlag = useCallback((n: number) => {
+    setFlagged((prev) => {
+      const next = new Set(prev);
+      if (next.has(n)) next.delete(n);
+      else next.add(n);
+      return next;
+    });
+  }, []);
   const refs = useRef(new Map<number, HTMLDivElement>());
 
   const numbers = useMemo(
@@ -67,6 +81,7 @@ function ReadingPlayer() {
           <SubmitDialog
             attemptId={player.attemptId!}
             section="reading"
+            formId={player.form?.id}
             answeredCount={player.answered.size}
             total={numbers.length}
           />
@@ -110,11 +125,13 @@ function ReadingPlayer() {
             <h2 className="mt-1 mb-5 text-xl font-semibold tracking-tight">
               {currentGroup?.title}
             </h2>
-            <div className="prose-passage">
-              {currentGroup?.passageText?.split("\n\n").map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
-            </div>
+            {currentGroup?.passageText && (
+              <PassageHighlighter
+                text={currentGroup.passageText}
+                attemptId={player.attemptId ?? "local"}
+                groupId={currentGroup.id}
+              />
+            )}
           </div>
         </section>
 
@@ -135,6 +152,8 @@ function ReadingPlayer() {
                 onAnswer={player.setAnswer}
                 current={current}
                 registerRef={registerRef}
+                flagged={flagged}
+                onToggleFlag={toggleFlag}
               />
             ))}
 
@@ -158,6 +177,7 @@ function ReadingPlayer() {
         numbers={numbers}
         answered={player.answered}
         current={current}
+        flagged={flagged}
         onJump={(n) => {
           setMobilePane("questions");
           jumpTo(n);

@@ -1,5 +1,17 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { EssayFeedback } from "~/components/writing/EssayFeedback";
+import { Icon } from "~/components/ui/Icon";
+import {
+  useAttemptReviewV2,
+  useAttemptTranscripts,
+  useGradingJobs,
+  type AttemptReviewV2Row,
+  type GradingJobRow,
+  type TranscriptRow,
+  type WritingFeedback,
+} from "~/lib/practice-queries";
 import { AppShell } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
@@ -8,8 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/Tabs";
 import { formatBand, tallyBy } from "~/lib/scoring";
 import { cn } from "~/lib/cn";
 import { Protected } from "~/lib/auth";
-import { useAttemptResult, useAttemptReview } from "~/lib/queries";
-import type { AttemptReviewRow, CriterionFeedback, SpeakingScoreRow, WritingScoreRow } from "~/types/database";
+import { queryKeys, useAttemptResult } from "~/lib/queries";
+import type { CriterionFeedback, SpeakingScoreRow } from "~/types/database";
 
 export const Route = createFileRoute("/results/$attemptId")({ component: ResultRoute });
 
@@ -89,7 +101,7 @@ function ObjectivePanel({
   section: "listening" | "reading";
   raw: number | null;
   band: number | null;
-  review: AttemptReviewRow[];
+  review: AttemptReviewV2Row[];
 }) {
   const rows = review
     .filter((r) => r.section === section)
@@ -143,13 +155,6 @@ function ObjectivePanel({
     </div>
   );
 }
-
-const WRITING_CRITERIA: Array<[keyof WritingScoreRow, string]> = [
-  ["task_achievement", "Task Achievement / Response"],
-  ["coherence_cohesion", "Coherence and Cohesion"],
-  ["lexical_resource", "Lexical Resource"],
-  ["grammatical_range", "Grammatical Range and Accuracy"],
-];
 
 const SPEAKING_CRITERIA: Array<[keyof SpeakingScoreRow, string]> = [
   ["fluency_coherence", "Fluency and Coherence"],
@@ -205,7 +210,7 @@ function CriteriaPanel({
                         {feedback.evidence.map((quote, j) => (
                           <li
                             key={j}
-                            className="border-l-2 border-line-strong pl-3 text-xs italic leading-relaxed text-muted"
+                            className="border-s-2 border-line-strong ps-3 text-xs italic leading-relaxed text-muted"
                           >
                             “{quote}”
                           </li>
@@ -223,13 +228,209 @@ function CriteriaPanel({
   );
 }
 
+const JOB_STATUS: Record<GradingJobRow["status"], { label: string; tone: "neutral" | "brand" | "good" | "bad" }> = {
+  pending: { label: "Queued", tone: "neutral" },
+  running: { label: "Grading…", tone: "brand" },
+  done: { label: "Done", tone: "good" },
+  failed: { label: "Grading failed — contact support", tone: "bad" },
+};
+
+function GradingPanel({ jobs }: { jobs: GradingJobRow[] | undefined }) {
+  return (
+    <Card className="mt-6 border-brand-200 bg-brand-50/40">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-brand-600" aria-hidden />
+          Grading your Writing and Speaking…
+        </CardTitle>
+      </CardHeader>
+      <CardBody>
+        <p className="mb-3 text-sm text-ink-soft">
+          This usually takes a minute or two. You can leave this page; your bands will be here when you come back.
+        </p>
+        {!jobs ? (
+          <p className="text-sm text-muted">Checking progress…</p>
+        ) : (
+          <ul className="grid gap-2">
+            {jobs.map((job) => (
+              <li key={job.id} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-surface px-3 py-2 text-sm">
+                <span className="flex items-center gap-2">
+                  <Icon name={job.kind === "writing" ? "pen" : "mic"} size={16} className="text-brand-600" />
+                  {job.kind === "writing" ? `Writing Task ${job.part_number}` : `Speaking Part ${job.part_number}`}
+                </span>
+                <Badge tone={JOB_STATUS[job.status].tone}>{JOB_STATUS[job.status].label}</Badge>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardBody>
+    </Card>
+  );
+}
+
+function TranscriptLines({ text }: { text: string }) {
+  const lines = text.split(/\n+/).filter((l) => l.trim());
+  return (
+    <div className="grid gap-2 text-sm leading-relaxed">
+      {lines.map((line, i) => {
+        const m = /^([A-Z][\w .'-]{0,30}):\s*(.*)$/.exec(line.trim());
+        return (
+          <p key={i}>
+            {m ? (
+              <>
+                <strong className="font-semibold">{m[1]}:</strong> {m[2]}
+              </>
+            ) : (
+              line
+            )}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+function TranscriptPart({ part }: { part: TranscriptRow }) {
+  const [rate, setRate] = useState("1");
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    if (audio) audio.playbackRate = Number(rate);
+  }, [audio, rate]);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Part {part.part_number}</CardTitle>
+      </CardHeader>
+      <CardBody>
+        {part.audio_url && (
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <audio ref={setAudio} controls preload="none" src={part.audio_url} className="min-w-0 flex-1" />
+            <label className="flex items-center gap-2 text-sm text-muted">
+              Speed
+              <select
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
+                className="h-9 rounded-lg border border-line-strong bg-surface px-2 text-sm text-ink"
+              >
+                {["0.75", "1", "1.25", "1.5"].map((r) => (
+                  <option key={r} value={r}>
+                    {r}×
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        )}
+        <TranscriptLines text={part.transcript} />
+      </CardBody>
+    </Card>
+  );
+}
+
+interface SpeakingStats {
+  wordCount?: number;
+  wordsPerMinute?: number;
+  fillerCount?: number;
+  fillerRate?: number;
+  longPauses?: number;
+  topFillers?: Array<{ filler: string; count: number }>;
+  speakingSeconds?: number;
+}
+
+function SpeakingExtras({ row }: { row: SpeakingScoreRow }) {
+  const fb = (row.feedback ?? {}) as Record<string, unknown>;
+  const stats = (fb.stats ?? null) as SpeakingStats | null;
+  const better = typeof fb.better_answer === "string" ? fb.better_answer : null;
+  return (
+    <div className="mt-4 grid gap-4">
+      {stats && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Delivery</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <p className="text-2xl font-semibold tabular-nums">{stats.wordsPerMinute != null ? Math.round(stats.wordsPerMinute) : "—"}</p>
+                <p className="text-xs text-muted">words per minute</p>
+              </div>
+              <div>
+                <p className="text-2xl font-semibold tabular-nums">
+                  {stats.fillerRate != null ? Number(stats.fillerRate).toFixed(1) : "—"}
+                </p>
+                <p className="text-xs text-muted">fillers per 100 words</p>
+              </div>
+              <div>
+                <p className="text-2xl font-semibold tabular-nums">{stats.longPauses ?? "—"}</p>
+                <p className="text-xs text-muted">long pauses</p>
+              </div>
+            </div>
+            {stats.topFillers?.length ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {stats.topFillers.map((f) => (
+                  <Badge key={f.filler} tone="warn">
+                    “{f.filler}” × {f.count}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
+          </CardBody>
+        </Card>
+      )}
+      {row.transcript && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Your transcript</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-ink-soft">{row.transcript}</p>
+          </CardBody>
+        </Card>
+      )}
+      {better && (
+        <Card className="border-good/30">
+          <CardHeader>
+            <CardTitle>A stronger answer</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <p className="whitespace-pre-line text-sm leading-relaxed">{better}</p>
+          </CardBody>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 function ResultPage() {
   const { attemptId } = useParams({ from: "/results/$attemptId" });
   const { data, isLoading } = useAttemptResult(attemptId);
   const [reviewFilter, setReviewFilter] = useState<"all" | "wrong">("all");
 
-  const submitted = data?.attempt.status === "completed";
-  const { data: review } = useAttemptReview(attemptId, submitted);
+  const queryClient = useQueryClient();
+  const submitted = Boolean(data?.attempt.submitted_at);
+  const completed = data?.attempt.status === "completed";
+  const gradingActive = data?.attempt.status === "awaiting_speaking" && submitted;
+
+  const [poll, setPoll] = useState(true);
+  const { data: jobs } = useGradingJobs(gradingActive ? attemptId : undefined, gradingActive && poll);
+  const allDone = Boolean(jobs && jobs.length > 0 && jobs.every((j) => j.status === "done" || j.status === "failed"));
+  useEffect(() => {
+    setPoll(!allDone);
+  }, [allDone]);
+  // Once every job has finished, refresh the result until the bands land.
+  useEffect(() => {
+    if (!gradingActive || !allDone) return;
+    const refresh = () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.result(attemptId) });
+      queryClient.invalidateQueries({ queryKey: ["attempts"] });
+    };
+    refresh();
+    const id = window.setInterval(refresh, 5000);
+    return () => window.clearInterval(id);
+  }, [gradingActive, allDone, attemptId, queryClient]);
+
+  const { data: review } = useAttemptReviewV2(attemptId, submitted);
+  const { data: transcripts } = useAttemptTranscripts(attemptId, submitted);
 
   const rows = useMemo(
     () =>
@@ -272,7 +473,9 @@ function ResultPage() {
           <Badge tone="brand" className="capitalize">
             {(data.attempt.test_forms?.variant ?? "").replace("_", " ")}
           </Badge>
-          {!submitted && <Badge tone="warn">Awaiting speaking</Badge>}
+          {!completed && (
+            <Badge tone="warn">{gradingActive ? "Grading in progress" : "Awaiting speaking"}</Badge>
+          )}
         </div>
         <p className="mt-1.5 text-sm text-muted">
           {data.attempt.submitted_at
@@ -284,6 +487,8 @@ function ResultPage() {
             : "Not yet submitted"}
         </p>
       </div>
+
+      {gradingActive && <GradingPanel jobs={jobs} />}
 
       {/* Bands */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -313,6 +518,7 @@ function ResultPage() {
           <TabsTrigger value="reading">Reading</TabsTrigger>
           <TabsTrigger value="writing">Writing</TabsTrigger>
           <TabsTrigger value="speaking">Speaking</TabsTrigger>
+          <TabsTrigger value="transcript">Listening transcript</TabsTrigger>
         </TabsList>
 
         <TabsContent value="listening" className="mt-4">
@@ -332,20 +538,66 @@ function ResultPage() {
           />
         </TabsContent>
         <TabsContent value="writing" className="mt-4">
-          <CriteriaPanel
-            rows={data.writing as unknown as Array<Record<string, unknown>>}
-            criteria={WRITING_CRITERIA as Array<[string, string]>}
-            emptyMessage="Your writing has not been graded yet."
-            labelFor={(row) => `Task ${row.task_number}`}
-          />
+          {data.writing.length === 0 ? (
+            <Card>
+              <CardBody className="pt-5 text-sm text-muted">Your writing has not been graded yet.</CardBody>
+            </Card>
+          ) : (
+            <div className="grid gap-8">
+              {data.writing.map((row) => (
+                <div key={row.id}>
+                  <h3 className="mb-3 text-sm font-semibold">Task {row.task_number}</h3>
+                  <EssayFeedback
+                    taskNumber={row.task_number}
+                    task_band={row.task_band}
+                    task_achievement={row.task_achievement}
+                    coherence_cohesion={row.coherence_cohesion}
+                    lexical_resource={row.lexical_resource}
+                    grammatical_range={row.grammatical_range}
+                    feedback={row.feedback as unknown as WritingFeedback}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </TabsContent>
         <TabsContent value="speaking" className="mt-4">
-          <CriteriaPanel
-            rows={data.speaking as unknown as Array<Record<string, unknown>>}
-            criteria={SPEAKING_CRITERIA as Array<[string, string]>}
-            emptyMessage="Your speaking has not been graded yet."
-            labelFor={(row) => `Part ${row.part_number}`}
-          />
+          {data.speaking.length === 0 ? (
+            <CriteriaPanel rows={[]} criteria={[]} emptyMessage="Your speaking has not been graded yet." labelFor={() => ""} />
+          ) : (
+            <div className="grid gap-10">
+              {data.speaking.map((row) => (
+                <div key={row.id}>
+                  <CriteriaPanel
+                    rows={[row as unknown as Record<string, unknown>]}
+                    criteria={SPEAKING_CRITERIA as Array<[string, string]>}
+                    emptyMessage=""
+                    labelFor={() => `Part ${row.part_number}`}
+                  />
+                  <SpeakingExtras row={row} />
+                </div>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="transcript" className="mt-4">
+          {!submitted ? (
+            <Card>
+              <CardBody className="pt-5 text-sm text-muted">Transcripts are released once the attempt is submitted.</CardBody>
+            </Card>
+          ) : !transcripts?.length ? (
+            <Card>
+              <CardBody className="pt-5 text-sm text-muted">No listening transcript for this test.</CardBody>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {[...transcripts]
+                .sort((a, b) => a.part_number - b.part_number)
+                .map((part) => (
+                  <TranscriptPart key={part.group_id} part={part} />
+                ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
@@ -381,7 +633,7 @@ function ResultPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[46rem] text-sm">
-              <thead className="border-b border-line bg-paper text-left text-xs uppercase tracking-wide text-muted">
+              <thead className="border-b border-line bg-paper text-start text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 font-medium">#</th>
                   <th className="px-4 py-3 font-medium">Section</th>
@@ -407,8 +659,11 @@ function ResultPage() {
                     >
                       {row.user_answer || "—"}
                     </td>
-                    <td className="px-4 py-3 text-ink-soft">
+                    <td className="max-w-sm px-4 py-3 text-ink-soft">
                       {row.accepted_answers?.join(" / ")}
+                      {row.explanation && (
+                        <p className="mt-1.5 text-xs leading-relaxed text-muted">{row.explanation}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <Badge tone={row.is_correct ? "good" : "bad"}>

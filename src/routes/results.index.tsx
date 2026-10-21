@@ -63,7 +63,7 @@ function ResultsList() {
                       {attempt.status === "awaiting_speaking" ? "Awaiting speaking" : "In progress"}
                     </Badge>
                   )}
-                  <span className="w-12 text-right text-lg font-semibold tabular-nums">
+                  <span className="w-12 text-end text-lg font-semibold tabular-nums">
                     {attempt.attempt_scores?.overall_band
                       ? formatBand(Number(attempt.attempt_scores.overall_band))
                       : "—"}

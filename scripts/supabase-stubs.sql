@@ -26,3 +26,55 @@ grant usage on schema public to authenticated, anon, service_role;
 alter default privileges in schema public grant all on tables to service_role;
 -- On Supabase the service role bypasses RLS entirely.
 alter role service_role bypassrls;
+
+-- MoreTOEFL objects that MoreIELTS reuses in the shared project: the account
+-- profile (written by MoreTOEFL's signup trigger) and is_admin(). Minimal
+-- copies of the live definitions, local test use only.
+create table if not exists public.profiles (
+  id uuid primary key references auth.users (id) on delete cascade,
+  email text,
+  full_name text,
+  role text not null default 'user',
+  tier text not null default 'free',
+  premium_expires_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create or replace function public.handle_new_user() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.profiles (id, email) values (new.id, new.email) on conflict (id) do nothing;
+  return new;
+end; $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users
+  for each row execute function public.handle_new_user();
+create or replace function public.is_admin() returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin');
+$$;
+grant select on public.profiles to authenticated;
+grant execute on function public.is_admin() to authenticated, anon;
+
+-- Minimal Supabase Storage stand-ins (buckets, objects, foldername()).
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id text primary key, name text, public boolean default false,
+  file_size_limit bigint, allowed_mime_types text[]
+);
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(), bucket_id text, name text, owner uuid
+);
+alter table storage.objects enable row level security;
+create or replace function storage.foldername(name text) returns text[]
+language sql immutable as $$ select (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1] $$;
+grant usage on schema storage to authenticated, anon, service_role;
+
+-- Vault and pg_net stand-ins.
+create schema if not exists vault;
+create table if not exists vault.secrets (id uuid primary key default gen_random_uuid(), name text unique, secret text);
+create or replace view vault.decrypted_secrets as select id, name, secret as decrypted_secret from vault.secrets;
+create or replace function vault.create_secret(p_secret text, p_name text) returns uuid
+language sql as $$ insert into vault.secrets (name, secret) values (p_name, p_secret) returning id $$;
+create schema if not exists net;
+create or replace function net.http_post(url text, headers jsonb default '{}', body jsonb default '{}', timeout_milliseconds int default 1000)
+returns bigint language sql as $$ select 1::bigint $$;

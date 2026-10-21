@@ -74,9 +74,9 @@ const DASH_MAP: Record<string, string> = {
  */
 export function normalizeText(input: string): string {
   let out = input.normalize("NFKC");
-  out = out.replace(/[‘’‚‛“”„«»]/g, (c) => QUOTE_MAP[c] ?? c);
-  out = out.replace(/[‐‑‒–—―−]/g, (c) => DASH_MAP[c] ?? c);
-  out = out.replace(/[   ]/g, " ");
+  out = out.replace(/[\u2018\u2019\u201A\u201B\u201C\u201D\u201E\u00AB\u00BB]/g, (c) => QUOTE_MAP[c] ?? c);
+  out = out.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, (c) => DASH_MAP[c] ?? c);
+  out = out.replace(/[\u00A0\u2007\u202F]/g, " ");
   return out.trim().replace(/\s+/g, " ");
 }
 
@@ -282,7 +282,7 @@ function canonicaliseNumbers(text: string): string {
   let out = text;
 
   // Currency symbol -> trailing code: "£32.50" -> "32.50 gbp"
-  out = out.replace(/([£$€])\s?(\d[\d.,]*)/g, (_, sym: string, num: string) => {
+  out = out.replace(/([\u00A3$\u20AC])\s?(\d[\d.,]*)/g, (_, sym: string, num: string) => {
     return `${num} ${CURRENCY_WORDS[sym]}`;
   });
   // Currency word -> code: "32.50 pounds" -> "32.50 gbp"

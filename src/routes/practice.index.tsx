@@ -5,7 +5,7 @@ import { AppShell } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
 import { PRACTICE_META, PRACTICE_SECTIONS } from "~/data/practice";
-import { Protected, useAuth } from "~/lib/auth";
+import { PremiumGate, useAuth } from "~/lib/auth";
 import {
   fetchHistory,
   formatHistoryScore,
@@ -29,9 +29,9 @@ export const Route = createFileRoute("/practice/")({
 
 function PracticeRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <PracticeHome />
-    </Protected>
+    </PremiumGate>
   );
 }
 

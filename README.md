@@ -53,7 +53,14 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 | `R2_SECRET_ACCESS_KEY` | Edge Functions | R2 secret |
 | `R2_BUCKET` | Edge Functions | Bucket holding audio, images and speaking recordings |
 | `R2_PUBLIC_BASE_URL` | Edge Functions | Public base URL of the bucket, used to build stored object URLs |
-| `SITE_URL` | Edge Functions | Origin allowed by CORS |
+| `SITE_URL` | Edge Functions | Origin allowed by CORS, and the Stripe return URL base |
+| `GRADING_MODEL` | Edge Functions | Optional. Claude model for grading (default `claude-opus-5-5`) |
+| `OPENAI_API_KEY` | Edge Functions | Speaking transcription (`whisper-1`) and listening narration (`gpt-4o-mini-tts`) |
+| `TRANSCRIBE_MODEL`, `TTS_MODEL` | Edge Functions | Optional overrides for the two OpenAI models |
+| `GRADING_WORKER_KEY` | Edge Functions | Shared secret for `grading-worker` and batch `generate-audio` calls; must equal the Vault secret `ielts_grading_worker_key` |
+| `STRIPE_SECRET_KEY` | Edge Functions | Stripe API key for `checkout` |
+| `STRIPE_WEBHOOK_SECRET` | Edge Functions | Signing secret of the `stripe-webhook` endpoint |
+| `STRIPE_PRICE_MONTH`, `STRIPE_PRICE_QUARTER` | Edge Functions | Stripe Price ids for the 30- and 90-day Premium passes |
 
 Google OAuth is configured in the Supabase dashboard (Authentication →
 Providers). Because the project is shared with MoreTOEFL, its Site URL is
@@ -198,9 +205,16 @@ existing renderer, nothing else changes.
 | `/` | Dashboard — target vs estimated band, resume card, recent attempts |
 | `/practice` | Practice — the four skills, five AI-corrected items each, recent results |
 | `/practice/$section` | Practice runner for `listening`, `reading`, `writing` or `speaking` |
+| `/drills` | Question types ranked by your accuracy; starts a drill |
+| `/drill/$typeCode` | One part's questions of a type, server-marked, explanations and script |
+| `/review` | Mistake notebook — Leitner spaced repetition of wrong answers |
+| `/writing-lab` | Essays outside a mock: background AI grading, corrections, band+1 rewrite, rewrite loop |
+| `/vocabulary` | 16 IELTS topics × 25 words with Arabic meanings, flashcards (public) |
+| `/guides`, `/guides/$slug` | Public strategy page per question type (SEO surface) |
+| `/pricing` | Premium passes via Stripe Checkout, access codes |
 | `/mock` | Published forms and the section order |
-| `/learn` | Format reference and every question type |
-| `/enhance` | Weakest question types from your last attempt |
+| `/learn` | Format reference and links to every strategy guide (public) |
+| `/enhance` | Study plan: goals, exam countdown, today's checklist, weak spots |
 | `/test/reading` | Reading player — split pane, navigator, tabbed on mobile |
 | `/test/listening` | Listening player — play-once audio, current part's questions |
 | `/test/writing` | Writing player — live word count, autosave, one 60-min clock |
@@ -334,6 +348,89 @@ reach the browser.
 
 ## Not built
 
-Cloudflare Stream video, payments, and course content. Speech-to-text for
-speaking recordings in the mock test is stubbed as described above (Speaking
-*practice* transcribes in the browser with the Web Speech API).
+Cloudflare Stream video and course content. Speech-to-text for
+speaking recordings in the mock test are transcribed on the server (Whisper) by the grading worker; Speaking *practice* transcribes in the browser with the Web Speech API.
+
+## Shared project and naming
+
+MoreIELTS runs in the Supabase project it shares with MoreTOEFL
+(`nlsuvapjkznatczghvay`). Every MoreIELTS table, view, function, index, cron
+job, Vault secret and Edge Function is prefixed `ielts_` / `ielts-`, and no
+migration here touches a MoreTOEFL object. Accounts (name, email, admin role)
+are MoreTOEFL's `public.profiles`, read only; `public.is_admin()` is reused.
+Everything IELTS-specific about a learner, including IELTS Premium, lives in
+`ielts_learners`, created on first visit by `ielts_ensure_learner()`.
+
+## Premium-only, access codes and mock exams (migration 0013)
+
+MoreIELTS has no free tier. `ielts_is_premium()` (an active
+`ielts_learners.premium_expires_at`, or an admin) gates every question
+(`ielts_questions_public`), passage and audio (`ielts_item_groups` RLS),
+attempt (`ielts_start_attempt`), drill, essay and learner mark on the server;
+`<PremiumGate>` gives the same rule a friendly face in the app. The form
+catalogue stays readable so locked exams can be listed.
+
+Admins generate codes at **Admin → Access codes** (up to 500 per batch:
+duration, prefix, batch label, optional redeem-by date; copy or CSV). Learners
+redeem them on `/pricing`; time stacks on top of any Premium they already have.
+
+Forms have a `purpose`: `practice` forms feed the skill sections (drills,
+writing-lab prompts); `mock` forms are the full exams on the Mock Test page,
+run in order Listening → Reading → Writing → Speaking with `?form=<id>`.
+There are four mock exams (`mock-academic-1/2`, `mock-general-1/2`).
+
+Listening audio is narrated from each part's script by
+`npm run mock:audio -- --all` (OpenAI speech + ffmpeg, one gender-matched
+voice per speaker) into `public/audio/mock` and `public/audio/forms`, and
+`npm run seed:generate` points `audio_url` at those files.
+
+## Edge Functions in the shared project
+
+The deployed functions are `ielts-submit-attempt`, `ielts-drill`,
+`ielts-grading-worker` (no JWT; it checks a key that exists only in Vault,
+via `ielts_check_worker_key()`) and `ielts-generate-audio`. They use secrets
+the shared project already has: `ANTHROPIC_API_KEY` (grading) and
+`ELEVENLABS_API_KEY` (speaking transcription, in-app narration). Media is in
+Supabase Storage (`ielts-media` public, `ielts-recordings` private).
+
+`npm run functions:build` bundles each function into
+`supabase/functions/_dist/<name>.js`. Each deployed function is a one-line
+loader that imports its bundle from jsDelivr at a pinned commit, so update a
+function by rebuilding, committing, and redeploying the loader with the new
+commit hash.
+
+## Background grading, audio and payments (migrations 0007–0010)
+
+**Grading.** Submitting a whole attempt marks Listening and Reading at once
+and queues one `grading_jobs` row per Writing task and Speaking part.
+`grading-worker` claims jobs (`SKIP LOCKED`), grades them, and re-scores the
+attempt, which flips to `completed` when the last job lands. The pg_cron job
+`grading-sweep` calls the worker every minute while anything is pending and
+marks a job `failed` after five tries. Speaking is transcribed on the server
+from the stored recordings; nothing the client sends is graded.
+
+One-time setup after `supabase db push`:
+
+```sql
+-- Database -> Extensions: enable pg_net and pg_cron first.
+select vault.create_secret('<same value as GRADING_WORKER_KEY>', 'ielts_grading_worker_key');
+select vault.create_secret('https://<ref>.supabase.co/functions/v1/ielts-grading-worker', 'grading_worker_url');
+```
+
+**Listening audio.** Scripts live in the admin-only `item_group_scripts`
+table (never on `item_groups`, which candidates can read). In the form
+builder, a listening part's *Script & audio* panel runs `generate-audio`,
+which gives each speaker a voice and accent, uploads the MP3 to R2 and sets
+`audio_url`.
+
+**Content.** Forms are authored in `scripts/seed-content/forms/<slug>`.
+`npm run seed:validate` checks them; `npm run seed:generate` writes
+`supabase/seed.sql` (six forms: four Academic, two General Training).
+
+**Payments.** `checkout` creates a Stripe Checkout Session for a 30- or
+90-day pass; `stripe-webhook` (point Stripe's `checkout.session.completed`
+at `https://<ref>.supabase.co/functions/v1/ielts-stripe-webhook`) grants Premium
+through the idempotent `grant_paid_premium()`.
+
+`grading-worker` and `stripe-webhook` are deployed with `--no-verify-jwt`
+(their own key / signature is the auth); `npm run functions:deploy` does both.

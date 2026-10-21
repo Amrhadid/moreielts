@@ -3,7 +3,7 @@ import { AppShell } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
-import { Protected } from "~/lib/auth";
+import { Protected, useAuth } from "~/lib/auth";
 import { useForms } from "~/lib/queries";
 
 export const Route = createFileRoute("/mock")({ component: MockRoute });
@@ -26,7 +26,9 @@ const ORDER = [
 function MockTest() {
   // RLS returns published forms only, so this list is already safe to show.
   const { data: forms, isLoading } = useForms();
-  const published = (forms ?? []).filter((f) => f.is_published);
+  const { isPremium } = useAuth();
+  // Full exams only: the practice forms feed the skill sections instead.
+  const published = (forms ?? []).filter((f) => f.is_published && f.purpose === "mock");
 
   return (
     <AppShell>
@@ -42,13 +44,13 @@ function MockTest() {
       ) : published.length === 0 ? (
         <Card className="mt-6">
           <CardBody className="pt-5 text-sm text-muted">
-            No published test forms yet. An admin can create and publish one from the
-            admin console.
+            No mock exams are published yet. An admin can publish one from the admin
+            console.
           </CardBody>
         </Card>
       ) : (
         <div className="mt-6 grid gap-3">
-          {published.map((form) => (
+          {[...published].sort((a, b) => a.title.localeCompare(b.title)).map((form) => (
             <Card key={form.id} className="border-brand-200 bg-brand-50/40">
               <CardHeader>
                 <div className="flex flex-wrap items-center gap-3">
@@ -56,6 +58,7 @@ function MockTest() {
                   <Badge tone="brand" className="capitalize">
                     {form.variant.replace("_", " ")}
                   </Badge>
+                  <Badge tone="neutral" className="capitalize">{form.difficulty}</Badge>
                   {form.is_premium && <Badge tone="warn">Premium</Badge>}
                 </div>
               </CardHeader>
@@ -64,9 +67,17 @@ function MockTest() {
                   {form.description ??
                     "Approximately 2 hours 45 minutes including the speaking test. Fixed test form — the difficulty does not change as you work."}
                 </p>
-                <Button asChild size="lg" className="mt-4">
-                  <Link to="/test/listening">Begin with Listening</Link>
-                </Button>
+                {isPremium ? (
+                  <Button asChild size="lg" className="mt-4">
+                    <Link to="/test/listening" search={{ form: form.id }}>
+                      Start the exam with Listening
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild size="lg" variant="secondary" className="mt-4">
+                    <Link to="/pricing">Unlock with an access code</Link>
+                  </Button>
+                )}
               </CardBody>
             </Card>
           ))}

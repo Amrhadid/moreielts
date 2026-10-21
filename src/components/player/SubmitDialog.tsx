@@ -17,19 +17,30 @@ import type { SectionCode } from "~/types/content";
  * responses and writes the scores. The client only asks for it and routes to
  * the result.
  */
+/** A full mock runs in the official order; Speaking ends the attempt. */
+const NEXT_SECTION: Partial<Record<SectionCode, { section: SectionCode; to: string }>> = {
+  listening: { section: "reading", to: "/test/reading" },
+  reading: { section: "writing", to: "/test/writing" },
+  writing: { section: "speaking", to: "/test/speaking" },
+};
+
 export function SubmitDialog({
   attemptId,
   section,
+  formId,
   answeredCount,
   total,
   label = "Submit",
 }: {
   attemptId: string;
   section?: SectionCode;
+  /** The form being sat, carried to the next section's player. */
+  formId?: string;
   answeredCount: number;
   total: number;
   label?: string;
 }) {
+  const next = section ? NEXT_SECTION[section] : undefined;
   const navigate = useNavigate();
   const submit = useSubmitAttempt();
   const [error, setError] = useState<string | null>(null);
@@ -38,8 +49,14 @@ export function SubmitDialog({
   async function onSubmit() {
     setError(null);
     try {
-      await submit.mutateAsync({ attemptId });
-      navigate({ to: "/results/$attemptId", params: { attemptId } });
+      if (next) {
+        // Marks this section and keeps the attempt open for the next one.
+        await submit.mutateAsync({ attemptId, section });
+        navigate({ to: next.to as "/test/reading", search: (formId ? { form: formId } : {}) as never });
+      } else {
+        await submit.mutateAsync({ attemptId });
+        navigate({ to: "/results/$attemptId", params: { attemptId } });
+      }
     } catch (err) {
       setError((err as Error).message ?? "Submission failed. Try again.");
     }
@@ -70,7 +87,11 @@ export function SubmitDialog({
             <Button variant="outline">Keep working</Button>
           </DialogClose>
           <Button onClick={onSubmit} disabled={submit.isPending}>
-            {submit.isPending ? "Submitting…" : `Submit ${section ?? "section"}`}
+            {submit.isPending
+              ? "Submitting…"
+              : next
+                ? `Submit and continue to ${next.section}`
+                : `Submit ${section ?? "section"}`}
           </Button>
         </div>
       </DialogContent>

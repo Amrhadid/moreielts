@@ -22,3 +22,5 @@ done
 psql -q -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/seed.sql" >/dev/null
 psql -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/tests/rls_test.sql" 2>&1 |
   grep -E "NOTICE|ERROR" || true
+psql -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/tests/practice_test.sql" 2>&1 |
+  grep -E "NOTICE|ERROR" || true

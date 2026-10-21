@@ -5,8 +5,10 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
-import { AuthProvider } from "~/lib/auth";
+import { useEffect, useState, type ReactNode } from "react";
+import { AuthProvider, useAuth } from "~/lib/auth";
+import { installErrorReporter, registerServiceWorker } from "~/lib/error-reporter";
+import { I18nProvider } from "~/lib/i18n";
 import appCss from "~/styles.css?url";
 
 export const Route = createRootRoute({
@@ -14,6 +16,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#0875c9" },
+      { property: "og:site_name", content: "MoreIELTS" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/icons/icon-512.png" },
       { title: "MoreIELTS — IELTS practice and mock exams" },
       {
         name: "description",
@@ -24,6 +30,8 @@ export const Route = createRootRoute({
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
     ],
   }),
   shellComponent: RootDocument,
@@ -41,18 +49,40 @@ function RootDocument({ children }: { children: ReactNode }) {
       }),
   );
 
+  useEffect(() => {
+    installErrorReporter();
+    registerServiceWorker();
+  }, []);
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <LocaleFromProfile>{children}</LocaleFromProfile>
+          </AuthProvider>
         </QueryClientProvider>
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function LocaleFromProfile({ children }: { children: ReactNode }) {
+  const { profile, user } = useAuth();
+  return (
+    <I18nProvider profileLocale={profile?.locale ?? null} userId={user?.id ?? null}>
+      {children}
+    </I18nProvider>
   );
 }
 

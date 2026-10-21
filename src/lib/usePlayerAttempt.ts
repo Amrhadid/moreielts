@@ -1,8 +1,10 @@
+import { useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useAttemptResponses,
   useAttemptState,
   useDefaultForm,
+  useFormById,
   useHeartbeat,
   useSaveResponse,
   useSectionContent,
@@ -25,7 +27,12 @@ const SAVE_DEBOUNCE_MS = 600;
  * that arrives after section_deadline_at. A tampered client clock buys nothing.
  */
 export function usePlayerAttempt(section: SectionCode) {
-  const { data: form, isLoading: formLoading, error: formError } = useDefaultForm();
+  // The Mock Test page opens each section with ?form=<id>; without one the
+  // player falls back to the default published form.
+  const search = useSearch({ strict: false }) as { form?: string };
+  const chosen = useFormById(search.form);
+  const fallback = useDefaultForm();
+  const { data: form, isLoading: formLoading, error: formError } = search.form ? chosen : fallback;
   const startAttempt = useStartAttempt();
   const startSection = useStartSection();
   const saveResponse = useSaveResponse();

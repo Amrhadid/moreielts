@@ -1,4 +1,5 @@
 import { QuestionRenderer } from "~/components/renderers/QuestionRenderer";
+import { Icon } from "~/components/ui/Icon";
 import { cn } from "~/lib/cn";
 import type { AnswerSheet, ItemGroup } from "~/types/content";
 
@@ -12,12 +13,17 @@ export function QuestionBlock({
   onAnswer,
   current,
   registerRef,
+  flagged,
+  onToggleFlag,
 }: {
   group: ItemGroup;
   answers: AnswerSheet;
   onAnswer: (questionId: string, value: string | string[]) => void;
   current: number;
   registerRef: (n: number, el: HTMLDivElement | null) => void;
+  /** Optional "flag for review" support. */
+  flagged?: Set<number>;
+  onToggleFlag?: (n: number) => void;
 }) {
   return (
     <section className="mb-8">
@@ -42,6 +48,22 @@ export function QuestionBlock({
               <span className="text-[0.6875rem] uppercase tracking-wide text-muted">
                 {q.typeLabel ?? q.type}
               </span>
+              {onToggleFlag && (
+                <button
+                  type="button"
+                  onClick={() => onToggleFlag(q.number)}
+                  aria-pressed={flagged?.has(q.number) ?? false}
+                  className={cn(
+                    "ms-auto inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs transition-colors",
+                    flagged?.has(q.number)
+                      ? "bg-warn-soft text-warn"
+                      : "text-muted hover:bg-paper",
+                  )}
+                >
+                  <Icon name="flag" className="size-3.5" />
+                  {flagged?.has(q.number) ? "Flagged" : "Flag for review"}
+                </button>
+              )}
             </div>
             <p className="mb-3 text-sm leading-relaxed">{q.prompt}</p>
             <QuestionRenderer

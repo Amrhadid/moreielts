@@ -7,7 +7,7 @@
 -- instead, which simply does not project the answer columns. There is no
 -- client-side filtering anywhere in the stack.
 
-create or replace view public.questions_public
+create or replace view public.ielts_questions_public
 with (security_invoker = off) as
   select
     q.id,
@@ -24,25 +24,25 @@ with (security_invoker = off) as
     t.renderer,
     t.label as type_label,
     t.section
-  from public.questions q
-  join public.question_types t on t.code = q.type_code
-  join public.item_groups g on g.id = q.group_id
-  join public.test_sections s on s.id = g.section_id
-  join public.test_forms f on f.id = s.form_id
+  from public.ielts_questions q
+  join public.ielts_question_types t on t.code = q.type_code
+  join public.ielts_item_groups g on g.id = q.group_id
+  join public.ielts_test_sections s on s.id = g.section_id
+  join public.ielts_test_forms f on f.id = s.form_id
   where f.is_published;
 
-comment on view public.questions_public is
+comment on view public.ielts_questions_public is
   'Candidate-safe question projection. Excludes accepted_answers and '
   'scoring_rules by construction, and exposes published forms only.';
 
-revoke all on public.questions_public from anon;
-grant select on public.questions_public to authenticated;
+revoke all on public.ielts_questions_public from anon;
+grant select on public.ielts_questions_public to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Answer review, available only once an attempt is finished
 -- ---------------------------------------------------------------------------
 
-create or replace function public.get_attempt_review(p_attempt_id uuid)
+create or replace function public.ielts_get_attempt_review(p_attempt_id uuid)
 returns table (
   question_id uuid,
   section text,
@@ -61,9 +61,9 @@ security definer
 set search_path = public
 as $$
 declare
-  v_attempt public.attempts%rowtype;
+  v_attempt public.ielts_attempts%rowtype;
 begin
-  select * into v_attempt from public.attempts where id = p_attempt_id;
+  select * into v_attempt from public.ielts_attempts where id = p_attempt_id;
   if not found then
     raise exception 'attempt_not_found';
   end if;
@@ -90,16 +90,16 @@ begin
       r.answer,
       q.accepted_answers,
       r.is_correct
-    from public.questions q
-    join public.question_types t on t.code = q.type_code
-    join public.item_groups g on g.id = q.group_id
-    join public.test_sections s on s.id = g.section_id
-    left join public.responses r
+    from public.ielts_questions q
+    join public.ielts_question_types t on t.code = q.type_code
+    join public.ielts_item_groups g on g.id = q.group_id
+    join public.ielts_test_sections s on s.id = g.section_id
+    left join public.ielts_responses r
       on r.question_id = q.id and r.attempt_id = p_attempt_id
     where s.form_id = v_attempt.form_id
     order by s.order_index, g.order_index, q.order_index;
 end;
 $$;
 
-revoke all on function public.get_attempt_review(uuid) from public, anon;
-grant execute on function public.get_attempt_review(uuid) to authenticated;
+revoke all on function public.ielts_get_attempt_review(uuid) from public, anon;
+grant execute on function public.ielts_get_attempt_review(uuid) to authenticated;

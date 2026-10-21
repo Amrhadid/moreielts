@@ -124,7 +124,7 @@ function FormBuilder() {
           <Badge tone="brand" className="capitalize">
             {draft.form.variant.replace("_", " ")}
           </Badge>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ms-auto flex items-center gap-4">
             <div className="flex items-center gap-2.5">
               <Switch
                 id="premium"
@@ -179,7 +179,7 @@ function FormBuilder() {
                 )}
               >
                 {code}
-                <span className="ml-2 text-xs text-muted">
+                <span className="ms-2 text-xs text-muted">
                   {present
                     ? present.groups.reduce((sum, g) => sum + g.questions.length, 0)
                     : 0}

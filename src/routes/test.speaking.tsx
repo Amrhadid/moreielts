@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "~/components/layout/Logo";
 import { PlayerStatus } from "~/components/player/PlayerStatus";
@@ -6,17 +6,21 @@ import { Button } from "~/components/ui/Button";
 import { Textarea } from "~/components/ui/Field";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
-import { Protected } from "~/lib/auth";
+import { PremiumGate } from "~/lib/auth";
 import { uploadToR2, useSubmitAttempt } from "~/lib/queries";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
 
-export const Route = createFileRoute("/test/speaking")({ component: SpeakingRoute });
+export const Route = createFileRoute("/test/speaking")({
+  validateSearch: (s: Record<string, unknown>): { form?: string } =>
+    typeof s.form === "string" ? { form: s.form } : {},
+  component: SpeakingRoute,
+});
 
 function SpeakingRoute() {
   return (
-    <Protected>
+    <PremiumGate>
       <SpeakingPlayer />
-    </Protected>
+    </PremiumGate>
   );
 }
 
@@ -145,12 +149,12 @@ function Recorder({
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         {state === "idle" && (
           <Button size="lg" onClick={start}>
-            <span aria-hidden className="mr-1">●</span> Record answer
+            <span aria-hidden className="me-1">●</span> Record answer
           </Button>
         )}
         {state === "recording" && (
           <Button size="lg" variant="danger" onClick={stop}>
-            <span aria-hidden className="mr-1">■</span> Stop
+            <span aria-hidden className="me-1">■</span> Stop
           </Button>
         )}
         {state === "uploading" && <p className="text-sm text-muted">Uploading…</p>}
@@ -180,6 +184,7 @@ function Recorder({
 function SpeakingPlayer() {
   const player = usePlayerAttempt("speaking");
   const submit = useSubmitAttempt();
+  const navigate = useNavigate();
   const [partIndex, setPartIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [notes, setNotes] = useState("");
@@ -347,7 +352,15 @@ function SpeakingPlayer() {
             <Button
               className="mt-4"
               disabled={submit.isPending}
-              onClick={() => submit.mutate({ attemptId: player.attemptId! })}
+              onClick={() =>
+                submit.mutate(
+                  { attemptId: player.attemptId! },
+                  {
+                    onSuccess: () =>
+                      navigate({ to: "/results/$attemptId", params: { attemptId: player.attemptId! } }),
+                  },
+                )
+              }
             >
               {submit.isPending ? "Submitting…" : "Finish and score"}
             </Button>

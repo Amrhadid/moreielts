@@ -4,11 +4,14 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { signOut, useAuth } from "~/lib/auth";
 import { Logo } from "./Logo";
+import { Icon } from "~/components/ui/Icon";
+import { useI18n } from "~/lib/i18n";
 import { PRIMARY_NAV } from "./nav";
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const { profile, user, session, isAdmin } = useAuth();
+  const { profile, user, session, isAdmin, isPremium } = useAuth();
+  const { t, locale, setLocale } = useI18n();
 
   const email = profile?.email ?? user?.email ?? "";
   const name = profile?.full_name ?? email;
@@ -27,19 +30,37 @@ export function Header() {
           <Logo />
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-1 md:flex">
-          {PRIMARY_NAV.filter((i) => i.to !== "/").map((item) => (
+        <nav className="ms-6 hidden items-center gap-1 md:flex">
+          {PRIMARY_NAV.filter((i) => i.inHeader).map((item) => (
             <Link
               key={item.to}
               to={item.to}
               className="rounded-xl px-3.5 py-2.5 text-sm font-semibold text-ink-soft transition-all hover:bg-paper hover:text-ink data-[status=active]:bg-brand-50 data-[status=active]:text-brand-700"
             >
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ms-auto flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
+            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted hover:text-ink sm:inline-flex"
+            aria-label="Switch interface language"
+          >
+            <Icon name="globe" size={16} />
+            {t("common.language")}
+          </button>
+          {!isPremium && (
+            <Link
+              to="/pricing"
+              className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-warn hover:bg-warn-soft sm:inline-flex"
+            >
+              <Icon name="crown" size={16} />
+              {t("nav.pricing")}
+            </Link>
+          )}
           {isAdmin && (
             <Link
               to="/admin"
@@ -107,11 +128,11 @@ export function Header() {
               aria-label="Open navigation"
               className="grid h-9 w-9 place-items-center rounded-lg border border-line text-lg md:hidden"
             >
-              ☰
+              <span aria-hidden>☰</span>
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40" />
-              <Dialog.Content className="fixed inset-y-0 right-0 z-50 w-72 border-l border-line bg-surface p-4">
+              <Dialog.Content className="fixed inset-y-0 end-0 z-50 w-72 border-s border-line bg-surface p-4">
                 <div className="flex items-center justify-between">
                   <Dialog.Title className="text-sm font-semibold text-muted">
                     Menu
@@ -128,8 +149,8 @@ export function Header() {
                       onClick={() => setOpen(false)}
                       className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium hover:bg-paper"
                     >
-                      <span aria-hidden>{item.icon}</span>
-                      {item.label}
+                      <Icon name={item.icon} size={18} />
+                      {t(item.labelKey)}
                     </Link>
                   ))}
                   {isAdmin && (
@@ -138,9 +159,23 @@ export function Header() {
                       onClick={() => setOpen(false)}
                       className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium hover:bg-paper"
                     >
-                      <span aria-hidden>⚙️</span> Admin
+                      <Icon name="settings" size={18} /> {t("nav.admin")}
                     </Link>
                   )}
+                  <Link
+                    to="/pricing"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium hover:bg-paper"
+                  >
+                    <Icon name="crown" size={18} /> {t("nav.pricing")}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
+                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-start text-sm font-medium hover:bg-paper"
+                  >
+                    <Icon name="globe" size={18} /> {t("common.language")}
+                  </button>
                 </nav>
               </Dialog.Content>
             </Dialog.Portal>
