@@ -28,7 +28,7 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npx vite preview --port 4173 &
-          npx wait-on -t 60000 http://localhost:4173
+          npx -y wait-on -t 60000 http://localhost:4173
           BASE_URL=http://localhost:4173 npm run test:e2e
 
   database:
