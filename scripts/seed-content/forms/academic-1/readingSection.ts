@@ -309,6 +309,53 @@ The practical response has been procedural rather than psychological. Identifica
   ],
 };
 
+const EXPLANATIONS: Record<number, string> = {
+  1: 'The passage states it "has the largest wingspan of any living bird."',
+  2: 'The bird travels huge distances "while beating their wings only rarely", so the statement is false.',
+  3: 'Energy is extracted "from the wind gradient", because wind "is slowed near the surface by friction with the water."',
+  4: 'The passage never says how young birds acquire the technique.',
+  5: '"The expensive parts of an albatross\'s day are take-off and landing", while soaring costs "barely higher than ... sitting on the nest."',
+  6: '"A pair raises a single chick", not two.',
+  7: '"A tendon lock in the shoulder holds the wing extended."',
+  8: 'The chick grows slowly, "fledging after roughly nine months."',
+  9: 'Mitigation includes "streamer lines that scare birds away from the sinking hooks."',
+  10: 'Another measure is "setting gear at night when fewer birds are active."',
+  11: '"successful breeders can attempt it only every second year."',
+  12: 'The passage mentions "weighted lines that sink faster."',
+  13: '"seabird bycatch has fallen sharply, in some fisheries by more than ninety per cent."',
+  14: 'Paragraph A says nothing recorded "what the trees returned"; trees "appeared only as a cost."',
+  15: 'Paragraph B describes how "researchers started attaching instruments to street trees" to measure their effects.',
+  16: 'Paragraph C shows shade "falls unevenly", with canopy "tracking historical patterns of wealth."',
+  17: 'Paragraph D explains that benefits "accrue to a tree of thirty or forty years\' standing."',
+  18: 'Paragraph E covers species that may be "poorly suited to the conditions expected there in fifty years."',
+  19: 'Paragraph F says "What has changed, in the end, is not the trees but the accounting", as canopy returns "a given sum per year."',
+  20: 'Paragraph C: "the wealthiest districts commonly carried two or three times the leaf area of the poorest."',
+  21: 'Paragraph F: "Several cities now carry their trees on the asset register alongside the bridges and the drains."',
+  22: 'Paragraph D: "The councillor who authorises the planting will not be in office when the investment matures."',
+  23: 'Paragraph B: "A mature plane tree ... intercepts several thousand litres of rainfall a year."',
+  24: 'Shade can "lower the surface temperature beneath it by fifteen degrees or more."',
+  25: 'A new tree "requires watering through dry summers to survive at all."',
+  26: 'A diverse canopy is "more likely to survive both a warming climate and the arrival of a new pest."',
+  27: 'The writer says the model "survives, not least in the courtroom", so it has not been abandoned.',
+  28: '"The reproductions did not simply lose detail. They changed shape."',
+  29: 'The ethics of Bartlett\'s study are never discussed.',
+  30: '"A single word in a question, asked after the event, had been incorporated into the memory of the event itself."',
+  31: 'The writer says "jurors read that certainty as reliability", so they do not distinguish the two.',
+  32: '"Unfamiliar elements were quietly replaced with familiar ones" to fit "what it expects to find."',
+  33: 'Participants reported broken glass, but "There had been no broken glass."',
+  34: 'The passage says "the hippocampus binding the elements into a retrievable pattern."',
+  35: 'Loftus showed that "A single word in a question, asked after the event" changed the memory.',
+  36: 'Bartlett found unfamiliar elements "replaced with familiar ones."',
+  37: 'Nadel\'s account says recall "leaves it briefly labile before it is stabilised again."',
+  38: 'Bartlett concluded "remembering is not retrieval but reconstruction."',
+  39: 'Such details are recalled "as part of the original event", and "Contaminated memories do not feel contaminated", so the witness is confident.',
+  40: 'Parades are run "by an officer who does not know which member is the suspect", and witnesses give "a statement of confidence at the moment of first identification."',
+};
+
+for (const group of [passage1, passage2, passage3]) {
+  for (const question of group.questions) question.explanation = EXPLANATIONS[question.number];
+}
+
 export const readingSection: Section = {
   code: "reading",
   title: "Reading",
