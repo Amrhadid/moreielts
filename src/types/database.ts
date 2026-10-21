@@ -1,3 +1,5 @@
+import type { Site } from "~/lib/site";
+
 /**
  * Hand-written row types matching supabase/migrations.
  *
@@ -25,6 +27,10 @@ export interface ProfileRow {
   premium_expires_at: string | null;
   target_band: number | null;
   current_band: number | null;
+  /** Sites this account has signed in to; see `~/lib/site`. */
+  sites: Site[];
+  /** Site the account was created on; null only for Google sign-ups not seen since. */
+  signup_site: Site | null;
   created_at: string;
   updated_at: string;
 }

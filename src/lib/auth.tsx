@@ -5,10 +5,12 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { SITE } from "./site";
 import { supabase } from "./supabase";
 import type { ProfileRow } from "~/types/database";
 
@@ -55,6 +57,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       listener.subscription.unsubscribe();
     };
   }, [queryClient]);
+
+  // Record that this account uses this site (profiles.sites), so it appears in
+  // this site's admin dashboard and not MoreTOEFL's. Once per signed-in
+  // account per page load; the RPC is idempotent.
+  const registeredUserId = useRef<string | null>(null);
+  const userId = session?.user.id ?? null;
+  useEffect(() => {
+    if (!userId || registeredUserId.current === userId) return;
+    registeredUserId.current = userId;
+    supabase.rpc("register_site_visit", { p_site: SITE }).then(({ error }) => {
+      if (error) console.warn("register_site_visit failed", error);
+    });
+  }, [userId]);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", session?.user.id],
