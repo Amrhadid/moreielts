@@ -21,8 +21,11 @@ import {
 import { formatBand } from "~/lib/scoring";
 
 export const Route = createFileRoute("/writing-lab")({
-  validateSearch: (s: Record<string, unknown>): { essay?: string } =>
-    typeof s.essay === "string" && s.essay ? { essay: s.essay } : {},
+  // ?task=1|2 preselects the tab (the study plan links here with it).
+  validateSearch: (s: Record<string, unknown>): { essay?: string; task?: 1 | 2 } => ({
+    ...(typeof s.essay === "string" && s.essay ? { essay: s.essay } : {}),
+    ...(Number(s.task) === 1 || Number(s.task) === 2 ? { task: Number(s.task) as 1 | 2 } : {}),
+  }),
   component: () => (
     <Protected>
       <AppShell>
@@ -51,12 +54,12 @@ function errorText(err: unknown): { text: string; pricing?: boolean } {
 
 function WritingLab() {
   const { t } = useI18n();
-  const { essay: essayId } = Route.useSearch();
+  const { essay: essayId, task: taskParam } = Route.useSearch();
   const navigate = useNavigate({ from: "/writing-lab" });
   const essays = useEssays();
   const selected = essays.data?.find((e) => e.id === essayId);
 
-  const [task, setTask] = useState<1 | 2>(2);
+  const [task, setTask] = useState<1 | 2>(taskParam ?? 2);
   const [prompt, setPrompt] = useState<WritingPrompt | null>(null);
   const [custom, setCustom] = useState("");
   const [body, setBody] = useState("");

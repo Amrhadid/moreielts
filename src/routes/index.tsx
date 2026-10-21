@@ -9,6 +9,113 @@ import { cn } from "~/lib/cn";
 import { useAuth } from "~/lib/auth";
 import { Landing } from "~/components/layout/Landing";
 import { useAttempts } from "~/lib/queries";
+import { useQuery } from "@tanstack/react-query";
+import { Icon, type IconName } from "~/components/ui/Icon";
+import { supabase } from "~/lib/supabase";
+import { roundToHalfBand } from "~/lib/scoring";
+import { useDailyPlan } from "~/lib/use-daily-plan";
+
+type SectionBands = {
+  listening_band: number | null;
+  reading_band: number | null;
+  writing_band: number | null;
+  speaking_band: number | null;
+};
+
+/** Section bands of the latest completed attempts, newest first. */
+function useRecentSectionBands(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["recent_section_bands", userId],
+    enabled: Boolean(userId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("attempts")
+        .select("id, submitted_at, attempt_scores ( listening_band, reading_band, writing_band, speaking_band )")
+        .eq("status", "completed")
+        .order("submitted_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return ((data ?? []) as unknown as Array<{ attempt_scores: SectionBands | SectionBands[] | null }>)
+        .map((a) => (Array.isArray(a.attempt_scores) ? a.attempt_scores[0] : a.attempt_scores))
+        .filter((s): s is SectionBands => Boolean(s));
+    },
+  });
+}
+
+const PREDICT_SECTIONS: Array<{ key: keyof SectionBands; label: string; icon: IconName }> = [
+  { key: "listening_band", label: "Listening", icon: "headphones" },
+  { key: "reading_band", label: "Reading", icon: "book" },
+  { key: "writing_band", label: "Writing", icon: "pen" },
+  { key: "speaking_band", label: "Speaking", icon: "mic" },
+];
+
+function predicted(rows: SectionBands[], key: keyof SectionBands): number | null {
+  const vals = rows
+    .map((r) => r[key])
+    .filter((v): v is number => v !== null && v !== undefined)
+    .slice(0, 3)
+    .map(Number);
+  if (!vals.length) return null;
+  return roundToHalfBand(vals.reduce((a, b) => a + b, 0) / vals.length);
+}
+
+function StatTile({
+  icon,
+  label,
+  value,
+  to,
+  tone = "text-brand-600 bg-brand-50",
+}: {
+  icon: IconName;
+  label: string;
+  value: string;
+  to?: string;
+  tone?: string;
+}) {
+  const body = (
+    <Card className={cn("h-full", to && "transition-colors hover:border-brand-200")}>
+      <CardBody className="flex items-center gap-3 pt-5">
+        <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl", tone)}>
+          <Icon name={icon} size={20} />
+        </span>
+        <div className="min-w-0">
+          <p className="text-xl font-bold tabular-nums">{value}</p>
+          <p className="truncate text-xs text-muted">{label}</p>
+        </div>
+      </CardBody>
+    </Card>
+  );
+  return to ? (
+    <Link to={to as never} className="block">
+      {body}
+    </Link>
+  ) : (
+    body
+  );
+}
+
+function ActivityChart({ days, goal }: { days: Array<{ day: string; minutes: number }>; goal: number }) {
+  const last = days.slice(-14);
+  const max = Math.max(goal, ...last.map((d) => d.minutes), 1);
+  return (
+    <div>
+      <div className="flex h-28 items-end gap-1.5" role="img" aria-label="Study minutes over the last 14 days">
+        {last.map((d) => (
+          <div key={d.day} className="flex h-full flex-1 flex-col justify-end" title={`${d.day}: ${d.minutes} min`}>
+            <span
+              className={cn("w-full rounded-t-sm", d.minutes >= goal ? "bg-good" : d.minutes > 0 ? "bg-brand-500" : "bg-line")}
+              style={{ height: `${Math.max(4, (d.minutes / max) * 100)}%` }}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[11px] text-muted">
+        <span>{last[0] ? new Date(last[0].day).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : ""}</span>
+        <span>Today</span>
+      </div>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({ component: HomeRoute });
 
@@ -37,6 +144,9 @@ function HomeRoute() {
 function Dashboard() {
   const { profile, user } = useAuth();
   const { data: attempts, isLoading } = useAttempts(user?.id);
+  const { plan, stats } = useDailyPlan();
+  const { data: sectionRows } = useRecentSectionBands(user?.id);
+  const goalMinutes = profile?.daily_goal_minutes ?? 30;
 
   const targetBand = profile?.target_band ? Number(profile.target_band) : 7;
   const currentBand = profile?.current_band ? Number(profile.current_band) : null;
@@ -45,6 +155,7 @@ function Dashboard() {
   const inProgress = attempts?.find(
     (a) => a.status === "in_progress" || a.status === "awaiting_speaking",
   );
+  const grading = inProgress?.status === "awaiting_speaking" && Boolean(inProgress.submitted_at);
   const completed = (attempts ?? []).filter((a) => a.status === "completed");
 
   // Band trend from the last six completed attempts, oldest first.
@@ -67,6 +178,17 @@ function Dashboard() {
         <p className="mt-1.5 text-sm capitalize text-muted">
           {profile?.tier === "premium" ? "Premium" : "Free"} plan
         </p>
+      </div>
+
+      {/* Stats row */}
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <StatTile icon="flame" label="Day streak" value={String(stats?.streak ?? 0)} tone="text-warn bg-warn-soft" />
+        <StatTile icon="chart" label={`of ${goalMinutes} min today`} value={`${stats?.today_minutes ?? 0}`} to="/enhance" />
+        <StatTile icon="repeat" label="Cards due" value={String(stats?.mistakes_due ?? 0)} to="/review" />
+        <StatTile icon="language" label="Words learned" value={String(stats?.words_learned ?? 0)} to="/vocabulary" />
+        {plan.daysToExam !== null && (
+          <StatTile icon="calendar" label="Days to exam" value={String(plan.daysToExam)} to="/enhance" tone="text-good bg-good-soft" />
+        )}
       </div>
 
       {/* Band summary */}
@@ -135,7 +257,22 @@ function Dashboard() {
         </Card>
 
         {/* Continue where you left off */}
-        {inProgress ? (
+        {inProgress && grading ? (
+          <Card className="border-brand-200 bg-brand-50/40">
+            <CardHeader>
+              <Badge tone="warn">Grading in progress</Badge>
+              <CardTitle className="mt-2">{inProgress.test_forms?.title ?? "Mock test"}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <p className="text-sm text-ink-soft">Your Writing and Speaking are being scored.</p>
+              <Button asChild variant="secondary" className="mt-3 w-full">
+                <Link to="/results/$attemptId" params={{ attemptId: inProgress.id }}>
+                  View results
+                </Link>
+              </Button>
+            </CardBody>
+          </Card>
+        ) : inProgress ? (
           <Card className="border-brand-200 bg-brand-50/40">
             <CardHeader>
               <Badge tone="brand">In progress</Badge>
@@ -179,6 +316,73 @@ function Dashboard() {
             </CardBody>
           </Card>
         )}
+      </div>
+
+      {/* Predicted band per section */}
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>Predicted band</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted">Overall</p>
+              <p className="mt-1 text-3xl font-extrabold tabular-nums text-brand-600">
+                {currentBand !== null ? formatBand(currentBand) : "—"}
+              </p>
+            </div>
+            {PREDICT_SECTIONS.map((sec) => {
+              const band = predicted(sectionRows ?? [], sec.key);
+              return (
+                <div key={sec.key}>
+                  <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted">
+                    <Icon name={sec.icon} size={14} /> {sec.label}
+                  </p>
+                  <p className="mt-1 text-3xl font-bold tabular-nums">{band !== null ? formatBand(band) : "—"}</p>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-4 text-xs text-muted">Average of your last three completed mocks per section, to the nearest half band.</p>
+        </CardBody>
+      </Card>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Last 14 days</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <ActivityChart days={stats?.days ?? []} goal={goalMinutes} />
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Today's plan</CardTitle>
+              <Link to="/enhance" className="text-sm font-medium text-brand-600">
+                Full plan
+              </Link>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <ul className="grid gap-2">
+              {plan.tasks.slice(0, 3).map((task) => (
+                <li key={task.key}>
+                  <Link
+                    to={task.to as never}
+                    search={task.search as never}
+                    className="flex items-center gap-3 rounded-lg border border-line px-3 py-2.5 hover:bg-paper"
+                  >
+                    <Icon name={task.icon} size={18} className="shrink-0 text-brand-600" />
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium">{task.title}</span>
+                    <span className="text-xs tabular-nums text-muted">{task.minutes} min</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </CardBody>
+        </Card>
       </div>
 
       {/* Quick links to each section */}
