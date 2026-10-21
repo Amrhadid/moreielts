@@ -67,6 +67,24 @@ side: the authorised redirect URI is the project's
 `/auth/v1/callback`, which both sites share. `/auth/callback` surfaces any
 provider or exchange error on `/login` rather than bouncing silently.
 
+## Deployment
+
+The site is a Cloudflare Worker (`wrangler.jsonc`) built by Cloudflare's Git
+integration from the `Amrhadid/moreielts` repository. **Production builds from
+`main`**; every other branch gets a preview build that is never promoted on its
+own. Build variables and secrets (Settings → Builds) must hold the shared
+Supabase project:
+
+```
+VITE_SUPABASE_URL=https://nlsuvapjkznatczghvay.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_7ehXXiaMvUlfBQX_zMbDbw_ppOo0lxc
+```
+
+Both are baked into the bundle at build time, so changing them needs a new
+deployment, and the code falls back to exactly these values when they are
+unset. The Worker's runtime secrets are not used by the app: Edge Function
+secrets belong in the Supabase project.
+
 ## Stack
 
 React 19 · TypeScript · TanStack Router + TanStack Start · Vite · Tailwind CSS 4 ·
