@@ -47,13 +47,13 @@ Deno.serve(async (req) => {
       const { data: candidates, error } = await db
         .from("questions")
         .select(`group_id, item_groups!inner ( ${GROUP_FIELDS} )`)
-        .eq("type_code", typeCode)
-        .eq("item_groups.test_sections.test_forms.is_published", true);
+        .eq("type_code", typeCode);
       if (error) throw error;
 
       const groups = new Map<string, Row>();
       for (const c of (candidates ?? []) as Row[]) {
         const form = c.item_groups.test_sections.test_forms;
+        if (!form.is_published) continue;
         if (form.is_premium && !premium) continue;
         if (body.difficulty && form.difficulty !== body.difficulty) continue;
         groups.set(c.group_id, c.item_groups);

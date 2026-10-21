@@ -39,9 +39,10 @@ create table if not exists public.grading_jobs (
   )
 );
 
+-- A full (not partial) unique index, so submit-attempt's upsert can name it in
+-- ON CONFLICT. Essay jobs have a null attempt_id, and nulls never collide.
 create unique index if not exists grading_jobs_attempt_part_key
-  on public.grading_jobs (attempt_id, kind, part_number)
-  where attempt_id is not null;
+  on public.grading_jobs (attempt_id, kind, part_number);
 create unique index if not exists grading_jobs_submission_key
   on public.grading_jobs (submission_id)
   where submission_id is not null;
