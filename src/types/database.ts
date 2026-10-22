@@ -29,6 +29,9 @@ export interface ProfileRow {
   daily_goal_minutes: number;
   locale: "en" | "ar";
   reminder_emails: boolean;
+  nationality: string | null;
+  whatsapp: string | null;
+  onboarded_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -43,6 +46,10 @@ export interface LearnerRow {
   daily_goal_minutes: number;
   locale: "en" | "ar";
   reminder_emails: boolean;
+  full_name: string | null;
+  nationality: string | null;
+  whatsapp: string | null;
+  onboarded_at: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -585,7 +585,7 @@ export function useStudents() {
     queryKey: queryKeys.students,
     queryFn: async (): Promise<ProfileRow[]> => {
       // MoreIELTS learners only (the shared project also holds MoreTOEFL's).
-      const { data, error } = await supabase.rpc("ielts_admin_students", { p_limit: 100 });
+      const { data, error } = await supabase.rpc("ielts_admin_students_v2", { p_limit: 100 });
       if (error) throw error;
       return data as unknown as ProfileRow[];
     },

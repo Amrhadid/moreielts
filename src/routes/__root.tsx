@@ -9,6 +9,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { AuthProvider, useAuth } from "~/lib/auth";
 import { installErrorReporter, registerServiceWorker } from "~/lib/error-reporter";
 import { WhatsAppFloatingButton } from "~/components/WhatsApp";
+import { OnboardingGate } from "~/components/Onboarding";
 import { I18nProvider } from "~/lib/i18n";
 import appCss from "~/styles.css?url";
 
@@ -72,6 +73,7 @@ function RootDocument({ children }: { children: ReactNode }) {
             <LocaleFromProfile>
               {children}
               <WhatsAppFloatingButton />
+              <OnboardingGate />
             </LocaleFromProfile>
           </AuthProvider>
         </QueryClientProvider>

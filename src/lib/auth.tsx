@@ -26,7 +26,7 @@ export function mergeProfile(
   return {
     id: userId,
     email: account?.email ?? email,
-    full_name: account?.full_name ?? null,
+    full_name: learner?.full_name ?? account?.full_name ?? null,
     role: account?.role === "admin" ? "admin" : "user",
     tier: premium ? "premium" : "free",
     premium_expires_at: learner?.premium_expires_at ?? null,
@@ -36,6 +36,10 @@ export function mergeProfile(
     daily_goal_minutes: learner?.daily_goal_minutes ?? 20,
     locale: learner?.locale ?? "en",
     reminder_emails: learner?.reminder_emails ?? true,
+    nationality: learner?.nationality ?? null,
+    // Falls back to the MoreTOEFL number, so onboarding can pre-fill it.
+    whatsapp: learner?.whatsapp ?? account?.whatsapp ?? null,
+    onboarded_at: learner?.onboarded_at ?? null,
     created_at: learner?.created_at ?? account?.created_at ?? new Date().toISOString(),
     updated_at: learner?.updated_at ?? new Date().toISOString(),
   };
@@ -98,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const [account, learner] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id, email, full_name, role, created_at")
+          .select("id, email, full_name, role, whatsapp, created_at")
           .eq("id", session!.user.id)
           .maybeSingle(),
         supabase.rpc("ielts_ensure_learner"),
