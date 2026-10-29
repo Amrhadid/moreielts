@@ -417,7 +417,7 @@ function storedAnswer(answer) {
 var BOX_DAYS = [0, 1, 3, 7, 14, 30];
 var PUBLIC_QUESTION = "id, group_id, type_code, prompt, options, word_limit, order_index";
 var KEYED_QUESTION = "id, group_id, prompt, accepted_answers, explanation, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, question_types:ielts_question_types!inner ( renderer )";
-var GROUP_FIELDS = "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, is_published, is_premium, difficulty, purpose ) )";
+var GROUP_FIELDS = "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, variant, is_published, is_premium, difficulty, purpose ) )";
 function markable(q) {
   return { ...q, renderer: q.question_types.renderer };
 }

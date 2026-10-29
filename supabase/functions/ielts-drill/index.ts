@@ -21,7 +21,7 @@ const PUBLIC_QUESTION = "id, group_id, type_code, prompt, options, word_limit, o
 const KEYED_QUESTION =
   "id, group_id, prompt, accepted_answers, explanation, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, question_types:ielts_question_types!inner ( renderer )";
 const GROUP_FIELDS =
-  "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, is_published, is_premium, difficulty, purpose ) )";
+  "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, variant, is_published, is_premium, difficulty, purpose ) )";
 
 // deno-lint-ignore no-explicit-any
 type Row = any;
