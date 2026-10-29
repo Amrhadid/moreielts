@@ -3,7 +3,16 @@ import { useState } from "react";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Select } from "~/components/ui/Select";
 import { cn } from "~/lib/cn";
-import { useAdminAnalytics, useClientErrors, type AdminAnalytics } from "~/lib/practice-queries";
+import { Badge } from "~/components/ui/Badge";
+import { Button } from "~/components/ui/Button";
+import {
+  useAdminAnalytics,
+  useAdminHealth,
+  useClientErrors,
+  useRetryGradingJob,
+  useWorkerHealth,
+  type AdminAnalytics,
+} from "~/lib/practice-queries";
 
 export const Route = createFileRoute("/admin/analytics")({ component: Analytics });
 
@@ -37,6 +46,8 @@ function Analytics() {
           className="w-44"
         />
       </div>
+
+      <SystemHealth />
 
       {error && <p className="mb-4 text-sm text-bad">{(error as Error).message}</p>}
       {isLoading && <p className="text-sm text-muted">Loading…</p>}
@@ -338,5 +349,165 @@ function ClientErrors() {
         </li>
       ))}
     </ul>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * System health: is the grading pipeline alive, and is the content whole?
+ * ------------------------------------------------------------------ */
+
+function Light({ ok, warn, label, detail }: { ok: boolean; warn?: boolean; label: string; detail?: string }) {
+  return (
+    <li className="flex items-start gap-2.5 text-sm">
+      <span
+        aria-hidden
+        className={cn(
+          "mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full",
+          ok ? "bg-good" : warn ? "bg-warn" : "bg-bad",
+        )}
+      />
+      <span className="min-w-0">
+        <span className="font-medium">{label}</span>
+        {detail && <span className="block text-xs text-muted">{detail}</span>}
+      </span>
+    </li>
+  );
+}
+
+const ago = (iso: string | null | undefined) => {
+  if (!iso) return "never";
+  const minutes = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 60 * 48) return `${Math.round(minutes / 60)} h ago`;
+  return `${Math.round(minutes / 1440)} days ago`;
+};
+
+function SystemHealth() {
+  const health = useAdminHealth();
+  const worker = useWorkerHealth();
+  const retry = useRetryGradingJob();
+  const h = health.data;
+
+  return (
+    <Card className="mb-6">
+      <CardBody className="pt-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-sm font-medium">System health</p>
+            <p className="text-xs text-muted">
+              Grading pipeline, secrets and content, checked every 30 seconds.
+              {h ? ` Last check ${ago(h.checked_at)}.` : ""}
+            </p>
+          </div>
+          <Button size="sm" variant="outline" onClick={() => { void health.refetch(); void worker.refetch(); }}>
+            Refresh
+          </Button>
+        </div>
+
+        {health.error && <p className="mt-3 text-sm text-bad">{(health.error as Error).message}</p>}
+        {health.isLoading && <p className="mt-3 text-sm text-muted">Checking…</p>}
+
+        {h && (
+          <div className="mt-4 grid gap-6 md:grid-cols-3">
+            <ul className="grid gap-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted">Grading</p>
+              <Light
+                ok={h.cron_active && h.cron?.status === "succeeded"}
+                warn={h.cron_active}
+                label={h.cron_active ? "Sweep cron scheduled" : "Sweep cron missing"}
+                detail={h.cron ? `last run ${h.cron.status}, ${ago(h.cron.at)}` : "no run recorded"}
+              />
+              <Light
+                ok={h.vault.worker_key && h.vault.worker_url}
+                label="Vault worker key and URL"
+                detail={h.vault.worker_key && h.vault.worker_url ? "present" : "missing — grading cannot start"}
+              />
+              <Light
+                ok={h.jobs.stuck === 0 && h.jobs.oldest_pending_minutes < 10}
+                warn={h.jobs.stuck === 0}
+                label={`${h.jobs.pending} pending · ${h.jobs.running} running · ${h.jobs.failed} failed · ${h.jobs.done} done`}
+                detail={
+                  h.jobs.stuck > 0
+                    ? `${h.jobs.stuck} job(s) stuck for over 10 minutes`
+                    : h.jobs.pending > 0
+                      ? `oldest pending ${h.jobs.oldest_pending_minutes} min`
+                      : `last grade ${ago(h.jobs.last_done_at)}`
+                }
+              />
+            </ul>
+
+            <ul className="grid gap-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted">Worker secrets</p>
+              {worker.isLoading && <li className="text-sm text-muted">Asking the worker…</li>}
+              {worker.error && (
+                <Light ok={false} label="Worker unreachable" detail={(worker.error as Error).message} />
+              )}
+              {worker.data &&
+                Object.entries(worker.data.env).map(([key, present]) => (
+                  <Light key={key} ok={present} label={key} detail={present ? "set" : "missing"} />
+                ))}
+              {worker.data && (
+                <li className="text-xs text-muted">
+                  Grading model: {worker.data.grading_model ?? "function default"}
+                </li>
+              )}
+            </ul>
+
+            <ul className="grid gap-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted">Content and learners</p>
+              <Light
+                ok={h.content.listening_parts_without_audio === 0}
+                label={`${h.content.listening_parts_without_audio} listening parts without audio`}
+              />
+              <Light
+                ok={h.content.questions_without_explanation === 0}
+                warn
+                label={`${h.content.questions_without_explanation} questions without an explanation`}
+              />
+              <Light
+                ok={h.content.forms_missing_sections === 0}
+                label={`${h.content.forms_published} published forms (${h.content.mock_forms} mock)`}
+                detail={h.content.forms_missing_sections ? `${h.content.forms_missing_sections} missing a section` : "all four sections present"}
+              />
+              <Light
+                ok={h.learners.attempts_completed > 0}
+                warn
+                label={`${h.learners.attempts_submitted} mocks submitted · ${h.learners.attempts_completed} fully graded`}
+                detail={
+                  h.learners.attempts_completed === 0
+                    ? "the pipeline has not completed an exam yet — run one as admin"
+                    : `last attempt ${ago(h.learners.last_attempt_at)}`
+                }
+              />
+              <li className="text-xs text-muted">
+                {h.learners.total} learners · {h.learners.premium} Premium · {h.learners.onboarded} onboarded
+              </li>
+            </ul>
+          </div>
+        )}
+
+        {h && h.failed_jobs.length > 0 && (
+          <div className="mt-5">
+            <p className="text-sm font-medium">Failed grading jobs</p>
+            <ul className="mt-2 divide-y divide-line rounded-lg border border-line">
+              {h.failed_jobs.map((job) => (
+                <li key={job.id} className="flex flex-wrap items-center gap-3 px-3 py-2 text-sm">
+                  <Badge tone="bad">{job.kind}{job.part_number ? ` ${job.part_number}` : ""}</Badge>
+                  <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted" title={job.last_error ?? ""}>
+                    {job.last_error ?? "no error recorded"}
+                  </span>
+                  <span className="text-xs text-muted">{job.tries} tries · {ago(job.finished_at)}</span>
+                  <Button size="sm" variant="outline" disabled={retry.isPending} onClick={() => retry.mutate(job.id)}>
+                    Retry
+                  </Button>
+                </li>
+              ))}
+            </ul>
+            {retry.isError && <p className="mt-2 text-xs text-bad">{(retry.error as Error).message}</p>}
+          </div>
+        )}
+      </CardBody>
+    </Card>
   );
 }

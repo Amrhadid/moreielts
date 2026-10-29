@@ -1,6 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
+import { ExitButton } from "./ExitButton";
 
 /** Sticky test-player header: identity on the left, clock on the right. */
 export function PlayerHeader({
@@ -18,13 +18,7 @@ export function PlayerHeader({
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-surface/95 shadow-[0_4px_20px_rgba(20,49,78,.05)] backdrop-blur">
       <div className="flex h-16 items-center gap-3 px-3 sm:px-5">
-        <Link
-          to="/"
-          className="hidden text-sm font-medium text-muted hover:text-ink sm:block"
-          aria-label="Exit the test"
-        >
-          ← Exit
-        </Link>
+        <ExitButton remaining={remaining} className="hidden sm:block" />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{sectionName}</p>
           <p className="truncate text-xs text-muted">{contextLabel}</p>

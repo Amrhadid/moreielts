@@ -11,6 +11,9 @@ function json(body, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" }
   });
 }
+function preflight() {
+  return new Response("ok", { headers: corsHeaders });
+}
 
 // supabase/functions/_shared/supabase.ts
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -20,6 +23,18 @@ function serviceClient() {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
     { auth: { persistSession: false } }
   );
+}
+async function getCaller(req) {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const anon = createClient(
+    Deno.env.get("SUPABASE_URL"),
+    Deno.env.get("SUPABASE_ANON_KEY"),
+    { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } }
+  );
+  const { data, error } = await anon.auth.getUser();
+  if (error || !data.user) return null;
+  return data.user;
 }
 
 // supabase/functions/_shared/anthropic.ts
@@ -498,13 +513,43 @@ async function scoreAttempt(db, attemptId, options = {}) {
 }
 
 // supabase/functions/ielts-grading-worker/index.ts
+function health() {
+  const has = (name) => Boolean(Deno.env.get(name));
+  return {
+    ok: true,
+    env: {
+      ANTHROPIC_API_KEY: has("ANTHROPIC_API_KEY"),
+      ELEVENLABS_API_KEY: has("ELEVENLABS_API_KEY"),
+      SUPABASE_SERVICE_ROLE_KEY: has("SUPABASE_SERVICE_ROLE_KEY"),
+      SITE_URL: has("SITE_URL")
+    },
+    grading_model: Deno.env.get("GRADING_MODEL") ?? null,
+    checked_at: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return preflight();
   const db = serviceClient();
+  const body = await req.json().catch(() => ({}));
+  if (body.action === "health") {
+    const { data: keyOk2 } = await db.rpc("ielts_check_worker_key", {
+      p_key: req.headers.get("x-grade-key")
+    });
+    let allowed = keyOk2 === true;
+    if (!allowed) {
+      const user = await getCaller(req);
+      if (user) {
+        const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).maybeSingle();
+        allowed = profile?.role === "admin";
+      }
+    }
+    if (!allowed) return json({ error: "forbidden" }, 403);
+    return json(health());
+  }
   const { data: keyOk } = await db.rpc("ielts_check_worker_key", {
     p_key: req.headers.get("x-grade-key")
   });
   if (keyOk !== true) return json({ error: "forbidden" }, 403);
-  const body = await req.json().catch(() => ({}));
   const { data: jobs, error } = await db.rpc("ielts_claim_grading_jobs", {
     p_limit: Math.min(Number(body.limit ?? 5), 10),
     p_job: body.job_id ?? null

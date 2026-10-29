@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { cn } from "~/lib/cn";
 
 /**
@@ -7,12 +8,15 @@ import { cn } from "~/lib/cn";
 export function PlayerStatus({
   loading,
   error,
+  action,
   saving,
   saveError,
   inline,
 }: {
   loading?: boolean;
   error?: string | null;
+  /** An optional way forward from a startup error (the next section, say). */
+  action?: { label: string; to: string; search?: Record<string, unknown> } | null;
   saving?: boolean;
   saveError?: string | null;
   inline?: boolean;
@@ -49,9 +53,20 @@ export function PlayerStatus({
           This test could not be started
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">{error}</p>
-        <a href="/" className="mt-5 inline-block text-sm font-medium text-brand-600">
-          Back to dashboard
-        </a>
+        <div className="mt-5 flex flex-wrap justify-center gap-4">
+          {action && (
+            <Link
+              to={action.to as "/"}
+              search={(action.search ?? {}) as never}
+              className="inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              {action.label}
+            </Link>
+          )}
+          <a href="/" className="inline-flex h-10 items-center text-sm font-medium text-brand-600">
+            Back to dashboard
+          </a>
+        </div>
       </div>
     </div>
   );

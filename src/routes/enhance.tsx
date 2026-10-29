@@ -30,6 +30,10 @@ const BAND_OPTIONS = Array.from({ length: 11 }, (_, i) => {
   return { value: v, label: v };
 });
 const GOAL_OPTIONS = [10, 20, 30, 45, 60, 90].map((m) => ({ value: String(m), label: `${m} min / day` }));
+const VARIANT_OPTIONS = [
+  { value: "academic", label: "Academic" },
+  { value: "general_training", label: "General Training" },
+];
 
 const PHASE_LABEL: Record<PlanPhase, { label: string; detail: string }> = {
   foundation: { label: "Foundation", detail: "Learning every question type and building vocabulary." },
@@ -251,6 +255,7 @@ function GoalsCard() {
   const [target, setTarget] = useState("7.0");
   const [examDate, setExamDate] = useState("");
   const [goal, setGoal] = useState("30");
+  const [variant, setVariant] = useState<string | undefined>(undefined);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -258,6 +263,7 @@ function GoalsCard() {
     setTarget(profile.target_band != null ? Number(profile.target_band).toFixed(1) : "7.0");
     setExamDate(profile.exam_date ?? "");
     setGoal(String(profile.daily_goal_minutes ?? 30));
+    setVariant(profile.variant ?? undefined);
   }, [profile]);
 
   return (
@@ -267,7 +273,7 @@ function GoalsCard() {
       </CardHeader>
       <CardBody>
         <form
-          className="grid gap-4 sm:grid-cols-3"
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
           onSubmit={(e) => {
             e.preventDefault();
             if (!user) return;
@@ -278,6 +284,7 @@ function GoalsCard() {
                 target_band: Number(target),
                 exam_date: examDate || null,
                 daily_goal_minutes: Number(goal),
+                variant: (variant as "academic" | "general_training" | undefined) ?? null,
               },
               { onSuccess: () => setSaved(true) },
             );
@@ -295,7 +302,18 @@ function GoalsCard() {
             <Label>Daily goal</Label>
             <Select aria-label="Daily goal" value={goal} onValueChange={setGoal} options={GOAL_OPTIONS} />
           </div>
-          <div className="flex items-center gap-3 sm:col-span-3">
+          <div>
+            <Label>Exam type</Label>
+            <Select
+              aria-label="Exam type"
+              value={variant}
+              onValueChange={setVariant}
+              options={VARIANT_OPTIONS}
+              placeholder="Academic or General?"
+            />
+            <p className="mt-1 text-xs text-muted">Filters your mocks, drills and writing prompts.</p>
+          </div>
+          <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-4">
             <Button type="submit" disabled={update.isPending}>
               {update.isPending ? "Saving…" : "Save goals"}
             </Button>

@@ -33,7 +33,7 @@ function WritingPlayer() {
   const [taskIndex, setTaskIndex] = useState(0);
 
   if (player.loading || player.error) {
-    return <PlayerStatus loading={player.loading} error={player.error} />;
+    return <PlayerStatus loading={player.loading} error={player.error} action={player.errorAction} />;
   }
 
   const group = player.groups[taskIndex];

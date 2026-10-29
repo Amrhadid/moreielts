@@ -82,6 +82,7 @@ export function useUpdateGoals() {
       target_band?: number | null;
       exam_date?: string | null;
       daily_goal_minutes?: number;
+      variant?: "academic" | "general_training" | null;
     }) => {
       const { userId, ...patch } = vars;
       const { error } = await supabase.from("ielts_learners").update(patch).eq("user_id", userId);
@@ -588,6 +589,92 @@ export function useAdminAnalytics(days: number) {
       const { data, error } = await supabase.rpc("ielts_admin_analytics", { p_days: days });
       if (error) throw error;
       return data as AdminAnalytics;
+    },
+  });
+}
+
+/** The System health card on /admin/analytics (ielts_admin_health, 0015). */
+export interface AdminHealth {
+  checked_at: string;
+  jobs: {
+    pending: number;
+    running: number;
+    stuck: number;
+    failed: number;
+    done: number;
+    oldest_pending_minutes: number;
+    last_done_at: string | null;
+  };
+  failed_jobs: Array<{
+    id: string;
+    kind: "writing" | "speaking" | "essay";
+    part_number: number | null;
+    attempt_id: string | null;
+    submission_id: string | null;
+    tries: number;
+    last_error: string | null;
+    finished_at: string | null;
+  }>;
+  cron: { status: string; at: string; message: string | null } | null;
+  cron_active: boolean;
+  vault: { worker_key: boolean; worker_url: boolean };
+  content: {
+    forms_published: number;
+    mock_forms: number;
+    listening_parts_without_audio: number;
+    questions_without_explanation: number;
+    forms_missing_sections: number;
+  };
+  learners: {
+    total: number;
+    premium: number;
+    onboarded: number;
+    attempts_submitted: number;
+    attempts_completed: number;
+    last_attempt_at: string | null;
+  };
+}
+
+export function useAdminHealth() {
+  return useQuery({
+    queryKey: ["admin_health"],
+    refetchInterval: 30_000,
+    queryFn: async (): Promise<AdminHealth> => {
+      const { data, error } = await supabase.rpc("ielts_admin_health");
+      if (error) throw error;
+      return data as AdminHealth;
+    },
+  });
+}
+
+/** Which secrets the grading worker can see (booleans), via its health action. */
+export interface WorkerHealth {
+  ok: boolean;
+  env: Record<string, boolean>;
+  grading_model: string | null;
+  checked_at: string;
+}
+
+export function useWorkerHealth() {
+  return useQuery({
+    queryKey: ["worker_health"],
+    retry: false,
+    queryFn: () => invokeFunction<WorkerHealth>("ielts-grading-worker", { action: "health" }),
+  });
+}
+
+/** Puts a failed grading job back in the queue (own job, or any as admin). */
+export function useRetryGradingJob() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (jobId: string) => {
+      const { error } = await supabase.rpc("ielts_retry_grading_job", { p_job: jobId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_health"] });
+      queryClient.invalidateQueries({ queryKey: ["grading_jobs"] });
+      queryClient.invalidateQueries({ queryKey: practiceKeys.essays });
     },
   });
 }

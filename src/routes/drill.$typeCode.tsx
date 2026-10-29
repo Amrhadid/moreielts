@@ -103,19 +103,22 @@ function DrillPage() {
     return (
       <Card className="mx-auto max-w-xl">
         <CardBody className="pt-6 text-center">
-          {errorCode === "no_free_content_for_type" ? (
+          {errorCode === "premium_required" ? (
             <>
               <Icon name="lock" className="mx-auto h-8 w-8 text-brand-600" />
-              <p className="mt-3 font-medium">You've finished the free sets for {label}</p>
-              <p className="mt-1 text-sm text-muted">Upgrade to Premium to keep drilling this type.</p>
+              <p className="mt-3 font-medium">Drills are part of Premium</p>
+              <p className="mt-1 text-sm text-muted">Enter your access code to drill {label}.</p>
               <Button asChild className="mt-4">
-                <Link to={"/pricing" as never}>See plans</Link>
+                <Link to={"/pricing" as never}>Enter a code</Link>
               </Button>
             </>
           ) : errorCode === "no_content_for_type" ? (
             <>
               <p className="font-medium">No practice sets for {label} yet</p>
-              <p className="mt-1 text-sm text-muted">We're adding more content — try another question type for now.</p>
+              <p className="mt-1 text-sm text-muted">
+                None of the {label} sets match your exam type yet — try another question type, or
+                change your exam type under Study plan to see every set.
+              </p>
             </>
           ) : (
             <>

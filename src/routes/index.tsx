@@ -8,7 +8,8 @@ import { formatBand } from "~/lib/scoring";
 import { cn } from "~/lib/cn";
 import { useAuth } from "~/lib/auth";
 import { Landing } from "~/components/layout/Landing";
-import { useAttempts } from "~/lib/queries";
+import { useAttempts, useAttemptState } from "~/lib/queries";
+import { formatClock } from "~/lib/text";
 import { WHATSAPP_MESSAGES, whatsappLink } from "~/lib/whatsapp";
 import { useQuery } from "@tanstack/react-query";
 import { Icon, type IconName } from "~/components/ui/Icon";
@@ -143,7 +144,7 @@ function HomeRoute() {
 }
 
 function Dashboard() {
-  const { profile, user } = useAuth();
+  const { profile, user, isPremium } = useAuth();
   const { data: attempts, isLoading } = useAttempts(user?.id);
   const { plan, stats } = useDailyPlan();
   const { data: sectionRows } = useRecentSectionBands(user?.id);
@@ -157,6 +158,9 @@ function Dashboard() {
     (a) => a.status === "in_progress" || a.status === "awaiting_speaking",
   );
   const grading = inProgress?.status === "awaiting_speaking" && Boolean(inProgress.submitted_at);
+  // The server clock for the open section, so "Continue" says how long is left.
+  const { data: liveState } = useAttemptState(inProgress && !grading ? inProgress.id : undefined);
+  const liveRemaining = liveState?.remaining_seconds ?? null;
   const completed = (attempts ?? []).filter((a) => a.status === "completed");
 
   // Band trend from the last six completed attempts, oldest first.
@@ -176,8 +180,10 @@ function Dashboard() {
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Welcome back, {firstName}
         </h1>
-        {profile?.tier === "premium" ? (
-          <p className="mt-1.5 text-sm text-muted">Premium member</p>
+        {isPremium ? (
+          <p className="mt-1.5 text-sm text-muted">
+            {profile?.role === "admin" ? "Admin · everything unlocked" : "Premium member"}
+          </p>
         ) : (
           <p className="mt-3 inline-flex flex-wrap items-center gap-2 rounded-lg border border-warn/20 bg-warn-soft px-3 py-2 text-sm text-warn">
             Your exams and practice are locked until you enter a Premium access code.
@@ -300,6 +306,13 @@ function Dashboard() {
               <p className="text-sm capitalize text-ink-soft">
                 {inProgress.current_section ?? "Not started"} section
               </p>
+              {liveRemaining !== null && (
+                <p className={cn("mt-1 text-sm tabular-nums", liveRemaining === 0 ? "text-bad" : "text-muted")}>
+                  {liveRemaining === 0
+                    ? "Time is up for this section — open it to submit."
+                    : `${formatClock(liveRemaining)} left — the clock is running.`}
+                </p>
+              )}
               <Button asChild className="mt-3 w-full">
                 <Link
                   to={

@@ -80,7 +80,7 @@ function parseScript(script) {
   return turns;
 }
 var FEMALE_NAMES = new Set(
-  "anna ana alice amy amelia ann anne beth bella carla carol caroline charlotte chloe claire diana ella ellie emily emma eva fatima grace hannah helen holly isabel jane jasmine jenny jess jessica julia karen kate katie laura layla leila lily linda lisa lucy maria mary maya mia molly nadia nina nora olivia paula priya rachel rebecca rosa ruth sally sara sarah sophie susan tara una vanessa zara zoe narrator-f receptionist-f mrs ms miss".split(" ")
+  "anna ana alice amy amelia ann anne beth bella carla carol caroline charlotte chloe claire diana ella ellie emily emma eva fatima grace hannah helen holly isabel jane jasmine jenny jess jessica julia karen kate katie laura layla leila lily linda lisa lucy maria mary maya mia molly nadia nina nora olivia paula priya rachel rebecca rosa ruth sally sara sarah sophie susan tara una vanessa zara zoe clare gemma harriet imogen joanna kirsty lauren megan natalie sian tanya yasmin zainab aisha amira beatrice eleanor fiona georgia heather iris joy louise martha naomi phoebe rita shona tessa violet wendy abigail alison bridget catherine deborah esther freya gloria hazel ingrid janet kim lena margaret noor olga pam ruby sophia vera".split(" ")
 );
 var MALE_HINTS = /* @__PURE__ */ new Set(["mr", "sir", "man", "father", "dad", "boy"]);
 var FEMALE_HINTS = /* @__PURE__ */ new Set(["mrs", "ms", "miss", "woman", "mother", "mum", "girl", "lady"]);

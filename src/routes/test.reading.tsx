@@ -56,7 +56,7 @@ function ReadingPlayer() {
   }, []);
 
   if (player.loading || player.error) {
-    return <PlayerStatus loading={player.loading} error={player.error} />;
+    return <PlayerStatus loading={player.loading} error={player.error} action={player.errorAction} />;
   }
 
   const currentIndex = numbers.indexOf(current);

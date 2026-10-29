@@ -40,6 +40,8 @@ export function mergeProfile(
     // Falls back to the MoreTOEFL number, so onboarding can pre-fill it.
     whatsapp: learner?.whatsapp ?? account?.whatsapp ?? null,
     onboarded_at: learner?.onboarded_at ?? null,
+    variant: learner?.variant ?? null,
+    onboarding_skipped_at: learner?.onboarding_skipped_at ?? null,
     created_at: learner?.created_at ?? account?.created_at ?? new Date().toISOString(),
     updated_at: learner?.updated_at ?? new Date().toISOString(),
   };

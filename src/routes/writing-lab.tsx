@@ -127,11 +127,17 @@ function Composer(p: {
   pendingGroup: React.MutableRefObject<string | null>;
   onSubmitted: (id: string) => void;
 }) {
-  const { isPremium } = useAuth();
+  const { isPremium, profile } = useAuth();
   const prompts = useWritingPrompts();
   const submit = useSubmitEssay();
   const [useCustom, setUseCustom] = useState(false);
-  const list = (prompts.data ?? []).filter((x) => x.task_number === p.task);
+  const [allVariants, setAllVariants] = useState(false);
+  const variant = profile?.variant ?? null;
+  // Academic Task 1 is a chart; General Training Task 1 is a letter. A learner
+  // who has chosen their exam sees its prompts unless they ask for all.
+  const list = (prompts.data ?? []).filter(
+    (x) => x.task_number === p.task && (allVariants || !variant || x.variant === variant),
+  );
 
   // A rewrite carries the original group: reselect its prompt once prompts load.
   useEffect(() => {
@@ -211,6 +217,15 @@ function Composer(p: {
               <Icon name="pen" size={14} /> Write your own prompt
             </Button>
           </div>
+
+          {!useCustom && variant && (
+            <p className="flex flex-wrap items-center gap-2 text-xs text-muted">
+              <span>{allVariants ? "All prompts" : variant === "academic" ? "Academic prompts" : "General Training prompts"}</span>
+              <button type="button" className="font-medium text-brand-600 hover:underline" onClick={() => setAllVariants((v) => !v)}>
+                {allVariants ? "Show mine only" : "Show all"}
+              </button>
+            </p>
+          )}
 
           {useCustom ? (
             <Textarea

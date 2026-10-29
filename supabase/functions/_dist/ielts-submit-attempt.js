@@ -596,6 +596,13 @@ Deno.serve(async (req) => {
         kickWorker(db);
       }
     }
+    if (section) {
+      const { data: current } = await db.from("ielts_attempts").select("sections_done").eq("id", attempt_id).single();
+      const done = new Set(current?.sections_done ?? []);
+      done.add(section);
+      const { error: doneError } = await db.from("ielts_attempts").update({ sections_done: [...done] }).eq("id", attempt_id);
+      if (doneError) throw doneError;
+    }
     const score = await scoreAttempt(db, attempt_id, { close: !section });
     const { listening, reading, overall, complete } = score;
     const writingBand = score.writingBand;

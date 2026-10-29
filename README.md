@@ -125,6 +125,8 @@ supabase/
     0005_seed_question_types.sql The 15 question types
     0006_seed_band_conversion.sql Raw score -> band, versioned
     0007_practice_results.sql    ielts_practice_results, the practice history
+    0008-0014                    Content, grading queue, practice, payments, Premium-only, onboarding
+    0015_section_order_onboarding_health.sql  Section order, variant, admin health, job retry
   functions/
     _shared/               CORS, service client, rate limit, Anthropic client
     submit-attempt/        Marks responses and writes every score
@@ -212,7 +214,7 @@ existing renderer, nothing else changes.
 | `/vocabulary` | 16 IELTS topics × 25 words with Arabic meanings, flashcards (public) |
 | `/guides`, `/guides/$slug` | Public strategy page per question type (SEO surface) |
 | `/pricing` | Premium passes via Stripe Checkout, access codes |
-| `/mock` | Published forms and the section order |
+| `/mock` | Full exams for the learner's variant (Academic / General Training) and the section order. Sections open in order only: `ielts_start_section` refuses a later section until the earlier ones are submitted (0015) |
 | `/learn` | Format reference and links to every strategy guide (public) |
 | `/enhance` | Study plan: goals, exam countdown, today's checklist, weak spots |
 | `/test/reading` | Reading player — split pane, navigator, tabbed on mobile |
@@ -361,6 +363,17 @@ are MoreTOEFL's `public.profiles`, read only; `public.is_admin()` is reused.
 Everything IELTS-specific about a learner, including IELTS Premium, lives in
 `ielts_learners`, created on first visit by `ielts_ensure_learner()`.
 
+## Onboarding and the learner's variant (migration 0015)
+
+Every signed-in learner is asked once, in the interface language, for a
+name, nationality, which IELTS they are taking (Academic / General Training,
+stored as `ielts_learners.variant`) and an optional WhatsApp number. The form
+can be skipped (`onboarding_skipped_at`); the number is asked for again on
+`/pricing`, where a code has to be sent. The variant filters the mock list,
+drills (`ielts-drill` reads it; `all_variants: true` ignores it), the
+writing-lab prompts and the default form, and can be changed under Study
+plan → Your goals.
+
 ## Premium-only, access codes and mock exams (migration 0013)
 
 MoreIELTS has no free tier. `ielts_is_premium()` (an active
@@ -394,10 +407,29 @@ the shared project already has: `ANTHROPIC_API_KEY` (grading) and
 Supabase Storage (`ielts-media` public, `ielts-recordings` private).
 
 `npm run functions:build` bundles each function into
-`supabase/functions/_dist/<name>.js`. Each deployed function is a one-line
-loader that imports its bundle from jsDelivr at a pinned commit, so update a
-function by rebuilding, committing, and redeploying the loader with the new
-commit hash.
+`supabase/functions/_dist/<name>.js`, and `supabase/config.toml` points each
+function's entrypoint at its bundle, so `npm run functions:deploy` (build,
+then `supabase functions deploy` for the four) uploads self-contained code.
+Nothing deployed reaches back into this repository, so the repository can be
+private. The worker's health action (`{ "action": "health" }`, admin session
+or the worker key) reports which secrets it can see; the admin console shows
+it on **Analytics → System health** next to `ielts_admin_health()` (queue,
+cron, Vault, content gaps) and a **Retry** for failed jobs
+(`ielts_retry_grading_job`, also offered to the learner on their result).
+
+### Proving the pipeline
+
+`npm run test:e2e:mock` sits a whole mock exam through the real API as the
+account whose token you give it (admins count as Premium), submits every
+section in order, uploads a speech clip as each Speaking answer and waits for
+the Writing and Speaking bands:
+
+```bash
+E2E_REFRESH_TOKEN=<refresh token from the browser's sb-…-auth-token entry> npm run test:e2e:mock
+```
+
+Run it once against production after any change to the functions or the
+grading queue. It prints every job's status while it waits.
 
 ## Background grading, audio and payments (migrations 0007–0010)
 

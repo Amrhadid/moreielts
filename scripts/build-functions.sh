@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Bundles each deployed MoreIELTS Edge Function into one ASCII file under
-# supabase/functions/_dist. The deployed function is a one-line loader that
-# imports its bundle from a pinned commit, so what runs is exactly what CI
-# type-checked. Re-run and commit after changing a function.
+# supabase/functions/_dist. supabase/config.toml points each function's
+# entrypoint at its bundle, so `supabase functions deploy` uploads exactly
+# what CI type-checked and the deployed code never reaches back into this
+# repository. Re-run and commit after changing a function.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/supabase/functions/_dist"

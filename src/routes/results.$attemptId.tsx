@@ -7,6 +7,7 @@ import {
   useAttemptReviewV2,
   useAttemptTranscripts,
   useGradingJobs,
+  useRetryGradingJob,
   type AttemptReviewV2Row,
   type GradingJobRow,
   type TranscriptRow,
@@ -232,10 +233,11 @@ const JOB_STATUS: Record<GradingJobRow["status"], { label: string; tone: "neutra
   pending: { label: "Queued", tone: "neutral" },
   running: { label: "Grading…", tone: "brand" },
   done: { label: "Done", tone: "good" },
-  failed: { label: "Grading failed — contact support", tone: "bad" },
+  failed: { label: "Grading failed", tone: "bad" },
 };
 
 function GradingPanel({ jobs }: { jobs: GradingJobRow[] | undefined }) {
+  const retry = useRetryGradingJob();
   return (
     <Card className="mt-6 border-brand-200 bg-brand-50/40">
       <CardHeader>
@@ -248,6 +250,15 @@ function GradingPanel({ jobs }: { jobs: GradingJobRow[] | undefined }) {
         <p className="mb-3 text-sm text-ink-soft">
           This usually takes a minute or two. You can leave this page; your bands will be here when you come back.
         </p>
+        {retry.isError && (
+          <p className="mb-3 text-sm text-bad">Could not restart grading. Please try again in a minute.</p>
+        )}
+        {jobs?.some((j) => j.status === "failed") && (
+          <p className="mb-3 text-sm text-ink-soft">
+            One part could not be graded. "Try again" puts it back in the queue; if it fails
+            again, message us on WhatsApp and we will look at it.
+          </p>
+        )}
         {!jobs ? (
           <p className="text-sm text-muted">Checking progress…</p>
         ) : (
@@ -258,7 +269,19 @@ function GradingPanel({ jobs }: { jobs: GradingJobRow[] | undefined }) {
                   <Icon name={job.kind === "writing" ? "pen" : "mic"} size={16} className="text-brand-600" />
                   {job.kind === "writing" ? `Writing Task ${job.part_number}` : `Speaking Part ${job.part_number}`}
                 </span>
-                <Badge tone={JOB_STATUS[job.status].tone}>{JOB_STATUS[job.status].label}</Badge>
+                <span className="flex items-center gap-2">
+                  <Badge tone={JOB_STATUS[job.status].tone}>{JOB_STATUS[job.status].label}</Badge>
+                  {job.status === "failed" && (
+                    <button
+                      type="button"
+                      onClick={() => retry.mutate(job.id)}
+                      disabled={retry.isPending}
+                      className="text-xs font-medium text-brand-600 hover:underline disabled:opacity-50"
+                    >
+                      {retry.isPending ? "Retrying…" : "Try again"}
+                    </button>
+                  )}
+                </span>
               </li>
             ))}
           </ul>

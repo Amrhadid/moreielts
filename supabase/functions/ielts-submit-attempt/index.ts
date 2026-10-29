@@ -185,6 +185,25 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ------------------------------------------------------ section order
+    // A submitted section is recorded so ielts_start_section can refuse to
+    // reopen it or to start a later section before its predecessors. The
+    // service role is the only writer of sections_done (timing trigger).
+    if (section) {
+      const { data: current } = await db
+        .from("ielts_attempts")
+        .select("sections_done")
+        .eq("id", attempt_id)
+        .single();
+      const done = new Set<string>((current?.sections_done as string[] | null) ?? []);
+      done.add(section);
+      const { error: doneError } = await db
+        .from("ielts_attempts")
+        .update({ sections_done: [...done] })
+        .eq("id", attempt_id);
+      if (doneError) throw doneError;
+    }
+
     // --------------------------------------------------------------- score
     const score = await scoreAttempt(db, attempt_id, { close: !section });
     const { listening, reading, overall, complete } = score;
