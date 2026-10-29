@@ -11,6 +11,8 @@ import { useI18n } from "~/lib/i18n";
 import { WhatsAppPremiumButton } from "~/components/WhatsApp";
 import { useCheckout } from "~/lib/practice-queries";
 import { useRedeemCode } from "~/lib/queries";
+import { COUNTRIES, flag, splitPhone } from "~/components/Onboarding";
+import { supabase } from "~/lib/supabase";
 
 export const Route = createFileRoute("/pricing")({
   validateSearch: (s: Record<string, unknown>): { paid?: 1; cancelled?: 1 } => ({
@@ -80,6 +82,8 @@ function Pricing() {
           You are on Premium{expires ? ` until ${expires}` : ""}. Another code extends it.
         </div>
       )}
+
+      {user && !isPremium && !profile?.whatsapp && <WhatsAppNumberBox userId={user.id} />}
 
       {user ? (
         <RedeemBox />
@@ -174,6 +178,69 @@ function RedeemBox() {
         {redeem.isError && (
           <p className="mt-2 text-sm text-bad">{(redeem.error as Error).message || "That code is not valid."}</p>
         )}
+      </CardBody>
+    </Card>
+  );
+}
+
+/**
+ * The number a code is sent to. Optional at onboarding, asked for here where
+ * it is needed; saved straight to the learner row (own-row update under RLS).
+ */
+function WhatsAppNumberBox({ userId }: { userId: string }) {
+  const queryClient = useQueryClient();
+  const { profile } = useAuth();
+  const initial = splitPhone(profile?.whatsapp ?? null);
+  const [dial, setDial] = useState(initial.dial);
+  const [local, setLocal] = useState(initial.local);
+  const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    const number = local.replace(/\D/g, "").replace(/^0+/, "");
+    if (number.length < 6 || number.length > 12) return setState("error");
+    setState("saving");
+    const { error } = await supabase
+      .from("ielts_learners")
+      .update({ whatsapp: `+${dial}${number}` })
+      .eq("user_id", userId);
+    if (error) return setState("error");
+    setState("saved");
+    await queryClient.invalidateQueries({ queryKey: ["profile", userId] });
+  }
+
+  const field = "h-10 rounded-lg border border-line-strong bg-surface px-3 text-sm";
+  return (
+    <Card className="mt-8">
+      <CardBody className="pt-5">
+        <p className="text-sm font-medium">Where should we send your code?</p>
+        <p className="mt-1 text-sm text-muted">
+          Add your WhatsApp number so we can reply with your Premium access code. Optional, but it
+          makes things faster.
+        </p>
+        <form dir="ltr" onSubmit={save} className="mt-3 flex flex-wrap items-center gap-2">
+          <select aria-label="Country code" className={`${field} w-36`} value={dial} onChange={(e) => setDial(e.target.value)}>
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.dial}>
+                {flag(c.code)} +{c.dial}
+              </option>
+            ))}
+          </select>
+          <input
+            aria-label="WhatsApp number"
+            className={`${field} min-w-40 flex-1`}
+            type="tel"
+            inputMode="numeric"
+            placeholder="5xxxxxxxx"
+            value={local}
+            onChange={(e) => setLocal(e.target.value)}
+          />
+          <Button type="submit" variant="outline" size="sm" disabled={state === "saving" || !local.trim()}>
+            {state === "saving" ? "Saving…" : "Save number"}
+          </Button>
+          {state === "saved" && <span className="text-sm text-good">Saved</span>}
+          {state === "error" && <span className="text-sm text-bad">That number does not look right.</span>}
+        </form>
       </CardBody>
     </Card>
   );

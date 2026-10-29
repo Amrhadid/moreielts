@@ -10,8 +10,8 @@
  * the same job twice. A failure leaves the job pending for the next sweep;
  * after five tries it is marked failed.
  */
-import { json } from "../_shared/cors.ts";
-import { serviceClient } from "../_shared/supabase.ts";
+import { corsHeaders, json, preflight } from "../_shared/cors.ts";
+import { getCaller, serviceClient } from "../_shared/supabase.ts";
 import { gradeAttemptSpeaking, gradeAttemptWriting, gradeEssay } from "../_shared/grading.ts";
 import { scoreAttempt } from "../_shared/attempt-score.ts";
 
@@ -24,14 +24,53 @@ interface Job {
   tries: number;
 }
 
+/**
+ * Which secrets the worker can see, as booleans only. Shown on the admin
+ * System health card so a missing key is found before a learner hits it.
+ */
+function health() {
+  const has = (name: string) => Boolean(Deno.env.get(name));
+  return {
+    ok: true,
+    env: {
+      ANTHROPIC_API_KEY: has("ANTHROPIC_API_KEY"),
+      ELEVENLABS_API_KEY: has("ELEVENLABS_API_KEY"),
+      SUPABASE_SERVICE_ROLE_KEY: has("SUPABASE_SERVICE_ROLE_KEY"),
+      SITE_URL: has("SITE_URL"),
+    },
+    grading_model: Deno.env.get("GRADING_MODEL") ?? null,
+    checked_at: new Date().toISOString(),
+  };
+}
+
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return preflight();
   const db = serviceClient();
+  const body = await req.json().catch(() => ({}));
+
+  // The health action is also open to a signed-in admin, so the admin
+  // console can show it without holding the Vault key.
+  if (body.action === "health") {
+    const { data: keyOk } = await db.rpc("ielts_check_worker_key", {
+      p_key: req.headers.get("x-grade-key"),
+    });
+    let allowed = keyOk === true;
+    if (!allowed) {
+      const user = await getCaller(req);
+      if (user) {
+        const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).maybeSingle();
+        allowed = profile?.role === "admin";
+      }
+    }
+    if (!allowed) return json({ error: "forbidden" }, 403);
+    return json(health());
+  }
+
   const { data: keyOk } = await db.rpc("ielts_check_worker_key", {
     p_key: req.headers.get("x-grade-key"),
   });
   if (keyOk !== true) return json({ error: "forbidden" }, 403);
 
-  const body = await req.json().catch(() => ({}));
   const { data: jobs, error } = await db.rpc("ielts_claim_grading_jobs", {
     p_limit: Math.min(Number(body.limit ?? 5), 10),
     p_job: body.job_id ?? null,

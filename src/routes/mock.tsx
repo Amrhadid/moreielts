@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { AppShell } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Protected, useAuth } from "~/lib/auth";
+import { useI18n } from "~/lib/i18n";
 import { useForms } from "~/lib/queries";
 
 export const Route = createFileRoute("/mock")({ component: MockRoute });
@@ -17,18 +19,24 @@ function MockRoute() {
 }
 
 const ORDER = [
-  { code: "listening", to: "/test/listening", detail: "4 parts · 40 questions · audio plays once" },
-  { code: "reading", to: "/test/reading", detail: "3 passages · 40 questions" },
-  { code: "writing", to: "/test/writing", detail: "Task 1 (150 words) + Task 2 (250 words)" },
-  { code: "speaking", to: "/test/speaking", detail: "3 parts · recorded responses" },
+  { code: "listening", detail: "4 parts · 40 questions · audio plays once" },
+  { code: "reading", detail: "3 passages · 40 questions" },
+  { code: "writing", detail: "Task 1 (150 words) + Task 2 (250 words)" },
+  { code: "speaking", detail: "3 parts · recorded responses" },
 ] as const;
 
 function MockTest() {
   // RLS returns published forms only, so this list is already safe to show.
   const { data: forms, isLoading } = useForms();
-  const { isPremium } = useAuth();
-  // Full exams only: the practice forms feed the skill sections instead.
-  const published = (forms ?? []).filter((f) => f.is_published && f.purpose === "mock");
+  const { isPremium, profile } = useAuth();
+  const { t } = useI18n();
+  const [showAll, setShowAll] = useState(false);
+  const variant = profile?.variant ?? null;
+  // Full exams only: the practice forms feed the skill sections instead. A
+  // learner who chose Academic or General Training sees that variant first.
+  const published = (forms ?? []).filter(
+    (f) => f.is_published && f.purpose === "mock" && (showAll || !variant || f.variant === variant),
+  );
 
   return (
     <AppShell>
@@ -38,6 +46,19 @@ function MockTest() {
         each one is submitted before the next begins — you cannot return to a section
         once it is done.
       </p>
+
+      {variant && (
+        <p className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
+          <span>{t("mock.onlyVariant").replace("{variant}", t(`variant.${variant}`))}</span>
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="font-medium text-brand-600 hover:underline"
+          >
+            {showAll ? t("mock.showMine") : t("mock.showAll")}
+          </button>
+        </p>
+      )}
 
       {isLoading ? (
         <p className="mt-6 text-sm text-muted">Loading tests…</p>
@@ -84,7 +105,10 @@ function MockTest() {
         </div>
       )}
 
-      <h2 className="mb-3 mt-8 text-lg font-semibold tracking-tight">Test order</h2>
+      <h2 className="mb-1 mt-8 text-lg font-semibold tracking-tight">Test order</h2>
+      <p className="mb-3 text-sm text-muted">
+        Each exam starts with Listening. The next section opens when you submit the one before it.
+      </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {ORDER.map((section, i) => (
           <Card key={section.code}>
@@ -96,12 +120,6 @@ function MockTest() {
                 <div className="min-w-0 flex-1">
                   <p className="font-medium capitalize">{section.code}</p>
                   <p className="mt-1 text-xs leading-relaxed text-muted">{section.detail}</p>
-                  <Link
-                    to={section.to}
-                    className="mt-3 inline-block text-sm font-medium text-brand-600"
-                  >
-                    Open section →
-                  </Link>
                 </div>
               </div>
             </CardBody>

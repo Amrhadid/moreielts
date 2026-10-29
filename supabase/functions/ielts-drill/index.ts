@@ -21,7 +21,7 @@ const PUBLIC_QUESTION = "id, group_id, type_code, prompt, options, word_limit, o
 const KEYED_QUESTION =
   "id, group_id, prompt, accepted_answers, explanation, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, question_types:ielts_question_types!inner ( renderer )";
 const GROUP_FIELDS =
-  "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, is_published, is_premium, difficulty, purpose ) )";
+  "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, variant, is_published, is_premium, difficulty, purpose ) )";
 
 // deno-lint-ignore no-explicit-any
 type Row = any;
@@ -46,6 +46,12 @@ Deno.serve(async (req) => {
     /* ------------------------------------------------------------ start */
     if (body.action === "start") {
       const typeCode = String(body.type_code ?? "");
+      const { data: learner } = await db
+        .from("ielts_learners")
+        .select("variant")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const variant = body.all_variants ? null : (learner?.variant as string | null) ?? null;
       const { data: candidates, error } = await db
         .from("ielts_questions")
         .select(`group_id, item_groups:ielts_item_groups!inner ( ${GROUP_FIELDS} )`)
@@ -60,10 +66,13 @@ Deno.serve(async (req) => {
         if (form.purpose !== "practice") continue;
         if (form.is_premium && !premium) continue;
         if (body.difficulty && form.difficulty !== body.difficulty) continue;
+        // A learner who has chosen Academic or General Training drills that
+        // variant's forms; without a choice every variant is in the pool.
+        if (variant && form.variant !== variant) continue;
         groups.set(c.group_id, c.item_groups);
       }
       if (groups.size === 0) {
-        return json({ error: premium ? "no_content_for_type" : "no_free_content_for_type" }, 404);
+        return json({ error: "no_content_for_type" }, 404);
       }
 
       // Prefer a part the learner has not drilled for this type yet.

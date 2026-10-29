@@ -32,6 +32,9 @@ export interface ProfileRow {
   nationality: string | null;
   whatsapp: string | null;
   onboarded_at: string | null;
+  /** Academic or General Training; null until the learner chooses. */
+  variant: Variant | null;
+  onboarding_skipped_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -50,6 +53,8 @@ export interface LearnerRow {
   nationality: string | null;
   whatsapp: string | null;
   onboarded_at: string | null;
+  variant: Variant | null;
+  onboarding_skipped_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -138,6 +143,8 @@ export interface AttemptRow {
   section_started_at: string | null;
   section_deadline_at: string | null;
   last_heartbeat_at: string | null;
+  /** Sections already submitted, in no particular order (0015). */
+  sections_done: SectionCode[];
   started_at: string;
   submitted_at: string | null;
 }

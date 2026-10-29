@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "~/components/layout/Logo";
+import { ExitButton } from "~/components/player/ExitButton";
 import { PlayerStatus } from "~/components/player/PlayerStatus";
 import { Button } from "~/components/ui/Button";
 import { Textarea } from "~/components/ui/Field";
@@ -207,7 +208,7 @@ function SpeakingPlayer() {
   }, [isCueCard, phase, prepRemaining]);
 
   if (player.loading || player.error) {
-    return <PlayerStatus loading={player.loading} error={player.error} />;
+    return <PlayerStatus loading={player.loading} error={player.error} action={player.errorAction} />;
   }
 
   function advance() {
@@ -229,9 +230,10 @@ function SpeakingPlayer() {
   return (
     <div className="flex min-h-screen flex-col bg-paper">
       <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
+        <div className="mx-auto flex h-14 max-w-3xl items-center gap-4 px-4">
+          <ExitButton remaining={player.remaining} />
           <Logo />
-          <p className="text-sm text-muted">Speaking · 11–14 minutes</p>
+          <p className="ms-auto text-sm text-muted">Speaking · 11–14 minutes</p>
         </div>
       </header>
 

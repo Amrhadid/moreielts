@@ -12,7 +12,11 @@ import {
   useStartSection,
 } from "./queries";
 import { toItemGroups } from "./adapters";
+import { useAuth } from "./auth";
+import { describeStartupError, type StartupAction } from "./player-errors";
+import { supabase } from "./supabase";
 import type { AnswerSheet, SectionCode } from "~/types/content";
+
 
 const HEARTBEAT_MS = 30_000;
 const SAVE_DEBOUNCE_MS = 600;
@@ -30,8 +34,10 @@ export function usePlayerAttempt(section: SectionCode) {
   // The Mock Test page opens each section with ?form=<id>; without one the
   // player falls back to the default published form.
   const search = useSearch({ strict: false }) as { form?: string };
+  const { profile } = useAuth();
   const chosen = useFormById(search.form);
-  const fallback = useDefaultForm();
+  // The fallback follows the learner's chosen variant (Academic by default).
+  const fallback = useDefaultForm(profile?.variant ?? "academic");
   const { data: form, isLoading: formLoading, error: formError } = search.form ? chosen : fallback;
   const startAttempt = useStartAttempt();
   const startSection = useStartSection();
@@ -40,6 +46,7 @@ export function usePlayerAttempt(section: SectionCode) {
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [startupError, setStartupError] = useState<string | null>(null);
+  const [startupAction, setStartupAction] = useState<StartupAction | null>(null);
 
   const { data: content, isLoading: contentLoading } = useSectionContent(
     form?.id,
@@ -55,13 +62,31 @@ export function usePlayerAttempt(section: SectionCode) {
     started.current = true;
 
     (async () => {
+      let id: string | null = null;
       try {
-        const id = await startAttempt.mutateAsync(form.id);
-        setAttemptId(id);
+        id = await startAttempt.mutateAsync(form.id);
         await startSection.mutateAsync({ attemptId: id, section });
+        setAttemptId(id);
       } catch (error) {
         started.current = false;
-        setStartupError((error as Error).message ?? "Could not start the attempt");
+        // Which sections are done tells the message where to send the learner.
+        let done: string[] = [];
+        if (id) {
+          const { data } = await supabase
+            .from("ielts_attempts")
+            .select("sections_done")
+            .eq("id", id)
+            .maybeSingle();
+          done = (data?.sections_done as string[] | null) ?? [];
+        }
+        const described = describeStartupError(
+          (error as Error).message ?? "",
+          section,
+          form.id,
+          done,
+        );
+        setStartupError(described.text);
+        setStartupAction(described.action);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -213,7 +238,8 @@ export function usePlayerAttempt(section: SectionCode) {
     saving,
     saveError,
     expired: remaining === 0,
-    loading: formLoading || contentLoading || !attemptId,
+    loading: !startupError && (formLoading || contentLoading || !attemptId),
+    errorAction: startupAction,
     error:
       startupError ??
       (formError ? "Could not load the test form." : null) ??

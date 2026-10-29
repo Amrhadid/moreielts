@@ -56,6 +56,9 @@ begin
   insert into public.ielts_test_sections (form_id, section, time_limit_seconds, question_count)
   values (v_form, 'reading', 3600, 1)
   returning id into v_section;
+  -- A second section after Reading, for the section-order checks (0015).
+  insert into public.ielts_test_sections (form_id, section, time_limit_seconds, question_count, order_index)
+  values (v_form, 'writing', 3600, 0, 1);
 
   insert into public.ielts_item_groups (section_id, part_number, passage_text)
   values (v_section, 1, 'A passage.')
@@ -83,6 +86,7 @@ declare
   v_attempt uuid;
   v_remaining int;
   v_failed boolean;
+  v_ok boolean;
 begin
   -- 1. A user sees only their own learner row.
   select count(*) into v_count from public.ielts_learners;
@@ -140,6 +144,29 @@ begin
   -- 6. start_attempt resumes rather than duplicating.
   if public.ielts_start_attempt(v_form) <> v_attempt then
     raise exception 'FAIL: start_attempt created a second open attempt';
+  end if;
+
+  -- 6b. Sections run in order: Writing cannot start before Reading is
+  --     submitted (0015).
+  v_ok := false;
+  begin
+    perform * from public.ielts_start_section(v_attempt, 'writing');
+  exception when others then
+    if sqlerrm = 'section_out_of_order' then
+      v_ok := true;
+    end if;
+  end;
+  if not v_ok then
+    raise exception 'FAIL: start_section let a later section start out of order';
+  end if;
+
+  -- 6c. A candidate cannot mark a section done themselves.
+  update public.ielts_attempts set sections_done = '{reading}' where id = v_attempt;
+  if exists (
+    select 1 from public.ielts_attempts
+    where id = v_attempt and cardinality(sections_done) > 0
+  ) then
+    raise exception 'FAIL: candidate marked a section done directly';
   end if;
 
   -- 7. Saving a response works before the deadline.

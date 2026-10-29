@@ -417,7 +417,7 @@ function storedAnswer(answer) {
 var BOX_DAYS = [0, 1, 3, 7, 14, 30];
 var PUBLIC_QUESTION = "id, group_id, type_code, prompt, options, word_limit, order_index";
 var KEYED_QUESTION = "id, group_id, prompt, accepted_answers, explanation, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, question_types:ielts_question_types!inner ( renderer )";
-var GROUP_FIELDS = "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, is_published, is_premium, difficulty, purpose ) )";
+var GROUP_FIELDS = "id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, test_sections:ielts_test_sections!inner ( section, test_forms:ielts_test_forms!inner ( id, title, variant, is_published, is_premium, difficulty, purpose ) )";
 function markable(q) {
   return { ...q, renderer: q.question_types.renderer };
 }
@@ -432,6 +432,8 @@ Deno.serve(async (req) => {
     if (!premium) return json({ error: "premium_required" }, 403);
     if (body.action === "start") {
       const typeCode = String(body.type_code ?? "");
+      const { data: learner } = await db.from("ielts_learners").select("variant").eq("user_id", user.id).maybeSingle();
+      const variant = body.all_variants ? null : learner?.variant ?? null;
       const { data: candidates, error } = await db.from("ielts_questions").select(`group_id, item_groups:ielts_item_groups!inner ( ${GROUP_FIELDS} )`).eq("type_code", typeCode);
       if (error) throw error;
       const groups = /* @__PURE__ */ new Map();
@@ -441,10 +443,11 @@ Deno.serve(async (req) => {
         if (form.purpose !== "practice") continue;
         if (form.is_premium && !premium) continue;
         if (body.difficulty && form.difficulty !== body.difficulty) continue;
+        if (variant && form.variant !== variant) continue;
         groups.set(c.group_id, c.item_groups);
       }
       if (groups.size === 0) {
-        return json({ error: premium ? "no_content_for_type" : "no_free_content_for_type" }, 404);
+        return json({ error: "no_content_for_type" }, 404);
       }
       const { data: recent } = await db.from("ielts_drill_attempts").select("group_id").eq("user_id", user.id).eq("type_code", typeCode).order("started_at", { ascending: false }).limit(50);
       const seen = new Set((recent ?? []).map((r) => r.group_id));

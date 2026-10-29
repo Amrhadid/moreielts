@@ -1,0 +1,25 @@
+# Supabase CLI configuration for MoreIELTS.
+#
+# MoreIELTS shares the MoreTOEFL project. Only the four `ielts-*` functions
+# below are deployed, and each is deployed from its self-contained bundle in
+# supabase/functions/_dist (built by `npm run functions:build`), so the
+# deployed code has no dependency on this repository being reachable.
+project_id = "nlsuvapjkznatczghvay"
+
+[functions.ielts-submit-attempt]
+entrypoint = "./functions/_dist/ielts-submit-attempt.js"
+verify_jwt = true
+
+[functions.ielts-drill]
+entrypoint = "./functions/_dist/ielts-drill.js"
+verify_jwt = true
+
+[functions.ielts-generate-audio]
+entrypoint = "./functions/_dist/ielts-generate-audio.js"
+verify_jwt = true
+
+# Authenticated by the Vault-held worker key (ielts_check_worker_key), or an
+# admin session for the health action, so JWT verification is off.
+[functions.ielts-grading-worker]
+entrypoint = "./functions/_dist/ielts-grading-worker.js"
+verify_jwt = false
