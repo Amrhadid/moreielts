@@ -1,6 +1,6 @@
 /**
  * IELTS band scoring. Pure functions only — the same code runs in the
- * `submit-attempt` Edge Function (authoritative) and in the client for display.
+ * `ielts-submit-attempt` Edge Function (authoritative) and in the client for display.
  *
  * Bands are 0-9 in half-band steps. Nothing here deals in percentages.
  */

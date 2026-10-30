@@ -32,8 +32,8 @@ function SignupPage() {
 
   async function onSubmit(values: FormValues) {
     setServerError(null);
-    // The profiles row is created by the on_auth_user_created trigger, so
-    // there is nothing to insert here.
+    // The ielts_profiles row is created on first sign-in by
+    // ielts_ensure_profile(), so there is nothing to insert here.
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,

@@ -60,11 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["profile", session?.user.id],
     enabled: Boolean(session?.user.id),
     queryFn: async (): Promise<ProfileRow | null> => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session!.user.id)
-        .single();
+      // No signup trigger exists (the database is shared with MoreTOEFL), so
+      // the profile is created on first sign-in. Idempotent.
+      const { data, error } = await supabase.rpc("ielts_ensure_profile");
       if (error) throw error;
       return data as unknown as ProfileRow;
     },

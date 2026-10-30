@@ -1,5 +1,5 @@
 /**
- * grade-writing
+ * ielts-grade-writing
  *
  * Grades one Writing task against the four official criteria using Claude, and
  * writes the result to writing_scores as the service role.
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
     const db = serviceClient();
 
     const { data: attempt } = await db
-      .from("attempts")
+      .from("ielts_attempts")
       .select("id, user_id, form_id")
       .eq("id", attempt_id)
       .single();
@@ -86,12 +86,12 @@ Deno.serve(async (req) => {
 
     // 6 gradings per hour is comfortably above honest use and well below the
     // rate at which a scripted client could run up an API bill.
-    const allowed = await checkRateLimit(db, user.id, "grade-writing", 6, 60, attempt_id);
+    const allowed = await checkRateLimit(db, user.id, "ielts-grade-writing", 6, 60, attempt_id);
     if (!allowed) return json({ error: "rate_limited", retry_after_minutes: 60 }, 429);
 
     // Fetch the task prompt and the candidate's response.
     const { data: groups } = await db
-      .from("item_groups")
+      .from("ielts_item_groups")
       .select(
         `id, part_number, passage_text, shared_instructions,
          test_sections!inner ( section, form_id ),
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
     // deno-lint-ignore no-explicit-any
     const questionIds = ((group as any).questions ?? []).map((q: { id: string }) => q.id);
     const { data: responses } = await db
-      .from("responses")
+      .from("ielts_responses")
       .select("answer")
       .eq("attempt_id", attempt_id)
       .in("question_id", questionIds);
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
     // taken from the model: the arithmetic is ours and is unit tested.
     const taskBand = writingTaskBand(criteria);
 
-    const { error: writeError } = await db.from("writing_scores").upsert(
+    const { error: writeError } = await db.from("ielts_writing_scores").upsert(
       {
         attempt_id,
         task_number,
@@ -160,7 +160,7 @@ Deno.serve(async (req) => {
 
     return json({ attempt_id, task_number, ...criteria, task_band: taskBand });
   } catch (error) {
-    console.error("grade-writing failed", error);
+    console.error("ielts-grade-writing failed", error);
     return new Response(
       JSON.stringify({ error: String((error as Error).message ?? error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

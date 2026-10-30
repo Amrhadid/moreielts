@@ -45,7 +45,7 @@ function Waveform({ active }: { active: boolean }) {
 
 /**
  * Real recorder. Captures with MediaRecorder, uploads the blob to R2 through a
- * presigned URL issued by the upload-url Edge Function, then stores the object
+ * presigned URL issued by the ielts-upload-url Edge Function, then stores the object
  * URL on the response row. The browser never holds an R2 credential.
  */
 function Recorder({

@@ -1,5 +1,5 @@
 /**
- * grade-speaking
+ * ielts-grade-speaking
  *
  * Grades one Speaking part against the four official criteria and writes the
  * result to speaking_scores as the service role.
@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
     const db = serviceClient();
 
     const { data: attempt } = await db
-      .from("attempts")
+      .from("ielts_attempts")
       .select("id, user_id, form_id")
       .eq("id", attempt_id)
       .single();
@@ -88,13 +88,13 @@ Deno.serve(async (req) => {
     if (!attempt) return json({ error: "attempt_not_found" }, 404);
     if (attempt.user_id !== user.id) return json({ error: "forbidden" }, 403);
 
-    const allowed = await checkRateLimit(db, user.id, "grade-speaking", 9, 60, attempt_id);
+    const allowed = await checkRateLimit(db, user.id, "ielts-grade-speaking", 9, 60, attempt_id);
     if (!allowed) return json({ error: "rate_limited", retry_after_minutes: 60 }, 429);
 
     // Prefer a transcript already stored on the row over one sent by the
     // client, so a re-grade never depends on client input.
     const { data: existing } = await db
-      .from("speaking_scores")
+      .from("ielts_speaking_scores")
       .select("transcript")
       .eq("attempt_id", attempt_id)
       .eq("part_number", part_number)
@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
     if (!text) return json({ error: "no_transcript_to_grade" }, 400);
 
     const { data: groups } = await db
-      .from("item_groups")
+      .from("ielts_item_groups")
       .select(
         `part_number, passage_text, shared_instructions,
          test_sections!inner ( section, form_id )`,
@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
 
     const partBand = speakingBand(criteria);
 
-    const { error: writeError } = await db.from("speaking_scores").upsert(
+    const { error: writeError } = await db.from("ielts_speaking_scores").upsert(
       {
         attempt_id,
         part_number,
@@ -154,7 +154,7 @@ Deno.serve(async (req) => {
 
     return json({ attempt_id, part_number, ...criteria, part_band: partBand });
   } catch (error) {
-    console.error("grade-speaking failed", error);
+    console.error("ielts-grade-speaking failed", error);
     return new Response(
       JSON.stringify({ error: String((error as Error).message ?? error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

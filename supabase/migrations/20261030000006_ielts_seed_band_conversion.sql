@@ -13,7 +13,7 @@
 -- never edited in place.
 
 -- Listening (identical boundaries for Academic and General Training).
-insert into public.band_conversion (variant, section, raw_min, raw_max, band, version)
+insert into public.ielts_band_conversion (variant, section, raw_min, raw_max, band, version)
 select v.variant, 'listening', t.raw_min, t.raw_max, t.band, 'v1'
 from (values
   (39, 40, 9.0), (37, 38, 8.5), (35, 36, 8.0), (32, 34, 7.5), (30, 31, 7.0),
@@ -25,7 +25,7 @@ cross join (values ('academic'), ('general_training')) as v(variant)
 on conflict (variant, section, raw_min, version) do nothing;
 
 -- Academic Reading.
-insert into public.band_conversion (variant, section, raw_min, raw_max, band, version)
+insert into public.ielts_band_conversion (variant, section, raw_min, raw_max, band, version)
 values
   ('academic', 'reading', 39, 40, 9.0, 'v1'),
   ('academic', 'reading', 37, 38, 8.5, 'v1'),
@@ -49,7 +49,7 @@ on conflict (variant, section, raw_min, version) do nothing;
 
 -- General Training Reading. A higher raw score is needed for the same band,
 -- because the texts are less demanding than the Academic passages.
-insert into public.band_conversion (variant, section, raw_min, raw_max, band, version)
+insert into public.ielts_band_conversion (variant, section, raw_min, raw_max, band, version)
 values
   ('general_training', 'reading', 40, 40, 9.0, 'v1'),
   ('general_training', 'reading', 39, 39, 8.5, 'v1'),
@@ -83,7 +83,7 @@ begin
     foreach v_section in array array['listening', 'reading'] loop
       for v_raw in 0..40 loop
         if not exists (
-          select 1 from public.band_conversion
+          select 1 from public.ielts_band_conversion
           where variant = v_variant
             and section = v_section
             and version = 'v1'

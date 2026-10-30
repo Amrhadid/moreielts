@@ -47,7 +47,7 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 | `SUPABASE_URL` | Edge Functions | Injected by Supabase |
 | `SUPABASE_ANON_KEY` | Edge Functions | Injected by Supabase. Used to resolve the caller from their JWT |
 | `SUPABASE_SERVICE_ROLE_KEY` | Edge Functions | Injected by Supabase. Bypasses RLS; the only writer of marks and scores. **Never expose to the client** |
-| `ANTHROPIC_API_KEY` | Edge Functions | Claude, for `grade-writing` and `grade-speaking` |
+| `ANTHROPIC_API_KEY` | Edge Functions | Claude, for `ielts-grade-writing` and `ielts-grade-speaking` |
 | `R2_ACCOUNT_ID` | Edge Functions | Cloudflare account id for the S3-compatible endpoint |
 | `R2_ACCESS_KEY_ID` | Edge Functions | R2 access key. Used only to presign; never sent to the browser |
 | `R2_SECRET_ACCESS_KEY` | Edge Functions | R2 secret |
@@ -83,19 +83,19 @@ These are baked into the schema, the marking and the UI. They are not guesses.
 
 ```
 supabase/
-  migrations/            Numbered, sequential, additive-only SQL
-    0001_initial_schema.sql      Tables, triggers, signup hook
-    0002_row_level_security.sql  RLS policies and table grants
-    0003_safe_views.sql          questions_public + get_attempt_review()
-    0004_attempt_rpcs.sql        Server-authoritative timing, redeem_code
-    0005_seed_question_types.sql The 15 question types
-    0006_seed_band_conversion.sql Raw score -> band, versioned
+  migrations/            Timestamped (shared DB with MoreTOEFL), additive-only SQL, all objects ielts_-prefixed
+    20261030000001_ielts_initial_schema.sql      Tables, ielts_ensure_profile() (no auth.users trigger)
+    20261030000002_ielts_row_level_security.sql  RLS policies and table grants
+    20261030000003_ielts_safe_views.sql          questions_public + get_attempt_review()
+    20261030000004_ielts_attempt_rpcs.sql        Server-authoritative timing, redeem_code
+    20261030000005_ielts_seed_question_types.sql The 15 question types
+    20261030000006_ielts_seed_band_conversion.sql Raw score -> band, versioned
   functions/
     _shared/               CORS, service client, rate limit, Anthropic client
-    submit-attempt/        Marks responses and writes every score
-    grade-writing/         Claude, four Writing criteria, strict JSON
-    grade-speaking/        Claude, four Speaking criteria, strict JSON
-    upload-url/            Presigned R2 PUT URLs (SigV4)
+    ielts-submit-attempt/        Marks responses and writes every score
+    ielts-grade-writing/         Claude, four Writing criteria, strict JSON
+    ielts-grade-speaking/        Claude, four Speaking criteria, strict JSON
+    ielts-upload-url/            Presigned R2 PUT URLs (SigV4)
   tests/rls_test.sql       Security assertions, run by npm run test:db
   seed.sql                 GENERATED — one published Academic form
 
@@ -205,7 +205,7 @@ calling an RPC.
 
 **3. Correctness and scores are decided by the server.**
 `responses.is_correct` and every score table are SELECT-only for authenticated
-users; they are written exclusively by the `submit-attempt` Edge Function
+users; they are written exclusively by the `ielts-submit-attempt` Edge Function
 running as the service role. That function imports the same `answer-check` and
 `scoring` modules the app uses, so there is one implementation of both, and it is
 the tested one.
@@ -243,20 +243,20 @@ done here rather than taken from the model.
 
 ## AI grading
 
-`grade-writing` and `grade-speaking` call Claude with criterion-specific prompts
+`ielts-grade-writing` and `ielts-grade-speaking` call Claude with criterion-specific prompts
 that require a short verbatim quote from the candidate's own answer as evidence
 for each of the four criteria. Both demand strict JSON, validate every band is
 0–9 in half steps before writing, record `model_version` on every row, and are
 rate limited per user via `ai_grading_usage`. The API key exists only in the
 function environment.
 
-`grade-speaking` currently grades a transcript. Producing that transcript from
+`ielts-grade-speaking` currently grades a transcript. Producing that transcript from
 `responses.audio_url` server-side is marked `TODO(transcription)` — until then a
 client-supplied transcript is used only when no stored one exists.
 
 ## Media uploads
 
-`upload-url` issues a presigned R2 PUT (SigV4, five-minute expiry) after
+`ielts-upload-url` issues a presigned R2 PUT (SigV4, five-minute expiry) after
 checking: admin role for item audio and images, attempt ownership and an active
 attempt for speaking recordings. Content type and size are validated and the
 signed URL is bound to one object key and one content type. R2 credentials never

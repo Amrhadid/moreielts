@@ -1,5 +1,5 @@
 /**
- * submit-attempt
+ * ielts-submit-attempt
  *
  * The authoritative marking and scoring pass. This is the only place where
  * responses.is_correct and the score tables are written, and it runs as the
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     const db = serviceClient();
 
     const { data: attempt, error: attemptError } = await db
-      .from("attempts")
+      .from("ielts_attempts")
       .select("id, user_id, form_id, status")
       .eq("id", attempt_id)
       .single();
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     if (attempt.user_id !== user.id) return json({ error: "forbidden" }, 403);
 
     const { data: form } = await db
-      .from("test_forms")
+      .from("ielts_test_forms")
       .select("id, variant, scoring_version")
       .eq("id", attempt.form_id)
       .single();
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- mark
     // Pull every objective question on the form together with its answers.
     const { data: questions, error: questionsError } = await db
-      .from("questions")
+      .from("ielts_questions")
       .select(
         `id, type_code, accepted_answers, word_limit, spelling_policy,
          accepts_plural, case_sensitive, scoring_rules,
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
     if (questionsError) throw questionsError;
 
     const { data: responses } = await db
-      .from("responses")
+      .from("ielts_responses")
       .select("id, question_id, answer")
       .eq("attempt_id", attempt_id);
 
@@ -137,12 +137,12 @@ Deno.serve(async (req) => {
 
     // Persist the marks. Only the service role may write this column.
     for (const row of marked) {
-      await db.from("responses").update({ is_correct: row.is_correct }).eq("id", row.id);
+      await db.from("ielts_responses").update({ is_correct: row.is_correct }).eq("id", row.id);
     }
 
     // --------------------------------------------------------------- score
     const { data: conversion } = await db
-      .from("band_conversion")
+      .from("ielts_band_conversion")
       .select("variant, section, raw_min, raw_max, band, version")
       .eq("version", form.scoring_version ?? "v1");
 
@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
     // separately. A section with no scores yet contributes 0 and the attempt
     // stays awaiting_speaking until they land.
     const { data: writingRows } = await db
-      .from("writing_scores")
+      .from("ielts_writing_scores")
       .select("task_number, task_band")
       .eq("attempt_id", attempt_id);
 
@@ -181,7 +181,7 @@ Deno.serve(async (req) => {
         : null;
 
     const { data: speakingRows } = await db
-      .from("speaking_scores")
+      .from("ielts_speaking_scores")
       .select("part_band")
       .eq("attempt_id", attempt_id);
 
@@ -200,7 +200,7 @@ Deno.serve(async (req) => {
         })
       : null;
 
-    await db.from("attempt_scores").upsert(
+    await db.from("ielts_attempt_scores").upsert(
       {
         attempt_id,
         listening_raw: listening.raw,
@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
     // leaves it open for the next section.
     if (!section) {
       await db
-        .from("attempts")
+        .from("ielts_attempts")
         .update({
           status: complete ? "completed" : "awaiting_speaking",
           submitted_at: new Date().toISOString(),
@@ -230,7 +230,7 @@ Deno.serve(async (req) => {
 
       if (complete && overall) {
         await db
-          .from("profiles")
+          .from("ielts_profiles")
           .update({ current_band: overall.band })
           .eq("id", user.id);
       }
@@ -247,7 +247,7 @@ Deno.serve(async (req) => {
       status: complete ? "completed" : "awaiting_speaking",
     });
   } catch (error) {
-    console.error("submit-attempt failed", error);
+    console.error("ielts-submit-attempt failed", error);
     return new Response(
       JSON.stringify({ error: String((error as Error).message ?? error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

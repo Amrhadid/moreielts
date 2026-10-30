@@ -8,7 +8,7 @@
 -- Idempotent: re-running updates labels and limits without disturbing any
 -- question rows that reference these codes.
 
-insert into public.question_types
+insert into public.ielts_question_types
   (code, section, label, renderer, default_word_limit)
 values
   ('multiple_choice_single',    'reading',   'Multiple choice (one answer)',      'radio',      0),

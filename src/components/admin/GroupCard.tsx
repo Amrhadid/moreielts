@@ -62,7 +62,7 @@ export function GroupCard({
     });
   }
 
-  /** Uploads through the upload-url Edge Function; no R2 keys in the browser. */
+  /** Uploads through the ielts-upload-url Edge Function; no R2 keys in the browser. */
   async function upload(file: File, kind: "item_audio" | "item_image") {
     setUploadError(null);
     setUploading(kind === "item_audio" ? "audio" : "image");

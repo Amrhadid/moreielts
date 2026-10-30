@@ -1,5 +1,5 @@
 /**
- * upload-url
+ * ielts-upload-url
  *
  * Issues a short-lived presigned PUT URL for Cloudflare R2. The R2 access key
  * never leaves this function: the client receives only a URL that is valid for
@@ -160,7 +160,7 @@ Deno.serve(async (req) => {
         return json({ error: "attempt_id_and_question_id_required" }, 400);
       }
       const { data: attempt } = await db
-        .from("attempts")
+        .from("ielts_attempts")
         .select("id, user_id, status")
         .eq("id", attempt_id)
         .single();
@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     } else {
       // Content uploads are an admin operation.
       const { data: profile } = await db
-        .from("profiles")
+        .from("ielts_profiles")
         .select("role")
         .eq("id", user.id)
         .single();
@@ -203,7 +203,7 @@ Deno.serve(async (req) => {
       required_headers: { "Content-Type": content_type },
     });
   } catch (error) {
-    console.error("upload-url failed", error);
+    console.error("ielts-upload-url failed", error);
     return new Response(
       JSON.stringify({ error: String((error as Error).message ?? error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

@@ -13,7 +13,7 @@ import { useSubmitAttempt } from "~/lib/queries";
 import type { SectionCode } from "~/types/content";
 
 /**
- * Submission is a server operation: the submit-attempt Edge Function marks the
+ * Submission is a server operation: the ielts-submit-attempt Edge Function marks the
  * responses and writes the scores. The client only asks for it and routes to
  * the result.
  */

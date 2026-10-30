@@ -31,31 +31,33 @@ begin
     (v_alice, 'alice@example.com'),
     (v_bob, 'bob@example.com');
 
-  -- The signup trigger should have created three profiles.
-  select count(*) into v_count from public.profiles;
+  -- There is no signup trigger (the database is shared with MoreTOEFL); the
+  -- app creates the row through ielts_ensure_profile(). Seed them directly.
+  insert into public.ielts_profiles (id, email) select id, email from auth.users;
+  select count(*) into v_count from public.ielts_profiles;
   if v_count <> 3 then
-    raise exception 'FAIL: signup trigger did not create profiles (got %)', v_count;
+    raise exception 'FAIL: expected 3 profiles (got %)', v_count;
   end if;
 
-  update public.profiles set role = 'admin' where id = v_admin;
+  update public.ielts_profiles set role = 'admin' where id = v_admin;
 
-  insert into public.test_forms (id, title, variant, is_published, created_by)
+  insert into public.ielts_test_forms (id, title, variant, is_published, created_by)
   values (gen_random_uuid(), 'Published Academic Form', 'academic', true, v_admin)
   returning id into v_form;
 
-  insert into public.test_forms (title, variant, is_published, created_by)
+  insert into public.ielts_test_forms (title, variant, is_published, created_by)
   values ('Unpublished Draft', 'academic', false, v_admin)
   returning id into v_draft;
 
-  insert into public.test_sections (form_id, section, time_limit_seconds, question_count)
+  insert into public.ielts_test_sections (form_id, section, time_limit_seconds, question_count)
   values (v_form, 'reading', 3600, 1)
   returning id into v_section;
 
-  insert into public.item_groups (section_id, part_number, passage_text)
+  insert into public.ielts_item_groups (section_id, part_number, passage_text)
   values (v_section, 1, 'A passage.')
   returning id into v_group;
 
-  insert into public.questions (group_id, type_code, prompt, accepted_answers, word_limit)
+  insert into public.ielts_questions (group_id, type_code, prompt, accepted_answers, word_limit)
   values (v_group, 'short_answer', 'What holds the wing open?', array['tendon'], 2)
   returning id into v_question;
 
@@ -79,7 +81,7 @@ declare
   v_failed boolean;
 begin
   -- 1. A user sees only their own profile.
-  select count(*) into v_count from public.profiles;
+  select count(*) into v_count from public.ielts_profiles;
   if v_count <> 1 then
     raise exception 'FAIL: user can see % profiles, expected 1', v_count;
   end if;
@@ -87,58 +89,58 @@ begin
   -- 2. A user sees published forms only. Asserted as "no unpublished rows are
   --    visible" rather than an exact count, so seeding more forms cannot make
   --    this pass or fail spuriously.
-  select count(*) into v_count from public.test_forms where not is_published;
+  select count(*) into v_count from public.ielts_test_forms where not is_published;
   if v_count <> 0 then
     raise exception 'FAIL: user can see % unpublished forms', v_count;
   end if;
-  select count(*) into v_count from public.test_forms;
+  select count(*) into v_count from public.ielts_test_forms;
   if v_count < 1 then
     raise exception 'FAIL: user cannot see any published form';
   end if;
-  select id into v_form from public.test_forms
+  select id into v_form from public.ielts_test_forms
   where title = 'Published Academic Form' limit 1;
 
   -- 3. The questions base table is invisible: accepted_answers can never be
   --    read by a candidate, at any point in an attempt.
-  select count(*) into v_count from public.questions;
+  select count(*) into v_count from public.ielts_questions;
   if v_count <> 0 then
     raise exception 'FAIL: candidate can read % rows of questions', v_count;
   end if;
 
   -- 4. The candidate-safe view IS readable, and carries no answer column.
-  select count(*) into v_count from public.questions_public;
+  select count(*) into v_count from public.ielts_questions_public;
   if v_count < 1 then
     raise exception 'FAIL: questions_public returned no rows';
   end if;
   if exists (
     select 1 from information_schema.columns
-    where table_name = 'questions_public'
+    where table_name = 'ielts_questions_public'
       and column_name in ('accepted_answers', 'scoring_rules')
   ) then
     raise exception 'FAIL: questions_public exposes an answer column';
   end if;
   select q.id into v_question
-  from public.questions_public q
-  join public.item_groups g on g.id = q.group_id
-  join public.test_sections s on s.id = g.section_id
+  from public.ielts_questions_public q
+  join public.ielts_item_groups g on g.id = q.group_id
+  join public.ielts_test_sections s on s.id = g.section_id
   where s.form_id = v_form limit 1;
 
   -- 5. Attempt lifecycle.
-  v_attempt := public.start_attempt(v_form);
+  v_attempt := public.ielts_start_attempt(v_form);
   select remaining_seconds into v_remaining
-  from public.start_section(v_attempt, 'reading');
+  from public.ielts_start_section(v_attempt, 'reading');
   if v_remaining <> 3600 then
-    raise exception 'FAIL: start_section returned % seconds, expected 3600', v_remaining;
+    raise exception 'FAIL: ielts_start_section returned % seconds, expected 3600', v_remaining;
   end if;
 
-  -- 6. start_attempt resumes rather than duplicating.
-  if public.start_attempt(v_form) <> v_attempt then
-    raise exception 'FAIL: start_attempt created a second open attempt';
+  -- 6. ielts_start_attempt resumes rather than duplicating.
+  if public.ielts_start_attempt(v_form) <> v_attempt then
+    raise exception 'FAIL: ielts_start_attempt created a second open attempt';
   end if;
 
   -- 7. Saving a response works before the deadline.
-  perform public.save_response(v_attempt, v_question, 'tendon', 1200);
-  select count(*) into v_count from public.responses where attempt_id = v_attempt;
+  perform public.ielts_save_response(v_attempt, v_question, 'tendon', 1200);
+  select count(*) into v_count from public.ielts_responses where attempt_id = v_attempt;
   if v_count <> 1 then
     raise exception 'FAIL: response not saved';
   end if;
@@ -148,12 +150,12 @@ begin
   --    granted UPDATE, the missing policy would still make it a no-op. Accept
   --    either outcome, but never a successful mark.
   begin
-    update public.responses set is_correct = true where attempt_id = v_attempt;
+    update public.ielts_responses set is_correct = true where attempt_id = v_attempt;
   exception when insufficient_privilege then
     null;
   end;
   if exists (
-    select 1 from public.responses
+    select 1 from public.ielts_responses
     where attempt_id = v_attempt and is_correct is true
   ) then
     raise exception 'FAIL: candidate marked their own response correct';
@@ -162,7 +164,7 @@ begin
   -- 9. Answers are withheld until the attempt is submitted.
   v_failed := false;
   begin
-    perform * from public.get_attempt_review(v_attempt);
+    perform * from public.ielts_get_attempt_review(v_attempt);
   exception when others then
     v_failed := true;
     if sqlerrm not like '%attempt_not_submitted%' then
@@ -174,20 +176,20 @@ begin
   end if;
 
   -- 10. A user cannot extend their own deadline by updating the row.
-  update public.attempts
+  update public.ielts_attempts
   set section_deadline_at = now() + interval '10 hours'
   where id = v_attempt;
   if exists (
-    select 1 from public.attempts
+    select 1 from public.ielts_attempts
     where id = v_attempt and section_deadline_at > now() + interval '2 hours'
   ) then
     raise exception 'FAIL: candidate extended their own deadline';
   end if;
 
   -- 11. A user cannot promote themselves to admin or to premium.
-  update public.profiles set role = 'admin', tier = 'premium' where id = auth.uid();
+  update public.ielts_profiles set role = 'admin', tier = 'premium' where id = auth.uid();
   if exists (
-    select 1 from public.profiles
+    select 1 from public.ielts_profiles
     where id = auth.uid() and (role = 'admin' or tier = 'premium')
   ) then
     raise exception 'FAIL: candidate escalated their own privileges';
@@ -204,7 +206,7 @@ $$;
 -- write the timing columns directly.
 reset role;
 set role service_role;
-update public.attempts set section_deadline_at = now() - interval '1 second';
+update public.ielts_attempts set section_deadline_at = now() - interval '1 second';
 reset role;
 
 set role authenticated;
@@ -216,15 +218,15 @@ declare
   v_question uuid;
   v_failed boolean := false;
 begin
-  select id into v_attempt from public.attempts limit 1;
+  select id into v_attempt from public.ielts_attempts limit 1;
   -- The question already answered in this attempt, so the only thing under
   -- test here is the deadline.
   select r.question_id into v_question
-  from public.responses r
+  from public.ielts_responses r
   where r.attempt_id = v_attempt limit 1;
 
   begin
-    perform public.save_response(v_attempt, v_question, 'late answer', 100);
+    perform public.ielts_save_response(v_attempt, v_question, 'late answer', 100);
   exception when others then
     v_failed := true;
     if sqlerrm not like '%deadline_passed%' then
@@ -238,7 +240,7 @@ begin
 
   -- The earlier answer must be untouched by the rejected write.
   if exists (
-    select 1 from public.responses
+    select 1 from public.ielts_responses
     where attempt_id = v_attempt and answer = 'late answer'
   ) then
     raise exception 'FAIL: late answer was persisted';
@@ -259,23 +261,23 @@ declare
   v_attempt uuid;
   v_failed boolean := false;
 begin
-  select count(*) into v_count from public.attempts;
+  select count(*) into v_count from public.ielts_attempts;
   if v_count <> 0 then
     raise exception 'FAIL: Bob can see % of Alice''s attempts', v_count;
   end if;
 
-  select count(*) into v_count from public.responses;
+  select count(*) into v_count from public.ielts_responses;
   if v_count <> 0 then
     raise exception 'FAIL: Bob can see % of Alice''s responses', v_count;
   end if;
 
   reset role;
-  select id into v_attempt from public.attempts limit 1;
+  select id into v_attempt from public.ielts_attempts limit 1;
   set role authenticated;
   set request.jwt.claim.sub = '33333333-3333-3333-3333-333333333333';
 
   begin
-    perform public.save_response(v_attempt, (select id from public.questions_public limit 1), 'x');
+    perform public.ielts_save_response(v_attempt, (select id from public.ielts_questions_public limit 1), 'x');
   exception when others then
     v_failed := true;
     if sqlerrm not like '%forbidden%' then
@@ -296,7 +298,7 @@ $$;
 -- Submission is performed by the marking Edge Function as the service role.
 reset role;
 set role service_role;
-update public.attempts set status = 'completed', submitted_at = now();
+update public.ielts_attempts set status = 'completed', submitted_at = now();
 reset role;
 
 set role authenticated;
@@ -307,9 +309,9 @@ declare
   v_attempt uuid;
   v_answers text[];
 begin
-  select id into v_attempt from public.attempts limit 1;
+  select id into v_attempt from public.ielts_attempts limit 1;
   select accepted_answers into v_answers
-  from public.get_attempt_review(v_attempt) limit 1;
+  from public.ielts_get_attempt_review(v_attempt) limit 1;
 
   if v_answers is null or array_length(v_answers, 1) <> 1 then
     raise exception 'FAIL: review did not return accepted answers after submission';
@@ -328,18 +330,18 @@ do $$
 declare
   v_count int;
 begin
-  select count(*) into v_count from public.profiles;
+  select count(*) into v_count from public.ielts_profiles;
   if v_count <> 3 then
     raise exception 'FAIL: admin sees % profiles, expected 3', v_count;
   end if;
 
   -- The admin must see the draft that candidates cannot.
-  select count(*) into v_count from public.test_forms where not is_published;
+  select count(*) into v_count from public.ielts_test_forms where not is_published;
   if v_count < 1 then
     raise exception 'FAIL: admin cannot see the unpublished draft';
   end if;
 
-  select count(*) into v_count from public.questions;
+  select count(*) into v_count from public.ielts_questions;
   if v_count < 1 then
     raise exception 'FAIL: admin cannot read the questions table';
   end if;
@@ -357,17 +359,17 @@ do $$
 declare
   v_count int;
 begin
-  select count(*) into v_count from public.question_types;
+  select count(*) into v_count from public.ielts_question_types;
   if v_count <> 15 then
     raise exception 'FAIL: expected 15 question types, found %', v_count;
   end if;
 
-  select count(distinct renderer) into v_count from public.question_types;
+  select count(distinct renderer) into v_count from public.ielts_question_types;
   if v_count <> 4 then
     raise exception 'FAIL: expected 4 distinct renderers, found %', v_count;
   end if;
 
-  select count(*) into v_count from public.band_conversion where version = 'v1';
+  select count(*) into v_count from public.ielts_band_conversion where version = 'v1';
   if v_count < 60 then
     raise exception 'FAIL: band_conversion looks incomplete (% rows)', v_count;
   end if;

@@ -54,7 +54,7 @@ export function useQuestionTypes() {
     staleTime: 60 * 60 * 1000,
     queryFn: async (): Promise<QuestionTypeRow[]> => {
       const { data, error } = await supabase
-        .from("question_types")
+        .from("ielts_question_types")
         .select("*")
         .eq("is_active", true)
         .order("code");
@@ -73,7 +73,7 @@ export function useForms(options?: Partial<UseQueryOptions<TestFormRow[]>>) {
     queryKey: queryKeys.forms,
     queryFn: async (): Promise<TestFormRow[]> => {
       const { data, error } = await supabase
-        .from("test_forms")
+        .from("ielts_test_forms")
         .select("*")
         .order("updated_at", { ascending: false });
       if (error) throw error;
@@ -102,7 +102,7 @@ export function useSectionContent(
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<SectionContent | null> => {
       const { data: sectionRow, error: sectionError } = await supabase
-        .from("test_sections")
+        .from("ielts_test_sections")
         .select("*")
         .eq("form_id", formId!)
         .eq("section", section)
@@ -111,7 +111,7 @@ export function useSectionContent(
       if (!sectionRow) return null;
 
       const { data: groups, error: groupsError } = await supabase
-        .from("item_groups")
+        .from("ielts_item_groups")
         .select("*")
         .eq("section_id", (sectionRow as unknown as TestSectionRow).id)
         .order("order_index");
@@ -119,7 +119,7 @@ export function useSectionContent(
 
       const groupIds = (groups as unknown as ItemGroupRow[]).map((g) => g.id);
       const { data: questions, error: questionsError } = await supabase
-        .from("questions_public")
+        .from("ielts_questions_public")
         .select("*")
         .in("group_id", groupIds.length ? groupIds : ["00000000-0000-0000-0000-000000000000"])
         .order("order_index");
@@ -150,7 +150,7 @@ export function useDefaultForm(variant: "academic" | "general_training" = "acade
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<TestFormRow | null> => {
       const { data, error } = await supabase
-        .from("test_forms")
+        .from("ielts_test_forms")
         .select("*")
         .eq("is_published", true)
         .eq("variant", variant)
@@ -173,7 +173,7 @@ export function useAttempts(userId: string | undefined) {
     enabled: Boolean(userId),
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("attempts")
+        .from("ielts_attempts")
         .select("*, test_forms ( title, variant ), attempt_scores ( overall_band )")
         .order("started_at", { ascending: false })
         .limit(25);
@@ -201,7 +201,7 @@ export function useAttemptState(attemptId: string | undefined) {
     staleTime: 0,
     gcTime: 0,
     queryFn: async (): Promise<AttemptStateRow | null> => {
-      const { data, error } = await supabase.rpc("get_attempt_state", {
+      const { data, error } = await supabase.rpc("ielts_get_attempt_state", {
         p_attempt_id: attemptId!,
       });
       if (error) throw error;
@@ -215,7 +215,7 @@ export function useStartAttempt() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (formId: string): Promise<string> => {
-      const { data, error } = await supabase.rpc("start_attempt", {
+      const { data, error } = await supabase.rpc("ielts_start_attempt", {
         p_form_id: formId,
       });
       if (error) throw error;
@@ -230,7 +230,7 @@ export function useStartAttempt() {
 export function useStartSection() {
   return useMutation({
     mutationFn: async (vars: { attemptId: string; section: SectionCode }) => {
-      const { data, error } = await supabase.rpc("start_section", {
+      const { data, error } = await supabase.rpc("ielts_start_section", {
         p_attempt_id: vars.attemptId,
         p_section: vars.section,
       });
@@ -250,7 +250,7 @@ export function useSaveResponse() {
       timeSpentMs?: number;
       audioUrl?: string;
     }) => {
-      const { data, error } = await supabase.rpc("save_response", {
+      const { data, error } = await supabase.rpc("ielts_save_response", {
         p_attempt_id: vars.attemptId,
         p_question_id: vars.questionId,
         p_answer: vars.answer,
@@ -266,7 +266,7 @@ export function useSaveResponse() {
 export function useHeartbeat() {
   return useMutation({
     mutationFn: async (vars: { attemptId: string; position?: number }) => {
-      const { data, error } = await supabase.rpc("heartbeat", {
+      const { data, error } = await supabase.rpc("ielts_heartbeat", {
         p_attempt_id: vars.attemptId,
         p_current_position: vars.position ?? null,
       });
@@ -283,7 +283,7 @@ export function useAttemptResponses(attemptId: string | undefined) {
     enabled: Boolean(attemptId),
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("responses")
+        .from("ielts_responses")
         .select("question_id, answer, audio_url")
         .eq("attempt_id", attemptId!);
       if (error) throw error;
@@ -300,7 +300,7 @@ export function useSubmitAttempt() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (vars: { attemptId: string; section?: SectionCode }) =>
-      invokeFunction<{ status: string }>("submit-attempt", {
+      invokeFunction<{ status: string }>("ielts-submit-attempt", {
         attempt_id: vars.attemptId,
         section: vars.section,
       }),
@@ -328,7 +328,7 @@ export function useAttemptResult(attemptId: string | undefined) {
     enabled: Boolean(attemptId),
     queryFn: async (): Promise<AttemptResultData | null> => {
       const { data: attempt, error } = await supabase
-        .from("attempts")
+        .from("ielts_attempts")
         .select("*, test_forms ( * )")
         .eq("id", attemptId!)
         .maybeSingle();
@@ -336,9 +336,9 @@ export function useAttemptResult(attemptId: string | undefined) {
       if (!attempt) return null;
 
       const [scores, writing, speaking] = await Promise.all([
-        supabase.from("attempt_scores").select("*").eq("attempt_id", attemptId!).maybeSingle(),
-        supabase.from("writing_scores").select("*").eq("attempt_id", attemptId!).order("task_number"),
-        supabase.from("speaking_scores").select("*").eq("attempt_id", attemptId!).order("part_number"),
+        supabase.from("ielts_attempt_scores").select("*").eq("attempt_id", attemptId!).maybeSingle(),
+        supabase.from("ielts_writing_scores").select("*").eq("attempt_id", attemptId!).order("task_number"),
+        supabase.from("ielts_speaking_scores").select("*").eq("attempt_id", attemptId!).order("part_number"),
       ]);
 
       return {
@@ -358,7 +358,7 @@ export function useAttemptReview(attemptId: string | undefined, enabled = true) 
     enabled: Boolean(attemptId) && enabled,
     retry: false,
     queryFn: async (): Promise<AttemptReviewRow[]> => {
-      const { data, error } = await supabase.rpc("get_attempt_review", {
+      const { data, error } = await supabase.rpc("ielts_get_attempt_review", {
         p_attempt_id: attemptId!,
       });
       if (error) throw error;
@@ -402,7 +402,7 @@ export function useAdminForm(formId: string | undefined) {
     enabled: Boolean(formId),
     queryFn: async (): Promise<AdminFormContent | null> => {
       const { data: form, error } = await supabase
-        .from("test_forms")
+        .from("ielts_test_forms")
         .select("*")
         .eq("id", formId!)
         .maybeSingle();
@@ -410,21 +410,21 @@ export function useAdminForm(formId: string | undefined) {
       if (!form) return null;
 
       const { data: sections } = await supabase
-        .from("test_sections")
+        .from("ielts_test_sections")
         .select("*")
         .eq("form_id", formId!)
         .order("order_index");
 
       const sectionRows = (sections as unknown as TestSectionRow[]) ?? [];
       const { data: groups } = await supabase
-        .from("item_groups")
+        .from("ielts_item_groups")
         .select("*")
         .in("section_id", sectionRows.length ? sectionRows.map((s) => s.id) : ["00000000-0000-0000-0000-000000000000"])
         .order("order_index");
 
       const groupRows = (groups as unknown as ItemGroupRow[]) ?? [];
       const { data: questions } = await supabase
-        .from("questions")
+        .from("ielts_questions")
         .select("*")
         .in("group_id", groupRows.length ? groupRows.map((g) => g.id) : ["00000000-0000-0000-0000-000000000000"])
         .order("order_index");
@@ -458,7 +458,7 @@ export function useSaveForm() {
       const { form, sections } = content;
 
       const { error: formError } = await supabase
-        .from("test_forms")
+        .from("ielts_test_forms")
         .update({
           title: form.title,
           description: form.description,
@@ -471,7 +471,7 @@ export function useSaveForm() {
 
       for (const section of sections) {
         const { error: sectionError } = await supabase
-          .from("test_sections")
+          .from("ielts_test_sections")
           .update({
             time_limit_seconds: section.time_limit_seconds,
             instructions: section.instructions,
@@ -483,7 +483,7 @@ export function useSaveForm() {
 
         for (const [groupIndex, group] of section.groups.entries()) {
           const { error: groupError } = await supabase
-            .from("item_groups")
+            .from("ielts_item_groups")
             .upsert({
               id: group.id,
               section_id: section.id,
@@ -499,7 +499,7 @@ export function useSaveForm() {
 
           for (const [questionIndex, question] of group.questions.entries()) {
             const { error: questionError } = await supabase
-              .from("questions")
+              .from("ielts_questions")
               .upsert({
                 id: question.id,
                 group_id: group.id,
@@ -529,7 +529,7 @@ export function useSaveForm() {
 export function useDeleteQuestion() {
   return useMutation({
     mutationFn: async (questionId: string) => {
-      const { error } = await supabase.from("questions").delete().eq("id", questionId);
+      const { error } = await supabase.from("ielts_questions").delete().eq("id", questionId);
       if (error) throw error;
     },
   });
@@ -538,7 +538,7 @@ export function useDeleteQuestion() {
 export function useDeleteGroup() {
   return useMutation({
     mutationFn: async (groupId: string) => {
-      const { error } = await supabase.from("item_groups").delete().eq("id", groupId);
+      const { error } = await supabase.from("ielts_item_groups").delete().eq("id", groupId);
       if (error) throw error;
     },
   });
@@ -549,7 +549,7 @@ export function useCreateForm() {
   return useMutation({
     mutationFn: async (vars: { title: string; variant: "academic" | "general_training" }) => {
       const { data, error } = await supabase
-        .from("test_forms")
+        .from("ielts_test_forms")
         .insert({ title: vars.title, variant: vars.variant })
         .select("id")
         .single();
@@ -565,7 +565,7 @@ export function useStudents() {
     queryKey: queryKeys.students,
     queryFn: async (): Promise<ProfileRow[]> => {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("ielts_profiles")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
@@ -580,7 +580,7 @@ export function useRedemptionCodes() {
     queryKey: queryKeys.codes,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("redemption_codes")
+        .from("ielts_redemption_codes")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
@@ -600,7 +600,7 @@ export function useRedeemCode() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (code: string) => {
-      const { data, error } = await supabase.rpc("redeem_code", { p_code: code });
+      const { data, error } = await supabase.rpc("ielts_redeem_code", { p_code: code });
       if (error) throw error;
       return data;
     },
@@ -618,7 +618,7 @@ export async function uploadToR2(
     upload_url: string;
     public_url: string;
     required_headers: Record<string, string>;
-  }>("upload-url", {
+  }>("ielts-upload-url", {
     kind,
     content_type: file.type,
     file_size: file.size,

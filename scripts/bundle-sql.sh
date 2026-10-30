@@ -54,14 +54,14 @@ HEADER
 --
 -- Uncomment and edit:
 --
--- update public.profiles set role = 'admin' where email = 'you@example.com';
+-- update public.ielts_profiles set role = 'admin' where email = 'you@example.com';
 
 -- Quick sanity check that everything landed:
 select
-  (select count(*) from public.question_types)                as question_types,
-  (select count(*) from public.band_conversion)               as band_conversion_rows,
-  (select count(*) from public.test_forms where is_published) as published_forms,
-  (select count(*) from public.questions)                     as questions,
+  (select count(*) from public.ielts_question_types)                as question_types,
+  (select count(*) from public.ielts_band_conversion)               as band_conversion_rows,
+  (select count(*) from public.ielts_test_forms where is_published) as published_forms,
+  (select count(*) from public.ielts_questions)                     as questions,
   (select count(*) from pg_tables
      where schemaname = 'public' and rowsecurity)             as tables_with_rls;
 FOOTER

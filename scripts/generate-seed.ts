@@ -59,7 +59,7 @@ const lines: string[] = [
   "",
   "begin;",
   "",
-  `insert into public.test_forms (id, title, description, variant, delivery_mode, is_published, is_premium, scoring_version)`,
+  `insert into public.ielts_test_forms (id, title, description, variant, delivery_mode, is_published, is_premium, scoring_version)`,
   `values (${q(FORM_ID)}, 'Academic Mock Test 1', 'A full Academic practice test covering all four sections.', 'academic', 'computer', true, false, 'v1')`,
   "on conflict (id) do update set title = excluded.title, is_published = excluded.is_published;",
   "",
@@ -68,7 +68,7 @@ const lines: string[] = [
 for (const { section, order } of SECTIONS) {
   const sectionId = uuidFor(`section:${section.code}`);
   lines.push(
-    `insert into public.test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)`,
+    `insert into public.ielts_test_sections (id, form_id, section, time_limit_seconds, question_count, instructions, order_index)`,
     `values (${q(sectionId)}, ${q(FORM_ID)}, ${q(section.code)}, ${section.durationMinutes * 60}, ${section.questionCount}, NULL, ${order})`,
     "on conflict (id) do update set time_limit_seconds = excluded.time_limit_seconds, question_count = excluded.question_count;",
     "",
@@ -81,7 +81,7 @@ for (const { section, order } of SECTIONS) {
       : "{}";
 
     lines.push(
-      `insert into public.item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)`,
+      `insert into public.ielts_item_groups (id, section_id, part_number, passage_text, audio_url, image_url, shared_instructions, metadata, order_index)`,
       `values (${q(groupId)}, ${q(sectionId)}, ${group.partNumber}, ${q(group.passageText)}, ${q(group.audioUrl)}, ${q(group.imageUrl)}, ${q(group.instructions)}, ${q(metadata)}::jsonb, ${groupIndex})`,
       "on conflict (id) do update set passage_text = excluded.passage_text, shared_instructions = excluded.shared_instructions;",
       "",
@@ -91,7 +91,7 @@ for (const { section, order } of SECTIONS) {
       const questionId = uuidFor(`question:${section.code}:${question.id}`);
       const options = JSON.stringify(question.options ?? []);
       lines.push(
-        `insert into public.questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, order_index)`,
+        `insert into public.ielts_questions (id, group_id, type_code, prompt, options, accepted_answers, word_limit, spelling_policy, accepts_plural, case_sensitive, scoring_rules, order_index)`,
         `values (${q(questionId)}, ${q(groupId)}, ${q(question.type)}, ${q(question.prompt)}, ${q(options)}::jsonb, ${textArray(question.acceptedAnswers)}, ${question.wordLimit ?? 0}, ${q(question.spellingStrict ? "strict" : "lenient")}, true, false, '{}'::jsonb, ${questionIndex})`,
         "on conflict (id) do update set prompt = excluded.prompt, options = excluded.options, accepted_answers = excluded.accepted_answers, word_limit = excluded.word_limit;",
         "",
