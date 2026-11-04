@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
@@ -147,9 +147,23 @@ function Pricing() {
   );
 }
 
+/** How long the "Welcome to Premium" screen shows before the dashboard opens. */
+const REDIRECT_MS = 2500;
+
 function RedeemBox() {
   const redeem = useRedeemCode();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [code, setCode] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
+
+  // Once the code is in, take the student straight into the Premium site.
+  useEffect(() => {
+    if (!unlocked) return;
+    const timer = window.setTimeout(() => void navigate({ to: "/" }), REDIRECT_MS);
+    return () => window.clearTimeout(timer);
+  }, [unlocked, navigate]);
+
   return (
     <Card className="mt-8">
       <CardBody className="pt-5">
@@ -157,7 +171,15 @@ function RedeemBox() {
           className="flex flex-wrap items-end gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            if (code.trim()) redeem.mutate(code.trim(), { onSuccess: () => setCode("") });
+            if (!code.trim()) return;
+            redeem.mutate(code.trim(), {
+              onSuccess: async () => {
+                setCode("");
+                // Make sure the dashboard sees the new Premium tier on arrival.
+                await queryClient.refetchQueries({ queryKey: ["profile"] });
+                setUnlocked(true);
+              },
+            });
           }}
         >
           <div className="min-w-56 flex-1">
@@ -170,16 +192,52 @@ function RedeemBox() {
               autoComplete="off"
             />
           </div>
-          <Button type="submit" variant="outline" disabled={redeem.isPending || !code.trim()}>
+          <Button type="submit" variant="outline" disabled={redeem.isPending || unlocked || !code.trim()}>
             {redeem.isPending ? "Redeeming…" : "Redeem"}
           </Button>
         </form>
-        {redeem.isSuccess && <p className="mt-2 text-sm text-good">Code redeemed — your access is updated.</p>}
         {redeem.isError && (
           <p className="mt-2 text-sm text-bad">{(redeem.error as Error).message || "That code is not valid."}</p>
         )}
       </CardBody>
+      {unlocked && <PremiumWelcome onContinue={() => void navigate({ to: "/" })} />}
     </Card>
+  );
+}
+
+/** Full-screen celebration shown right after a code unlocks Premium. */
+function PremiumWelcome({ onContinue }: { onContinue: () => void }) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="premium-welcome-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 backdrop-blur-sm"
+    >
+      <div className="w-full max-w-md animate-rise rounded-2xl border border-brand-100 bg-surface p-8 text-center shadow-xl">
+        <div className="mx-auto flex h-16 w-16 animate-wa-pop items-center justify-center rounded-full bg-brand-50 text-brand-600" style={{ animationDelay: "0s" }}>
+          <Icon name="crown" size={32} />
+        </div>
+        <h2 id="premium-welcome-title" className="mt-5 text-2xl font-bold tracking-tight">
+          Welcome to Premium!
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          Your code worked. Mock exams, skill practice, the Writing lab and AI feedback are all
+          unlocked. Taking you to your study space…
+        </p>
+        <div className="mx-auto mt-5 h-1.5 w-full overflow-hidden rounded-full bg-brand-50">
+          <div
+            className="h-full rounded-full bg-brand-600"
+            style={{ animation: `premium-progress ${REDIRECT_MS}ms linear both` }}
+          />
+        </div>
+        <Button className="mt-6 w-full" onClick={onContinue}>
+          <Icon name="sparkles" size={18} />
+          Start studying now
+        </Button>
+      </div>
+      <style>{"@keyframes premium-progress { from { width: 0% } to { width: 100% } }"}</style>
+    </div>
   );
 }
 
