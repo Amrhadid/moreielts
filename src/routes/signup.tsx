@@ -59,32 +59,35 @@ function SignupPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-paper px-4 py-10">
+    <div className="flex min-h-screen flex-col items-center bg-paper px-4 py-10 sm:justify-center">
       <div className="w-full max-w-sm">
-        <Link to="/" className="mb-6 flex justify-center">
+        <Link to="/" className="mb-8 flex justify-center" aria-label="MoreIELTS home">
           <Logo />
         </Link>
-        <Card>
-          <CardBody className="pt-6">
-            {needsConfirmation ? (
-              <>
-                <h1 className="text-xl font-semibold tracking-tight">Check your email</h1>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  We sent a confirmation link. Open it to finish creating your
-                  account, then sign in.
-                </p>
-                <Button asChild variant="outline" className="mt-5 w-full">
-                  <Link to="/login">Back to sign in</Link>
-                </Button>
-              </>
-            ) : (
-              <>
-                <h1 className="text-xl font-semibold tracking-tight">Create an account</h1>
-                <p className="mt-1 text-sm text-muted">
-                  Free practice, band-scored feedback and full mock tests.
-                </p>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
+        {needsConfirmation ? (
+          <>
+            <h1 className="display text-center text-[1.75rem] leading-tight">Check your email</h1>
+            <p className="mt-1.5 text-center text-sm text-muted">
+              We sent a confirmation link. Open it to finish creating your account, then sign
+              in.
+            </p>
+            <Button asChild variant="outline" className="mt-6 w-full">
+              <Link to="/login">Back to sign in</Link>
+            </Button>
+          </>
+        ) : (
+          <>
+            <h1 className="display text-center text-[1.75rem] leading-tight">
+              Create your account
+            </h1>
+            <p className="mt-1.5 text-center text-sm text-muted">
+              Free practice, band-scored feedback and full mock tests.
+            </p>
+
+            <Card className="mt-6">
+              <CardBody className="pt-5">
+                <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4" noValidate>
                   <div>
                     <Label htmlFor="fullName">Full name</Label>
                     <Input id="fullName" autoComplete="name" {...register("fullName")} />
@@ -113,7 +116,10 @@ function SignupPage() {
                   </div>
 
                   {serverError && (
-                    <p className="rounded-lg border border-bad/20 bg-bad-soft px-3 py-2 text-sm text-bad">
+                    <p
+                      role="alert"
+                      className="rounded-lg border border-bad/20 bg-bad-soft px-3 py-2 text-sm text-bad"
+                    >
                       {serverError}
                     </p>
                   )}
@@ -132,17 +138,28 @@ function SignupPage() {
                 <Button variant="outline" className="w-full" onClick={signUpWithGoogle}>
                   Continue with Google
                 </Button>
+              </CardBody>
+            </Card>
 
-                <p className="mt-5 text-center text-sm text-muted">
-                  Already registered?{" "}
-                  <Link to="/login" className="font-medium text-brand-600">
-                    Sign in
-                  </Link>
-                </p>
-              </>
-            )}
-          </CardBody>
-        </Card>
+            <p className="mt-5 text-center text-sm text-muted">
+              Already registered?{" "}
+              <Link to="/login" className="font-semibold text-brand-600">
+                Sign in
+              </Link>
+            </p>
+            <p className="mt-3 text-center text-xs text-muted">
+              By creating an account you agree to the{" "}
+              <Link to="/terms" className="underline hover:text-ink">
+                terms
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" className="underline hover:text-ink">
+                privacy notice
+              </Link>
+              .
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
