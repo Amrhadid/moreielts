@@ -1,9 +1,10 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState, type ReactNode } from "react";
-import { AppShell } from "~/components/layout/AppShell";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
-import { Card, CardBody } from "~/components/ui/Card";
+import { Card } from "~/components/ui/Card";
+import { EmptyState } from "~/components/ui/EmptyState";
 import { Input } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
 import { Progress } from "~/components/ui/Progress";
@@ -90,24 +91,28 @@ function VocabularyPage() {
   );
 
   const totalLearned = learned.size;
+  const totalWords = TOPICS.reduce((n, tp) => n + tp.words.length, 0);
   const showList = !!q || !!topic;
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("vocab.title")}</h1>
-          <p className="mt-1 text-sm text-muted">{t("vocab.subtitle")}</p>
-        </div>
-        {user && (
-          <div className="rounded-xl border border-line bg-surface px-4 py-2 text-center">
-            <div className="text-2xl font-bold text-brand-700">{totalLearned}</div>
-            <div className="text-xs text-muted">words learned</div>
-          </div>
-        )}
-      </header>
+      <PageHeader
+        title={t("vocab.title")}
+        subtitle={t("vocab.subtitle")}
+        action={
+          user ? (
+            <div className="text-end">
+              <p className="display tnum text-[1.75rem] leading-none">
+                {totalLearned}
+                <span className="text-base text-muted"> / {totalWords}</span>
+              </p>
+              <p className="mt-1 text-xs text-muted">words learned</p>
+            </div>
+          ) : undefined
+        }
+      />
 
-      <div className="mb-5 relative">
+      <div className="relative mb-5 max-w-xl">
         <Icon name="book" size={16} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-muted" />
         <Input
           value={query}
@@ -128,24 +133,28 @@ function VocabularyPage() {
       )}
 
       {!showList ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
           {TOPICS.map((tp) => {
             const n = tp.words.filter((w) => learned.has(w.slug)).length;
+            const done = n === tp.words.length && n > 0;
             return (
               <Link key={tp.slug} to="/vocabulary" search={{ topic: tp.slug }} className="block">
-                <Card className="h-full hover:border-brand-100">
-                  <CardBody className="p-4">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <h3 className="font-semibold">{tp.name}</h3>
-                      <span dir="rtl" lang="ar" className="text-sm text-muted">
-                        {tp.name_ar}
-                      </span>
-                    </div>
-                    <Progress value={(n / Math.max(1, tp.words.length)) * 100} tone="good" className="mt-3" />
-                    <p className="mt-1.5 text-xs text-muted">
-                      {n}/{tp.words.length} learned
-                    </p>
-                  </CardBody>
+                <Card className={cn("h-full p-4 transition-colors hover:border-line-strong", done && "border-good")}>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h3 className="font-semibold">{tp.name}</h3>
+                    <span dir="rtl" lang="ar" className="text-sm text-muted">
+                      {tp.name_ar}
+                    </span>
+                  </div>
+                  <Progress
+                    value={(n / Math.max(1, tp.words.length)) * 100}
+                    tone={done ? "good" : "brand"}
+                    className="mt-3"
+                    label={`${tp.name}: ${n} of ${tp.words.length} learned`}
+                  />
+                  <p className="tnum mt-1.5 text-xs text-muted">
+                    {n}/{tp.words.length} learned
+                  </p>
                 </Card>
               </Link>
             );
@@ -154,31 +163,32 @@ function VocabularyPage() {
       ) : (
         <>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {topic && !q && (
                 <Button variant="ghost" size="sm" onClick={() => navigate({ search: {} })}>
                   <Icon name="arrowRight" size={14} className="rotate-180 rtl:rotate-0" /> All topics
                 </Button>
               )}
-              <h2 className="text-lg font-semibold">
+              <h2 className="display text-[1.375rem]">
                 {q ? `Results for “${query.trim()}”` : topic?.name}
                 {!q && topic && (
-                  <span dir="rtl" lang="ar" className="ms-2 text-sm font-normal text-muted">
+                  <span dir="rtl" lang="ar" className="ms-2 font-sans text-sm font-normal text-muted">
                     {topic.name_ar}
                   </span>
                 )}
               </h2>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-sm">
-              <div className="inline-flex rounded-lg border border-line bg-paper p-0.5">
+              <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
                 {(["all", 5, 6, 7, 8] as const).map((b) => (
                   <button
                     key={b}
+                    type="button"
                     onClick={() => setBand(b)}
                     aria-pressed={band === b}
                     className={cn(
-                      "rounded-md px-2.5 py-1 text-xs font-medium",
-                      band === b ? "bg-surface text-ink shadow-sm" : "text-muted",
+                      "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+                      band === b ? "bg-brand-600 text-on-brand" : "text-muted hover:text-ink",
                     )}
                   >
                     {b === "all" ? "All" : `Band ${b}`}
@@ -186,7 +196,12 @@ function VocabularyPage() {
                 ))}
               </div>
               <label className="flex items-center gap-1.5 text-xs text-muted">
-                <input type="checkbox" checked={hideLearned} onChange={(e) => setHideLearned(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  className="accent-[var(--color-brand-600)]"
+                  checked={hideLearned}
+                  onChange={(e) => setHideLearned(e.target.checked)}
+                />
                 Hide learned
               </label>
               <Button size="sm" variant={flash ? "secondary" : "outline"} onClick={() => setFlash((f) => !f)} disabled={!words.length}>
@@ -196,11 +211,11 @@ function VocabularyPage() {
           </div>
 
           {words.length === 0 ? (
-            <p className="py-10 text-center text-sm text-muted">No words match.</p>
+            <EmptyState title="No words match" body="Try another band, clear the search, or show learned words." />
           ) : flash ? (
             <Flashcards key={`${topicSlug}:${band}:${q}:${hideLearned}`} words={words} onKnow={(s) => onToggle(s, true)} />
           ) : (
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-2.5 md:grid-cols-2">
               {words.map((w) => (
                 <WordCard
                   key={`${w.topic.slug}:${w.slug}`}
@@ -224,7 +239,7 @@ function highlight(example: string, word: string): ReactNode {
   const parts = example.split(re);
   return parts.map((p, i) =>
     i % 2 === 1 ? (
-      <mark key={i} className="rounded bg-brand-50 px-0.5 font-semibold text-brand-700">
+      <mark key={i} className="font-semibold">
         {p}
       </mark>
     ) : (
@@ -245,44 +260,42 @@ function WordCard({
   topicName?: string;
 }) {
   return (
-    <Card className={cn(learned && "border-good/30")}>
-      <CardBody className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="flex flex-wrap items-baseline gap-2">
-              <h3 className="text-lg font-semibold">{w.word}</h3>
-              <span className="text-xs italic text-muted">{w.pos}</span>
-              <Badge tone={w.band >= 7 ? "brand" : "neutral"}>Band {w.band}</Badge>
-              {topicName && <span className="text-xs text-muted">· {topicName}</span>}
-            </div>
-            <p className="mt-1 text-sm text-ink-soft">{w.definition}</p>
+    <Card className={cn("p-4", learned && "border-good")}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <h3 className="display text-[1.25rem]">{w.word}</h3>
+            <span className="text-xs italic text-muted">{w.pos}</span>
+            <Badge tone={w.band >= 7 ? "brand" : "neutral"}>Band {w.band}</Badge>
+            {topicName && <span className="text-xs text-muted">· {topicName}</span>}
           </div>
-          <span dir="rtl" lang="ar" className="shrink-0 text-base font-medium">
-            {w.meaning_ar}
-          </span>
+          <p className="mt-1 text-sm text-ink-soft">{w.definition}</p>
         </div>
-        <p className="mt-2 text-sm italic">{highlight(w.example, w.word)}</p>
-        {w.collocations.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1">
-            {w.collocations.map((c) => (
-              <span key={c} className="rounded-md bg-paper px-1.5 py-0.5 text-xs text-muted">
-                {c}
-              </span>
-            ))}
-          </div>
+        <span dir="rtl" lang="ar" className="shrink-0 text-base font-medium">
+          {w.meaning_ar}
+        </span>
+      </div>
+      <p className="mt-2 font-serif text-[0.9375rem] italic leading-relaxed">{highlight(w.example, w.word)}</p>
+      {w.collocations.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {w.collocations.map((c) => (
+            <span key={c} className="rounded-md bg-paper px-1.5 py-0.5 text-xs text-muted">
+              {c}
+            </span>
+          ))}
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={() => onToggle(!learned)}
+        aria-pressed={learned}
+        className={cn(
+          "mt-3 inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors",
+          learned ? "border-transparent bg-good-soft text-good" : "border-line text-muted hover:bg-paper",
         )}
-        <button
-          type="button"
-          onClick={() => onToggle(!learned)}
-          aria-pressed={learned}
-          className={cn(
-            "mt-3 inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium",
-            learned ? "border-good/30 bg-good-soft text-good" : "border-line text-muted hover:bg-paper",
-          )}
-        >
-          <Icon name="check" size={14} /> {learned ? "Learned" : "I know this"}
-        </button>
-      </CardBody>
+      >
+        <Icon name="check" size={14} /> {learned ? "Learned" : "I know this"}
+      </button>
     </Card>
   );
 }
@@ -294,14 +307,21 @@ function Flashcards({ words: initial, onKnow }: { words: Word[]; onKnow: (slug: 
   const [flipped, setFlipped] = useState(false);
   if (i >= words.length)
     return (
-      <Card>
-        <CardBody className="p-8 text-center">
-          <p className="font-semibold">Deck finished.</p>
-          <Button className="mt-4" variant="outline" onClick={() => { setI(0); setFlipped(false); }}>
+      <EmptyState
+        title="Deck finished"
+        body={`${words.length} words reviewed.`}
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setI(0);
+              setFlipped(false);
+            }}
+          >
             Start again
           </Button>
-        </CardBody>
-      </Card>
+        }
+      />
     );
   const w = words[i];
   const next = () => {
@@ -310,15 +330,17 @@ function Flashcards({ words: initial, onKnow }: { words: Word[]; onKnow: (slug: 
   };
   return (
     <div className="mx-auto max-w-lg">
-      <p className="mb-2 text-center text-xs text-muted">
+      <Progress value={(i / words.length) * 100} className="mb-2" label="Deck progress" />
+      <p className="tnum mb-3 text-center text-xs text-muted">
         {i + 1} / {words.length}
       </p>
       <button
         type="button"
         onClick={() => setFlipped((f) => !f)}
-        className="block w-full rounded-card border border-line bg-surface p-8 text-center shadow-sm"
+        aria-pressed={flipped}
+        className="block w-full rounded-card border border-line bg-surface p-8 text-center transition-colors hover:border-line-strong"
       >
-        <div className="text-2xl font-bold">{w.word}</div>
+        <div className="display text-[2rem] leading-tight">{w.word}</div>
         <div className="mt-1 text-xs italic text-muted">
           {w.pos} · Band {w.band}
         </div>
@@ -328,7 +350,7 @@ function Flashcards({ words: initial, onKnow }: { words: Word[]; onKnow: (slug: 
               {w.meaning_ar}
             </p>
             <p className="text-sm text-ink-soft">{w.definition}</p>
-            <p className="text-sm italic">{highlight(w.example, w.word)}</p>
+            <p className="font-serif text-sm italic">{highlight(w.example, w.word)}</p>
           </div>
         ) : (
           <p className="mt-5 text-xs text-muted">Tap to reveal</p>

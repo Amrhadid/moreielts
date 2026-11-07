@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AppShell } from "~/components/layout/AppShell";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
-import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "~/components/ui/Card";
+import { Card } from "~/components/ui/Card";
+import { EmptyState } from "~/components/ui/EmptyState";
 import { Input, Label } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
 import { Progress } from "~/components/ui/Progress";
+import { SectionIcon } from "~/components/ui/SectionIcon";
 import { Select } from "~/components/ui/Select";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
@@ -46,6 +48,15 @@ function pct(row: TypeAccuracyRow) {
   return row.total ? Math.round((row.correct / row.total) * 100) : 0;
 }
 
+function SectionHeading({ title, aside }: { title: string; aside?: React.ReactNode }) {
+  return (
+    <div className="mb-2.5 mt-8 flex items-baseline justify-between gap-3">
+      <h2 className="text-[1.0625rem] font-semibold">{title}</h2>
+      {aside}
+    </div>
+  );
+}
+
 function StudyPlan() {
   const { t } = useI18n();
   const { user, profile } = useAuth();
@@ -65,56 +76,45 @@ function StudyPlan() {
 
   return (
     <AppShell>
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("plan.title")}</h1>
-      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">{t("plan.subtitle")}</p>
+      <PageHeader title={t("plan.title")} subtitle={t("plan.subtitle")} />
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-3">
         <GoalsCard />
-        <Card>
-          <CardHeader>
-            <CardTitle>Exam countdown</CardTitle>
-          </CardHeader>
-          <CardBody>
-            {plan.daysToExam !== null ? (
-              <p className="text-5xl font-extrabold tabular-nums">
-                {plan.daysToExam}
-                <span className="ms-2 text-base font-medium text-muted">
-                  day{plan.daysToExam === 1 ? "" : "s"} to go
-                </span>
-              </p>
-            ) : (
-              <p className="text-sm text-muted">Set your exam date to get a countdown and a paced plan.</p>
-            )}
-            <Badge tone="brand" className="mt-4">
-              {PHASE_LABEL[plan.phase].label} phase
-            </Badge>
-            <p className="mt-2 text-sm text-ink-soft">{PHASE_LABEL[plan.phase].detail}</p>
-          </CardBody>
+        <Card className="p-5">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[.08em] text-muted">Exam countdown</p>
+          {plan.daysToExam !== null ? (
+            <p className="mt-1 flex items-baseline gap-2">
+              <span className="display tnum text-[3rem] leading-none">{plan.daysToExam}</span>
+              <span className="text-sm text-muted">day{plan.daysToExam === 1 ? "" : "s"} to go</span>
+            </p>
+          ) : (
+            <p className="mt-2 text-sm text-muted">Set your exam date to get a countdown and a paced plan.</p>
+          )}
+          <Badge tone="brand" className="mt-4">
+            {PHASE_LABEL[plan.phase].label} phase
+          </Badge>
+          <p className="mt-2 text-sm text-ink-soft">{PHASE_LABEL[plan.phase].detail}</p>
         </Card>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between gap-3">
-              <CardTitle>Today's plan</CardTitle>
-              <span className="text-sm tabular-nums text-muted">
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <SectionHeading
+            title="Today's plan"
+            aside={
+              <span className="tnum text-sm text-muted">
                 {doneCount}/{plan.tasks.length} done · {planned} min
               </span>
-            </div>
-          </CardHeader>
-          <CardBody>
-            <ul className="grid gap-2">
+            }
+          />
+          {plan.tasks.length === 0 ? (
+            <EmptyState title="Nothing planned for today" body="Save your goals above to get a daily plan." />
+          ) : (
+            <ul className="divide-y divide-line border-t border-line">
               {plan.tasks.map((task) => {
                 const done = checks?.has(task.key) ?? false;
                 return (
-                  <li
-                    key={task.key}
-                    className={cn(
-                      "flex items-center gap-3 rounded-xl border border-line px-3 py-3",
-                      done && "bg-good-soft/50",
-                    )}
-                  >
+                  <li key={task.key} className="flex items-center gap-3 py-3">
                     <input
                       type="checkbox"
                       className="h-5 w-5 shrink-0 accent-[var(--color-brand-600)]"
@@ -122,8 +122,13 @@ function StudyPlan() {
                       aria-label={`Mark "${task.title}" done`}
                       onChange={(e) => toggle.mutate({ taskKey: task.key, done: e.target.checked })}
                     />
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600">
-                      <Icon name={task.icon} size={18} />
+                    <span
+                      className={cn(
+                        "grid h-9 w-9 shrink-0 place-items-center rounded-[0.625rem]",
+                        done ? "bg-good-soft text-good" : "bg-brand-50 text-brand-700",
+                      )}
+                    >
+                      <Icon name={done ? "check" : task.icon} size={17} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className={cn("text-sm font-medium", done && "text-muted line-through")}>{task.title}</p>
@@ -131,91 +136,83 @@ function StudyPlan() {
                         {task.detail} · {task.minutes} min
                       </p>
                     </div>
-                    <Button asChild variant="secondary" size="sm">
+                    <Button asChild variant="outline" size="sm">
                       <Link to={task.to as never} search={task.search as never}>
-                        Start
+                        {t("common.start")}
                       </Link>
                     </Button>
                   </li>
                 );
               })}
             </ul>
-          </CardBody>
-        </Card>
+          )}
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Today's minutes</CardTitle>
-          </CardHeader>
-          <CardBody className="flex flex-col items-center">
+        <div>
+          <SectionHeading title="Today's minutes" />
+          <Card className="flex flex-col items-center p-5">
             <ProgressRing value={stats?.today_minutes ?? 0} goal={profile?.daily_goal_minutes ?? 30} />
             <p className="mt-3 flex items-center gap-1.5 text-sm text-ink-soft">
               <Icon name="flame" size={16} className="text-warn" />
               {stats?.streak ?? 0}-day streak
             </p>
-          </CardBody>
-        </Card>
+          </Card>
+        </div>
       </div>
 
-      <h2 className="mb-3 mt-10 text-lg font-semibold tracking-tight">Weak spots</h2>
+      <SectionHeading title="Weak spots" aside={<span className="text-xs text-muted">From drills and mocks</span>} />
       {weakest.length === 0 ? (
-        <Card>
-          <CardBody className="pt-5 text-sm text-muted">
-            Answer at least three questions of a type (in a drill or a mock) to see how you are doing on it.
-          </CardBody>
-        </Card>
+        <EmptyState
+          title="Not enough answers yet"
+          body="Answer at least three questions of a type, in a drill or a mock, to see how you are doing on it."
+          action={
+            <Button asChild size="sm" variant="outline">
+              <Link to="/drills">Open drills</Link>
+            </Button>
+          }
+        />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <ul className="divide-y divide-line border-t border-line">
           {weakest.map((row) => (
-            <TypeCard key={row.type_code} row={row} />
+            <TypeRow key={row.type_code} row={row} />
           ))}
-        </div>
+        </ul>
       )}
 
       {strongest.length > 0 && (
         <>
-          <h2 className="mb-3 mt-8 text-lg font-semibold tracking-tight">Strongest types</h2>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <SectionHeading title="Strongest types" />
+          <ul className="divide-y divide-line border-t border-line">
             {strongest.map((row) => (
-              <Card key={row.type_code}>
-                <CardBody className="pt-5">
-                  <p className="text-sm font-medium">{row.type_label}</p>
-                  <p className="mt-1 text-xs capitalize text-muted">{row.section}</p>
-                  <Progress value={pct(row)} tone="good" className="mt-3" />
-                  <p className="mt-1.5 text-xs tabular-nums text-muted">
-                    {row.correct}/{row.total} · {pct(row)}%
-                  </p>
-                </CardBody>
-              </Card>
+              <TypeRow key={row.type_code} row={row} strong />
             ))}
-          </div>
+          </ul>
         </>
       )}
     </AppShell>
   );
 }
 
-function TypeCard({ row }: { row: TypeAccuracyRow }) {
+function TypeRow({ row, strong = false }: { row: TypeAccuracyRow; strong?: boolean }) {
   const p = pct(row);
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{row.type_label}</CardTitle>
-        <CardDescription className="capitalize">{row.section}</CardDescription>
-      </CardHeader>
-      <CardBody>
-        <div className="mb-2 flex items-baseline justify-between text-sm">
-          <span className="text-muted">Accuracy</span>
-          <span className="tabular-nums">
+    <li className="flex items-center gap-3 py-3">
+      <SectionIcon code={row.section} />
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium">{row.type_label}</p>
+        <div className="mt-1.5 flex items-center gap-3">
+          <Progress value={p} tone={p >= 70 ? "good" : "brand"} className="max-w-[12rem]" label={`${row.type_label} accuracy`} />
+          <span className="tnum text-xs text-muted">
             {row.correct}/{row.total} · {p}%
           </span>
         </div>
-        <Progress value={p} tone={p >= 70 ? "good" : "brand"} />
-        <Button asChild variant="secondary" size="sm" className="mt-4">
+      </div>
+      {!strong && (
+        <Button asChild variant="outline" size="sm">
           <Link to={`/drill/${row.type_code}` as never}>Drill this</Link>
         </Button>
-      </CardBody>
-    </Card>
+      )}
+    </li>
   );
 }
 
@@ -241,8 +238,8 @@ function ProgressRing({ value, goal, size = 132 }: { value: number; goal: number
       </svg>
       <div className="absolute inset-0 grid place-items-center text-center">
         <div>
-          <p className="text-2xl font-bold tabular-nums">{value}</p>
-          <p className="text-xs text-muted">of {goal} min</p>
+          <p className="display tnum text-[1.75rem] leading-none">{value}</p>
+          <p className="mt-1 text-xs text-muted">of {goal} min</p>
         </div>
       </div>
     </div>
@@ -267,61 +264,57 @@ function GoalsCard() {
   }, [profile]);
 
   return (
-    <Card className="lg:col-span-2">
-      <CardHeader>
-        <CardTitle>Your goals</CardTitle>
-      </CardHeader>
-      <CardBody>
-        <form
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!user) return;
-            setSaved(false);
-            update.mutate(
-              {
-                userId: user.id,
-                target_band: Number(target),
-                exam_date: examDate || null,
-                daily_goal_minutes: Number(goal),
-                variant: (variant as "academic" | "general_training" | undefined) ?? null,
-              },
-              { onSuccess: () => setSaved(true) },
-            );
-          }}
-        >
-          <div>
-            <Label>Target band</Label>
-            <Select aria-label="Target band" value={target} onValueChange={setTarget} options={BAND_OPTIONS} />
-          </div>
-          <div>
-            <Label htmlFor="exam-date">Exam date</Label>
-            <Input id="exam-date" type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
-          </div>
-          <div>
-            <Label>Daily goal</Label>
-            <Select aria-label="Daily goal" value={goal} onValueChange={setGoal} options={GOAL_OPTIONS} />
-          </div>
-          <div>
-            <Label>Exam type</Label>
-            <Select
-              aria-label="Exam type"
-              value={variant}
-              onValueChange={setVariant}
-              options={VARIANT_OPTIONS}
-              placeholder="Academic or General?"
-            />
-            <p className="mt-1 text-xs text-muted">Filters your mocks, drills and writing prompts.</p>
-          </div>
-          <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-4">
-            <Button type="submit" disabled={update.isPending}>
-              {update.isPending ? "Saving…" : "Save goals"}
-            </Button>
-            {saved && <span className="text-sm text-good">Saved</span>}
-            {update.isError && <span className="text-sm text-bad">Could not save. Try again.</span>}
-          </div>
-        </form>
-      </CardBody>
+    <Card className="p-5 lg:col-span-2">
+      <p className="text-[0.6875rem] font-bold uppercase tracking-[.08em] text-muted">Your goals</p>
+      <form
+        className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!user) return;
+          setSaved(false);
+          update.mutate(
+            {
+              userId: user.id,
+              target_band: Number(target),
+              exam_date: examDate || null,
+              daily_goal_minutes: Number(goal),
+              variant: (variant as "academic" | "general_training" | undefined) ?? null,
+            },
+            { onSuccess: () => setSaved(true) },
+          );
+        }}
+      >
+        <div>
+          <Label>Target band</Label>
+          <Select aria-label="Target band" value={target} onValueChange={setTarget} options={BAND_OPTIONS} />
+        </div>
+        <div>
+          <Label htmlFor="exam-date">Exam date</Label>
+          <Input id="exam-date" type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
+        </div>
+        <div>
+          <Label>Daily goal</Label>
+          <Select aria-label="Daily goal" value={goal} onValueChange={setGoal} options={GOAL_OPTIONS} />
+        </div>
+        <div>
+          <Label>Exam type</Label>
+          <Select
+            aria-label="Exam type"
+            value={variant}
+            onValueChange={setVariant}
+            options={VARIANT_OPTIONS}
+            placeholder="Academic or General?"
+          />
+          <p className="mt-1 text-xs text-muted">Filters your mocks, drills and writing prompts.</p>
+        </div>
+        <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-4">
+          <Button type="submit" disabled={update.isPending}>
+            {update.isPending ? "Saving…" : "Save goals"}
+          </Button>
+          {saved && <span className="text-sm text-good">Saved</span>}
+          {update.isError && <span className="text-sm text-bad">Could not save. Try again.</span>}
+        </div>
+      </form>
     </Card>
   );
 }
