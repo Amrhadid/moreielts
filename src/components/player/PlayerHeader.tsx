@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Eye, EyeOff, LogOut } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "~/components/ui/Button";
@@ -154,7 +154,6 @@ function useTimeAnnouncements(remaining: number | null) {
 
 /** Leaving does not stop the clock, so it asks first. */
 function ExitButton() {
-  const navigate = useNavigate();
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -177,9 +176,7 @@ function ExitButton() {
             <Button variant="outline">Stay</Button>
           </DialogClose>
           <Button asChild variant="danger">
-            <Link to="/" onClick={() => navigate({ to: "/" })}>
-              Leave
-            </Link>
+            <Link to="/">Leave</Link>
           </Button>
         </div>
       </DialogContent>

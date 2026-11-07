@@ -1,6 +1,6 @@
 # MoreIELTS UI redesign proposal
 
-Status: proposal, not yet implemented. Written against the code on `main` at
+Status: implemented on this branch. Written against the code on `main` at
 `28d7b4f` and screenshots of the landing and sign-in pages at 1440 px and 390 px,
 light and dark.
 
