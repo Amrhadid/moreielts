@@ -35,7 +35,7 @@ export const PRACTICE_META: Record<PracticeSection, PracticeSectionMeta> = {
     blurb: "A Part 1 conversation with form completion and multiple choice.",
     detail: "5 questions · about 2 minutes of audio",
     correction: "Marked instantly, then the AI explains each answer from the transcript.",
-    icon: "🎧",
+    icon: "headphones",
   },
   reading: {
     code: "reading",
@@ -43,7 +43,7 @@ export const PRACTICE_META: Record<PracticeSection, PracticeSectionMeta> = {
     blurb: "One Academic passage with True/False/Not Given, multiple choice and completion.",
     detail: "5 questions · one passage",
     correction: "Marked instantly, then the AI shows where in the passage each answer is.",
-    icon: "📄",
+    icon: "book",
   },
   writing: {
     code: "writing",
@@ -51,7 +51,7 @@ export const PRACTICE_META: Record<PracticeSection, PracticeSectionMeta> = {
     blurb: "Two Task 1 data prompts and three Task 2 essays.",
     detail: "5 tasks · choose one at a time",
     correction: "Banded by the AI on the four official criteria, with quotes from your text.",
-    icon: "✍️",
+    icon: "pen",
   },
   speaking: {
     code: "speaking",
@@ -59,6 +59,6 @@ export const PRACTICE_META: Record<PracticeSection, PracticeSectionMeta> = {
     blurb: "Part 1 questions, a Part 2 cue card and Part 3 discussion.",
     detail: "5 prompts · recorded in the browser",
     correction: "Transcribed as you speak, then banded by the AI on the four criteria.",
-    icon: "🎙️",
+    icon: "mic",
   },
 };

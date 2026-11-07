@@ -4,6 +4,7 @@ import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Input } from "~/components/ui/Field";
+import { Icon } from "~/components/ui/Icon";
 import { Progress } from "~/components/ui/Progress";
 import { cn } from "~/lib/cn";
 import { useAuth } from "~/lib/auth";
@@ -29,6 +30,7 @@ export function ObjectiveRunner({ set }: { set: ObjectiveSet }) {
   const [review, setReview] = useState<ObjectiveReview | null>(null);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [reviewing, setReviewing] = useState(false);
+  const [current, setCurrent] = useState<string | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const answered = set.questions.filter((q) => (answers[q.id] ?? "").trim() !== "").length;
@@ -88,44 +90,45 @@ export function ObjectiveRunner({ set }: { set: ObjectiveSet }) {
       <div className="min-w-0">{stimulus}</div>
 
       <div className="min-w-0">
-        <Card>
-          <CardHeader>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Questions 1–{set.questions.length}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">{set.instructions}</p>
-          </CardHeader>
-          <CardBody className="grid gap-5">
-            {set.questions.map((question) => (
-              <QuestionField
-                key={question.id}
-                question={question}
-                value={answers[question.id] ?? ""}
-                locked={marked !== null}
-                marked={marked?.find((m) => m.question.id === question.id) ?? null}
-                onChange={(value) => setAnswers((prev) => ({ ...prev, [question.id]: value }))}
-              />
-            ))}
+        <div className="rounded-[0.625rem] border border-line bg-surface px-4 py-3 text-sm leading-relaxed text-ink-soft">
+          <b className="font-semibold text-ink">Questions 1 to {set.questions.length}.</b>{" "}
+          {set.instructions}
+        </div>
 
-            {!marked ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-                <p className="text-sm text-muted">
-                  {answered}/{set.questions.length} answered
-                </p>
-                <Button onClick={check}>Check answers</Button>
-              </div>
-            ) : (
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-                <p className="text-sm font-medium">
-                  {correct}/{set.questions.length} correct
-                </p>
-                <Button variant="outline" onClick={reset}>
-                  Try again
-                </Button>
-              </div>
-            )}
-          </CardBody>
-        </Card>
+        <div className="mt-3 grid gap-3">
+          {set.questions.map((question) => (
+            <QuestionField
+              key={question.id}
+              question={question}
+              value={answers[question.id] ?? ""}
+              locked={marked !== null}
+              current={current === question.id}
+              marked={marked?.find((m) => m.question.id === question.id) ?? null}
+              onFocus={() => setCurrent(question.id)}
+              onChange={(value) => setAnswers((prev) => ({ ...prev, [question.id]: value }))}
+            />
+          ))}
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+          {!marked ? (
+            <>
+              <p className="tnum text-sm text-muted">
+                {answered} of {set.questions.length} answered
+              </p>
+              <Button onClick={check}>Check answers</Button>
+            </>
+          ) : (
+            <>
+              <p className="tnum text-sm font-medium">
+                {correct} of {set.questions.length} correct
+              </p>
+              <Button variant="outline" onClick={reset}>
+                Try again
+              </Button>
+            </>
+          )}
+        </div>
 
         {marked && (
           <div ref={resultsRef} className="mt-6 scroll-mt-24">
@@ -139,8 +142,8 @@ export function ObjectiveRunner({ set }: { set: ObjectiveSet }) {
               />
             </div>
             {review?.summary && (
-              <div className="mt-4 rounded-card border border-brand-100 bg-brand-50 p-5 animate-rise">
-                <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">
+              <div className="mt-4 rounded-card border border-brand-200 bg-brand-50 p-5 animate-rise">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-brand-700">
                   Tutor's summary
                 </p>
                 <p className="mt-1.5 text-sm leading-relaxed">{review.summary}</p>
@@ -164,10 +167,11 @@ export function ObjectiveRunner({ set }: { set: ObjectiveSet }) {
 
 function PassagePane({ title, paragraphs }: { title: string; paragraphs: string[] }) {
   return (
-    <Card className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-hidden">
-      <CardBody className="thin-scroll pt-5 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+    <Card className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-hidden">
+      <CardBody className="thin-scroll pt-5 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.1em] text-muted">Passage</p>
+        <h3 className="display mb-4 text-2xl">{title}</h3>
         <div className="prose-passage">
-          <h3>{title}</h3>
           {paragraphs.map((para, i) => (
             <p key={i}>{para}</p>
           ))}
@@ -189,12 +193,16 @@ function AudioPane({
   const [plays, setPlays] = useState(0);
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Recording</CardTitle>
-        <p className="mt-1 text-sm text-muted">
-          {durationLabel}. In the real test you hear it once, so try to answer on the first
-          play.
-        </p>
+      <CardHeader className="flex items-start gap-3">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[0.625rem] bg-listening-soft text-listening">
+          <Icon name="headphones" size={17} />
+        </span>
+        <div>
+          <CardTitle>Recording</CardTitle>
+          <p className="mt-1 text-sm text-muted">
+            {durationLabel}. In the real test you hear it once, so try to answer on the first play.
+          </p>
+        </div>
       </CardHeader>
       <CardBody>
         <audio
@@ -208,8 +216,8 @@ function AudioPane({
           {plays === 0 ? "Not played yet" : plays === 1 ? "Played once" : `Played ${plays} times`}
         </p>
 
-        <div className="mt-5 rounded-xl border border-line bg-paper/60 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Transcript</p>
+        <div className="mt-5 rounded-[0.625rem] border border-line bg-paper p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">Transcript</p>
           {transcript ? (
             <ul className="mt-2 grid gap-2 text-sm leading-relaxed">
               {transcript.map((line, i) => {
@@ -235,53 +243,60 @@ function QuestionField({
   question,
   value,
   locked,
+  current,
   marked,
+  onFocus,
   onChange,
 }: {
   question: ObjectiveQuestion;
   value: string;
   locked: boolean;
+  current: boolean;
   marked: MarkedQuestion | null;
+  onFocus: () => void;
   onChange: (value: string) => void;
 }) {
   const verdict = marked ? (marked.result.correct ? "good" : "bad") : null;
   return (
     <fieldset
+      onFocus={onFocus}
+      onClick={onFocus}
       className={cn(
-        "rounded-xl border p-4 transition-colors",
-        verdict === "good" && "border-good/30 bg-good-soft/40",
-        verdict === "bad" && "border-bad/30 bg-bad-soft/40",
-        verdict === null && "border-line",
+        "rounded-[0.625rem] border bg-surface p-4 ps-[1.125rem] transition-colors",
+        verdict === "good" && "border-good/40 shadow-[inset_3px_0_0_var(--color-good)]",
+        verdict === "bad" && "border-bad/40 shadow-[inset_3px_0_0_var(--color-bad)]",
+        verdict === null && current && "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)]",
+        verdict === null && !current && "border-line",
       )}
     >
       <legend className="sr-only">Question {question.number}</legend>
       <div className="flex items-start gap-3">
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-          {question.number}
-        </span>
+        <span className="font-mono text-sm text-brand-600">{question.number}</span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted">
-            {question.typeLabel}
-            {question.kind === "text" && question.wordLimit
-              ? ` · max ${question.wordLimit} ${question.wordLimit === 1 ? "word" : "words"}`
-              : ""}
-          </p>
-          <p className="mt-1 text-[0.95rem] leading-relaxed">{question.prompt}</p>
+          <p className="text-[0.95rem] leading-relaxed">{question.prompt}</p>
+          {question.kind === "text" && question.wordLimit ? (
+            <p className="mt-0.5 text-xs text-muted">
+              Up to {question.wordLimit} {question.wordLimit === 1 ? "word" : "words"}
+            </p>
+          ) : null}
 
           {question.kind === "radio" && question.options ? (
-            <div className="mt-3 grid gap-2">
+            <div className="mt-3 flex flex-wrap gap-2">
               {question.options.map((option) => {
                 const selected = value === option.value;
                 const isAnswer = marked !== null && question.acceptedAnswers.includes(option.value);
+                const wrong = marked !== null && selected && !isAnswer;
                 return (
                   <label
                     key={option.value}
                     className={cn(
-                      "flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
-                      selected ? "border-brand-500 bg-brand-50" : "border-line bg-surface",
+                      "inline-flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors",
+                      selected
+                        ? "border-brand-600 bg-brand-50 text-brand-700"
+                        : "border-line bg-surface hover:border-line-strong",
                       locked && "cursor-default",
-                      isAnswer && "border-good bg-good-soft",
-                      marked && selected && !isAnswer && "border-bad bg-bad-soft",
+                      isAnswer && "border-good bg-good-soft text-good",
+                      wrong && "border-bad bg-bad-soft text-bad",
                     )}
                   >
                     <input
@@ -291,12 +306,21 @@ function QuestionField({
                       checked={selected}
                       disabled={locked}
                       onChange={() => onChange(option.value)}
-                      className="mt-1 accent-brand-600"
+                      className="sr-only"
                     />
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "grid h-3.5 w-3.5 place-items-center rounded-full border",
+                        selected || isAnswer ? "border-current" : "border-line-strong",
+                      )}
+                    >
+                      {(selected || isAnswer) && <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+                    </span>
                     <span>
                       {/* Letter prefix for A–D options; TFNG labels stand alone. */}
                       {/^[A-Z]$/.test(option.value) && (
-                        <span className="mr-1.5 font-semibold">{option.value}</span>
+                        <span className="me-1.5 font-semibold">{option.value}</span>
                       )}
                       {option.label}
                     </span>
@@ -328,15 +352,15 @@ function ResultSummary({ correct, total }: { correct: number; total: number }) {
       <CardBody className="pt-5">
         <div className="flex items-baseline justify-between">
           <p className="text-sm font-semibold">Your score</p>
-          <p className="text-2xl font-semibold tabular-nums">
+          <p className="display tnum text-3xl">
             {correct}
-            <span className="text-base text-muted">/{total}</span>
+            <span className="text-base text-muted"> / {total}</span>
           </p>
         </div>
-        <Progress value={pct} tone={pct >= 80 ? "good" : "brand"} className="mt-3" />
+        <Progress value={pct} tone={pct >= 80 ? "good" : "brand"} className="mt-3" label="Score" />
         <p className="mt-2 text-xs text-muted">
-          Five questions are too few for a band estimate; a full 40-question section is scored
-          in bands on the mock test.
+          Five questions are too few for a band estimate. A full 40-question section is scored in
+          bands on the mock test.
         </p>
       </CardBody>
     </Card>
@@ -355,7 +379,7 @@ function ReviewItem({
     ? question.acceptedAnswers
         .map((v) => {
           const option = question.options?.find((o) => o.value === v);
-          return option ? `${v} — ${option.label}` : v;
+          return option ? `${v} · ${option.label}` : v;
         })
         .join(" / ")
     : question.acceptedAnswers.join(" / ");
@@ -363,8 +387,12 @@ function ReviewItem({
   return (
     <li className="rounded-card border border-line bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-semibold">Question {question.number}</p>
+        <p className="text-sm font-semibold">
+          <span className="font-mono text-brand-600">{question.number}</span>
+          <span className="ms-2">Question {question.number}</span>
+        </p>
         <Badge tone={result.correct ? "good" : "bad"}>
+          <Icon name={result.correct ? "check" : "x"} size={12} />
           {result.correct
             ? "Correct"
             : result.reason === "empty"
@@ -378,7 +406,7 @@ function ReviewItem({
         <div>
           <dt className="text-xs uppercase tracking-wide text-muted">Your answer</dt>
           <dd className={cn("font-medium", !result.correct && given && "line-through")}>
-            {given || "—"}
+            {given || "No answer"}
           </dd>
         </div>
         <div>
@@ -390,7 +418,7 @@ function ReviewItem({
         {ai?.explanation || question.explanation}
       </p>
       {ai?.evidence && (
-        <p className="mt-2 border-l-2 border-brand-200 pl-3 font-serif text-sm italic text-muted">
+        <p className="mt-2 border-s-2 border-brand-200 ps-3 font-serif text-sm italic text-muted">
           “{ai.evidence}”
         </p>
       )}

@@ -1,10 +1,11 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { AppShell } from "~/components/layout/AppShell";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { QuestionRenderer } from "~/components/renderers/QuestionRenderer";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
+import { EmptyState, SkeletonRows } from "~/components/ui/EmptyState";
 import { Icon } from "~/components/ui/Icon";
 import { PremiumGate } from "~/lib/auth";
 import { cn } from "~/lib/cn";
@@ -64,31 +65,27 @@ function ReviewPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("review.title")}</h1>
-      <p className="mt-1.5 text-sm text-muted">{t("review.subtitle")}</p>
+      <PageHeader title={t("review.title")} subtitle={t("review.subtitle")} />
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
-        <Stat label="Due now" value={isLoading ? "…" : queue.length} />
+      <div className="grid grid-cols-3 gap-3">
+        <Stat label="Due now" value={isLoading ? "…" : queue.length} accent />
         <Stat label="In notebook" value={counts?.open ?? "…"} />
         <Stat label="Mastered" value={counts?.mastered ?? "…"} />
       </div>
 
       <div className="mt-6">
         {isLoading ? (
-          <p className="text-sm text-muted">Loading your cards…</p>
+          <SkeletonRows rows={3} />
         ) : !card ? (
-          <Card>
-            <CardBody className="pt-8 pb-8 text-center">
-              <Icon name="sparkles" className="mx-auto h-10 w-10 text-brand-600" />
-              <p className="mt-3 text-lg font-semibold">All caught up!</p>
-              <p className="mt-1 text-sm text-muted">
-                Nothing is due for review. Drill a question type to keep improving.
-              </p>
-              <Button asChild className="mt-4">
+          <EmptyState
+            title="All caught up"
+            body="Nothing is due for review. Drill a question type to keep improving."
+            action={
+              <Button asChild>
                 <Link to="/drills">Go to drills</Link>
               </Button>
-            </CardBody>
-          </Card>
+            }
+          />
         ) : (
           <ReviewCardView key={card.question_id} card={card} onNext={() => next(card.question_id)} />
         )}
@@ -97,11 +94,11 @@ function ReviewPage() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number | string }) {
+function Stat({ label, value, accent = false }: { label: string; value: number | string; accent?: boolean }) {
   return (
-    <div className="rounded-card border border-line bg-surface p-3">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="text-xl font-semibold">{value}</p>
+    <div className={cn("rounded-card border px-4 py-3", accent ? "border-brand-600 bg-brand-50" : "border-line bg-surface")}>
+      <p className={cn("text-xs", accent ? "text-brand-700" : "text-muted")}>{label}</p>
+      <p className="display tnum text-2xl">{value}</p>
     </div>
   );
 }
@@ -126,35 +123,41 @@ function ReviewCardView({ card, onNext }: { card: MistakeCard; onNext: () => voi
   const hasStimulus = !!(g.passage_text || g.audio_url || g.image_url);
 
   return (
-    <Card>
-      <CardBody className="space-y-4 pt-5">
+    <Card className={cn(verdict && (verdict.correct ? "border-good/40" : "border-bad/40"))}>
+      <CardBody className="grid gap-4 pt-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Badge tone="brand">{card.question.type_label}</Badge>
           <BoxDots box={verdict?.box ?? card.box} />
         </div>
 
-        {g.instructions && <p className="text-sm text-ink-soft">{g.instructions}</p>}
+        {g.instructions && (
+          <div className="rounded-[0.625rem] border border-line bg-paper px-4 py-3 text-sm leading-relaxed text-ink-soft">
+            {g.instructions}
+          </div>
+        )}
 
         {hasStimulus && (
           <div>
             <button
               type="button"
               onClick={() => setShowStimulus((s) => !s)}
-              className="text-sm font-medium text-brand-700"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700"
+              aria-expanded={showStimulus}
             >
+              <Icon name={showStimulus ? "eyeOff" : "eye"} size={15} />
               {showStimulus ? "Hide" : "Show"} {g.audio_url ? "audio" : "passage"}
             </button>
             {showStimulus && (
-              <div className="mt-2 space-y-3">
+              <div className="mt-2 grid gap-3">
                 {g.audio_url && <audio controls src={g.audio_url} className="w-full" />}
                 {g.image_url && <img src={g.image_url} alt="" className="w-full rounded-card border border-line" />}
                 {g.passage_text && (
-                  <div className="max-h-80 overflow-y-auto rounded-card border border-line bg-paper p-4 font-serif text-sm leading-relaxed">
-                    {g.passage_text.split(/\n\s*\n/).map((p, i) => (
-                      <p key={i} className="mb-3 last:mb-0">
-                        {p}
-                      </p>
-                    ))}
+                  <div className="thin-scroll max-h-80 overflow-y-auto rounded-card border border-line bg-paper p-4">
+                    <div className="prose-passage text-[0.95rem]">
+                      {g.passage_text.split(/\n\s*\n/).map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -162,25 +165,30 @@ function ReviewCardView({ card, onNext }: { card: MistakeCard; onNext: () => voi
           </div>
         )}
 
-        <QuestionRenderer question={toQuestion(card)} value={answer} onChange={setAnswer} disabled={!!verdict} />
+        <div className="rounded-[0.625rem] border border-line p-4">
+          <QuestionRenderer question={toQuestion(card)} value={answer} onChange={setAnswer} disabled={!!verdict} />
+        </div>
 
         {card.last_answer && !verdict && (
           <p className="text-xs text-muted">Last time you answered: {card.last_answer}</p>
         )}
 
         {verdict && (
-          <div className={cn("rounded-md p-3 text-sm", verdict.correct ? "bg-good-soft" : "bg-bad-soft")}>
-            <p className={cn("flex items-center gap-1.5 font-medium", verdict.correct ? "text-good" : "text-bad")}>
-              <Icon name={verdict.correct ? "check" : "x"} className="h-4 w-4" />
+          <div className="rounded-[0.625rem] bg-paper p-4 text-sm">
+            <p className={cn("flex items-center gap-1.5 font-semibold", verdict.correct ? "text-good" : "text-bad")}>
+              <Icon name={verdict.correct ? "check" : "x"} size={16} />
               {verdict.correct ? "Correct" : "Incorrect"}
             </p>
             {verdict.accepted_answers.length > 0 && (
-              <p className="mt-1">Accepted: {verdict.accepted_answers.join(" / ")}</p>
+              <p className="mt-1">
+                <span className="text-xs uppercase tracking-wide text-muted">Accepted </span>
+                <span className="font-medium text-good">{verdict.accepted_answers.join(" / ")}</span>
+              </p>
             )}
-            {verdict.explanation && <p className="mt-2 text-ink-soft">{verdict.explanation}</p>}
+            {verdict.explanation && <p className="mt-2 leading-relaxed text-ink-soft">{verdict.explanation}</p>}
             <p className="mt-2 font-medium">
               {verdict.mastered
-                ? "Mastered!"
+                ? "Mastered"
                 : verdict.next_in_days != null
                   ? `Next review in ${verdict.next_in_days} day${verdict.next_in_days === 1 ? "" : "s"}`
                   : null}
@@ -190,9 +198,11 @@ function ReviewCardView({ card, onNext }: { card: MistakeCard; onNext: () => voi
 
         {review.isError && <p className="text-sm text-bad">Could not check this answer. Please try again.</p>}
 
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
           {verdict ? (
-            <Button onClick={onNext}>Next card</Button>
+            <Button onClick={onNext}>
+              Next card <Icon name="arrowRight" size={14} className="rtl:rotate-180" />
+            </Button>
           ) : (
             <Button
               disabled={review.isPending || answer == null || (Array.isArray(answer) && !answer.length)}
@@ -207,7 +217,7 @@ function ReviewCardView({ card, onNext }: { card: MistakeCard; onNext: () => voi
             </Button>
           )}
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             disabled={drop.isPending}
             onClick={() => drop.mutate(card.question_id, { onSuccess: onNext })}

@@ -3,7 +3,6 @@ import type { WritingTask } from "~/data/practice";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
-import { Textarea } from "~/components/ui/Field";
 import { cn } from "~/lib/cn";
 import { countWords } from "~/lib/answer-check";
 import { useAuth } from "~/lib/auth";
@@ -27,27 +26,31 @@ export function WritingRunner({ tasks }: { tasks: WritingTask[] }) {
   return (
     <div className="grid gap-6">
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-        {tasks.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setTaskId(t.id)}
-            className={cn(
-              "rounded-card border p-3.5 text-left transition-colors",
-              t.id === task.id
-                ? "border-brand-500 bg-brand-50"
-                : "border-line bg-surface hover:border-line-strong",
-            )}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-                Task {t.taskNumber}
-              </p>
-              {done.current.has(t.id) && <Badge tone="good">Banded</Badge>}
-            </div>
-            <p className="mt-1 text-sm font-medium leading-snug">{t.topic}</p>
-          </button>
-        ))}
+        {tasks.map((t) => {
+          const active = t.id === task.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTaskId(t.id)}
+              aria-pressed={active}
+              className={cn(
+                "rounded-card border bg-surface p-3.5 text-start transition-colors",
+                active
+                  ? "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)]"
+                  : "border-line hover:border-line-strong",
+              )}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">
+                  Task {t.taskNumber}
+                </p>
+                {done.current.has(t.id) && <Badge tone="good">Banded</Badge>}
+              </div>
+              <p className="mt-1 text-sm font-medium leading-snug">{t.topic}</p>
+            </button>
+          );
+        })}
       </div>
 
       <TaskEditor
@@ -109,10 +112,10 @@ function TaskEditor({ task, onGraded }: { task: WritingTask; onGraded: () => voi
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-      <Card className="lg:sticky lg:top-24 lg:self-start">
+      <Card className="lg:sticky lg:top-6 lg:self-start">
         <CardBody className="pt-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">{task.title}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{task.title}</p>
             <div
               className={cn(
                 "rounded-lg border px-2.5 py-1 font-mono text-xs tabular-nums",
@@ -137,18 +140,10 @@ function TaskEditor({ task, onGraded }: { task: WritingTask; onGraded: () => voi
       </Card>
 
       <div className="min-w-0">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <label htmlFor={`response-${task.id}`} className="text-sm font-medium">
-            Your response
-          </label>
-          <span
-            className={cn("text-xs tabular-nums", underLength && words > 0 ? "text-warn" : "text-muted")}
-            aria-live="polite"
-          >
-            {words} words · minimum {task.minWords}
-          </span>
-        </div>
-        <Textarea
+        <label htmlFor={`response-${task.id}`} className="sr-only">
+          Your response
+        </label>
+        <textarea
           id={`response-${task.id}`}
           value={text}
           disabled={grading || grade !== null}
@@ -157,14 +152,19 @@ function TaskEditor({ task, onGraded }: { task: WritingTask; onGraded: () => voi
             setText(e.target.value);
           }}
           rows={18}
-          placeholder="Start writing…"
-          className="min-h-[22rem] font-serif text-[1.0625rem] leading-[1.8]"
+          placeholder="Start writing. There is no maximum length."
+          className="min-h-[22rem] w-full resize-y rounded-t-card border border-line-strong bg-surface px-5 py-4 font-serif text-[1.0625rem] leading-[1.8] text-ink placeholder:text-muted/70 focus:border-brand-500 focus:outline-none disabled:opacity-70"
         />
-        <p className="mt-2 text-xs text-muted">
-          {underLength && words > 0
-            ? `Responses under ${task.minWords} words lose marks for Task ${task.taskNumber === 1 ? "Achievement" : "Response"}. There is no maximum.`
-            : "There is no maximum length. Write as much as the task needs."}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-b-card border border-t-0 border-line-strong bg-surface px-4 py-2.5 text-xs text-muted">
+          <span className={cn("tnum", underLength && words > 0 ? "text-warn" : "")} aria-live="polite">
+            {words} words · minimum {task.minWords}
+          </span>
+          <span>
+            {underLength && words > 0
+              ? `Under ${task.minWords} words loses marks for Task ${task.taskNumber === 1 ? "Achievement" : "Response"}.`
+              : "No maximum. Write as much as the task needs."}
+          </span>
+        </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           {!grade ? (

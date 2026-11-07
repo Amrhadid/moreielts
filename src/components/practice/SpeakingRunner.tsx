@@ -4,6 +4,7 @@ import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
 import { Textarea } from "~/components/ui/Field";
+import { Icon } from "~/components/ui/Icon";
 import { cn } from "~/lib/cn";
 import { countWords } from "~/lib/answer-check";
 import { useAuth } from "~/lib/auth";
@@ -14,21 +15,38 @@ import { useSpeechRecognition } from "~/lib/practice/useSpeechRecognition";
 import { BandResultCard } from "./BandResultCard";
 import { AiStatus } from "./PracticeShell";
 
-const WAVE = [8, 16, 26, 14, 30, 22, 34, 18, 28, 12, 24, 32, 20, 10, 26, 18, 30, 14, 22, 8];
-
-function Waveform({ active }: { active: boolean }) {
+/** Conic ring: preparation counts down in the speaking hue, recording in the bad hue. */
+function Ring({
+  value,
+  total,
+  tone,
+  label,
+  children,
+}: {
+  value: number;
+  total: number;
+  tone: "speaking" | "bad" | "good" | "muted";
+  label: string;
+  children?: React.ReactNode;
+}) {
+  const pct = total > 0 ? Math.min(100, (value / total) * 100) : 0;
+  const colour =
+    tone === "speaking"
+      ? "var(--color-speaking)"
+      : tone === "bad"
+        ? "var(--color-bad)"
+        : tone === "good"
+          ? "var(--color-good)"
+          : "var(--color-line-strong)";
   return (
-    <div aria-hidden className="flex h-12 items-center justify-center gap-1">
-      {WAVE.map((h, i) => (
-        <span
-          key={i}
-          className={cn(
-            "w-1 rounded-full transition-colors",
-            active ? "animate-pulse bg-brand-500" : "bg-line-strong",
-          )}
-          style={{ height: `${active ? h : Math.max(4, h / 3)}px` }}
-        />
-      ))}
+    <div
+      className="relative grid h-36 w-36 place-items-center rounded-full"
+      style={{ background: `conic-gradient(${colour} ${pct}%, var(--color-line) 0)` }}
+      role="img"
+      aria-label={label}
+    >
+      <div className="absolute inset-2 rounded-full bg-paper" />
+      <div className="relative text-center">{children}</div>
     </div>
   );
 }
@@ -48,23 +66,25 @@ export function SpeakingRunner({ prompts }: { prompts: SpeakingPrompt[] }) {
       <ol className="grid grid-cols-5 gap-2">
         {prompts.map((p, i) => {
           const band = bands[p.id];
+          const active = i === index;
           return (
             <li key={p.id}>
               <button
                 type="button"
                 onClick={() => setIndex(i)}
+                aria-pressed={active}
                 className={cn(
-                  "w-full rounded-xl border px-2 py-2 text-left transition-colors",
-                  i === index
-                    ? "border-brand-500 bg-brand-50"
-                    : "border-line bg-surface hover:border-line-strong",
+                  "w-full rounded-[0.625rem] border bg-surface px-2.5 py-2 text-start transition-colors",
+                  active
+                    ? "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)]"
+                    : "border-line hover:border-line-strong",
                 )}
               >
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">
                   Part {p.part}
                 </p>
                 <p className="mt-0.5 truncate text-xs font-medium">{p.topic}</p>
-                <p className="mt-1 text-xs tabular-nums text-good">
+                <p className="tnum mt-1 text-xs text-good">
                   {band !== undefined ? `Band ${band.toFixed(1)}` : " "}
                 </p>
               </button>
@@ -197,12 +217,21 @@ function PromptRunner({
     }
   }
 
+  const ringState =
+    phase === "prep"
+      ? { value: (item.prepSeconds ?? 0) - prepRemaining, total: item.prepSeconds ?? 1, tone: "speaking" as const, caption: "Preparing", time: formatClock(prepRemaining) }
+      : phase === "recording"
+        ? { value: elapsed, total: item.maxSeconds, tone: "bad" as const, caption: "Recording", time: formatClock(elapsed) }
+        : phase === "review" || phase === "graded"
+          ? { value: elapsed, total: item.maxSeconds, tone: "good" as const, caption: "Recorded", time: formatClock(elapsed) }
+          : { value: 0, total: item.maxSeconds, tone: "muted" as const, caption: "Ready", time: formatClock(item.maxSeconds) };
+
   return (
     <div className="grid gap-6">
       <Card>
         <CardBody className="pt-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">
               {item.title} · {position}
             </p>
             <Badge tone="neutral">
@@ -212,43 +241,44 @@ function PromptRunner({
           <p className="mt-2 text-sm leading-relaxed text-ink-soft">{item.instructions}</p>
 
           {item.cueCard ? (
-            <div className="mt-5 rounded-card border-2 border-line-strong bg-surface p-6">
-              <p className="text-lg font-semibold leading-snug">{item.cueCard.topic}</p>
+            <div className="mt-5 rounded-card border border-line bg-paper p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-speaking">Cue card</p>
+              <p className="display mt-2 text-2xl leading-snug">{item.cueCard.topic}</p>
               <p className="mt-3 text-sm text-muted">You should say:</p>
-              <ul className="mt-1 grid gap-1 text-[1rem] leading-relaxed">
+              <ul className="mt-1 grid list-disc gap-1 ps-5 text-[1rem] leading-relaxed">
                 {item.cueCard.bullets.map((b) => (
-                  <li key={b} className="pl-4 before:absolute before:-ml-4 before:content-['•']">
-                    {b}
-                  </li>
+                  <li key={b}>{b}</li>
                 ))}
               </ul>
               <p className="mt-3 text-[1rem] leading-relaxed">{item.cueCard.closing}</p>
             </div>
           ) : (
-            <p className="mt-5 text-xl leading-relaxed">{item.prompt}</p>
+            <p className="display mt-5 text-2xl leading-relaxed">{item.prompt}</p>
           )}
         </CardBody>
       </Card>
 
       {phase === "prep" && (
         <Card>
-          <CardBody className="pt-5">
-            <div className="mb-3 flex items-center justify-between">
+          <CardBody className="grid gap-4 pt-5 sm:grid-cols-[auto_1fr] sm:items-start">
+            <Ring value={ringState.value} total={ringState.total} tone={ringState.tone} label={`Preparation, ${ringState.time} left`}>
+              <p className="font-mono text-2xl tabular-nums">{ringState.time}</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">{ringState.caption}</p>
+            </Ring>
+            <div>
               <p className="text-sm font-medium">Preparation time</p>
-              <p className="font-mono text-lg tabular-nums text-brand-700">
-                {formatClock(prepRemaining)}
-              </p>
-            </div>
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={5}
-              placeholder="Make notes here — you can see them while you speak."
-            />
-            <div className="mt-3 flex justify-end">
-              <Button variant="outline" onClick={() => setPhase("ready")}>
-                I'm ready — start speaking
-              </Button>
+              <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={5}
+                className="mt-2"
+                placeholder="Make notes here. You can see them while you speak."
+              />
+              <div className="mt-3 flex justify-end">
+                <Button variant="outline" onClick={() => setPhase("ready")}>
+                  Start speaking now
+                </Button>
+              </div>
             </div>
           </CardBody>
         </Card>
@@ -258,41 +288,44 @@ function PromptRunner({
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
           <div className="grid gap-4 self-start">
             {notes && (
-              <div className="rounded-xl border border-line bg-surface p-4">
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">
+              <div className="rounded-[0.625rem] border border-line bg-surface p-4">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-[0.1em] text-muted">
                   Your notes
                 </p>
                 <p className="whitespace-pre-line text-sm">{notes}</p>
               </div>
             )}
-            <div className="rounded-card border border-line bg-surface p-6 text-center">
-              <Waveform active={phase === "recording"} />
-              <p className="mt-3 font-mono text-sm tabular-nums text-muted">
-                {formatClock(elapsed)} / {formatClock(item.maxSeconds)}
+            <div className="grid justify-items-center gap-4 rounded-card border border-line bg-surface p-6 text-center">
+              <Ring value={ringState.value} total={ringState.total} tone={ringState.tone} label={`${ringState.caption}, ${ringState.time}`}>
+                <p className="font-mono text-2xl tabular-nums">{ringState.time}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">{ringState.caption}</p>
+              </Ring>
+              <p className="font-mono text-xs tabular-nums text-muted">
+                up to {formatClock(item.maxSeconds)}
               </p>
               {!speech.supported && (
-                <p className="mt-3 text-xs text-warn">
-                  Live transcription needs Chrome or Safari. You can still practise: time
-                  yourself with the clock, then type what you said.
+                <p className="text-xs text-warn">
+                  Live transcription needs Chrome or Safari. You can still practise: time yourself
+                  with the clock, then type what you said.
                 </p>
               )}
               {speech.error && phase !== "recording" && (
-                <p className="mt-3 text-sm text-bad">{speech.error}</p>
+                <p className="text-sm text-bad">{speech.error}</p>
               )}
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 {phase === "ready" && (
                   <Button size="lg" onClick={startRecording}>
-                    <span aria-hidden className="mr-1">●</span> Start speaking
+                    <Icon name="mic" size={16} /> Start speaking
                   </Button>
                 )}
                 {phase === "recording" && (
                   <Button size="lg" variant="danger" onClick={stopRecording}>
-                    <span aria-hidden className="mr-1">■</span> Stop
+                    <Icon name="square" size={14} /> Stop
                   </Button>
                 )}
                 {(phase === "review" || phase === "graded") && (
                   <Button variant="ghost" onClick={restart} disabled={grading}>
-                    Speak again
+                    <Icon name="rotateCcw" size={14} /> Speak again
                   </Button>
                 )}
               </div>
@@ -304,7 +337,7 @@ function PromptRunner({
               <label htmlFor={`transcript-${item.id}`} className="text-sm font-medium">
                 {speech.supported ? "Transcript" : "What you said"}
               </label>
-              <span className="text-xs tabular-nums text-muted">
+              <span className="tnum text-xs text-muted">
                 {words} words
                 {phase === "recording" && speech.supported ? " · listening…" : ""}
               </span>
@@ -331,7 +364,7 @@ function PromptRunner({
               className="min-h-[14rem] text-[1rem] leading-[1.7]"
             />
             <p className="mt-2 text-xs text-muted">
-              The examiner grades the transcript, so correct any words the recogniser misheard —
+              The examiner grades the transcript, so correct any words the recogniser misheard,
               but do not rewrite what you actually said.
             </p>
 
@@ -341,7 +374,11 @@ function PromptRunner({
                   {grading ? "Grading…" : "Get my band"}
                 </Button>
               )}
-              {phase === "graded" && onNext && <Button onClick={onNext}>Next prompt →</Button>}
+              {phase === "graded" && onNext && (
+                <Button onClick={onNext}>
+                  Next prompt <Icon name="arrowRight" size={14} className="rtl:rotate-180" />
+                </Button>
+              )}
             </div>
 
             <div className="mt-4">

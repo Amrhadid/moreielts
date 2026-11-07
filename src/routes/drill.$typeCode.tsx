@@ -4,6 +4,7 @@ import { AppShell } from "~/components/layout/AppShell";
 import { QuestionRenderer } from "~/components/renderers/QuestionRenderer";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody } from "~/components/ui/Card";
+import { Skeleton } from "~/components/ui/EmptyState";
 import { Icon } from "~/components/ui/Icon";
 import { PremiumGate } from "~/lib/auth";
 import { cn } from "~/lib/cn";
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/drill/$typeCode")({
 function DrillRoute() {
   return (
     <PremiumGate>
-      <AppShell>
+      <AppShell wide>
         <DrillPage />
       </AppShell>
     </PremiumGate>
@@ -74,6 +75,7 @@ function DrillPage() {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [result, setResult] = useState<DrillResult | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [current, setCurrent] = useState<string | null>(null);
   const started = useRef(false);
 
   const begin = () => {
@@ -105,8 +107,10 @@ function DrillPage() {
         <CardBody className="pt-6 text-center">
           {errorCode === "premium_required" ? (
             <>
-              <Icon name="lock" className="mx-auto h-8 w-8 text-brand-600" />
-              <p className="mt-3 font-medium">Drills are part of Premium</p>
+              <span className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-warn-soft text-warn">
+                <Icon name="lock" size={22} />
+              </span>
+              <p className="mt-3 font-semibold">Drills are part of Premium</p>
               <p className="mt-1 text-sm text-muted">Enter your access code to drill {label}.</p>
               <Button asChild className="mt-4">
                 <Link to={"/pricing" as never}>Enter a code</Link>
@@ -114,15 +118,15 @@ function DrillPage() {
             </>
           ) : errorCode === "no_content_for_type" ? (
             <>
-              <p className="font-medium">No practice sets for {label} yet</p>
+              <p className="font-semibold">No practice sets for {label} yet</p>
               <p className="mt-1 text-sm text-muted">
-                None of the {label} sets match your exam type yet — try another question type, or
+                None of the {label} sets match your exam type yet. Try another question type, or
                 change your exam type under Study plan to see every set.
               </p>
             </>
           ) : (
             <>
-              <p className="font-medium">Something went wrong starting this drill</p>
+              <p className="font-semibold">Something went wrong starting this drill</p>
               <p className="mt-1 text-sm text-muted">{errorCode}</p>
               <Button className="mt-4" variant="outline" onClick={begin}>
                 Try again
@@ -139,18 +143,37 @@ function DrillPage() {
     );
   }
 
-  if (start.isPending || !drill) return <p className="text-sm text-muted">Preparing your drill…</p>;
+  if (start.isPending || !drill) {
+    return (
+      <div role="status" aria-label="Preparing your drill" className="grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-80 rounded-card" />
+        <div className="grid gap-3">
+          <Skeleton className="h-12 rounded-[0.625rem]" />
+          <Skeleton className="h-28 rounded-[0.625rem]" />
+          <Skeleton className="h-28 rounded-[0.625rem]" />
+        </div>
+      </div>
+    );
+  }
 
   const questions = [...drill.questions].sort((a, b) => a.order_index - b.order_index);
+  const answeredCount = questions.filter((q) => {
+    const a = answers[q.id];
+    return Array.isArray(a) ? a.length > 0 : Boolean(a && String(a).trim());
+  }).length;
 
   return (
     <>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <Link to="/drills" className="text-xs text-muted hover:text-ink">
-            ← Practice
+          <Link to="/drills" className="inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-ink">
+            <Icon name="arrowRight" size={14} className="rotate-180 rtl:rotate-0" />
+            Drills
           </Link>
-          <h1 className="text-xl font-semibold tracking-tight">{label}</h1>
+          <h1 className="display mt-2 text-[1.75rem] leading-tight sm:text-[2rem]">{label}</h1>
+          <p className="mt-1 text-sm text-muted">
+            {questions.length} questions · marked on the server · explained afterwards
+          </p>
         </div>
         {result && (
           <div className="flex gap-2">
@@ -164,60 +187,91 @@ function DrillPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Stimulus group={drill.group} />
-        <div className="space-y-4">
+        <div className="grid gap-3 content-start">
           {result && (
-            <Card>
-              <CardBody className="pt-5">
-                <p className="text-sm text-muted">Your score</p>
-                <p className="text-3xl font-semibold">
-                  {result.correct}/{result.total}
+            <Card className="animate-rise">
+              <CardBody className="flex items-baseline justify-between pt-5">
+                <p className="text-sm font-semibold">Your score</p>
+                <p className="display tnum text-3xl">
+                  {result.correct}
+                  <span className="text-base text-muted"> / {result.total}</span>
                 </p>
               </CardBody>
             </Card>
           )}
-          {drill.group.instructions && <p className="text-sm text-ink-soft">{drill.group.instructions}</p>}
+          {drill.group.instructions && (
+            <div className="rounded-[0.625rem] border border-line bg-surface px-4 py-3 text-sm leading-relaxed text-ink-soft">
+              {drill.group.instructions}
+            </div>
+          )}
           {questions.map((q, i) => {
             const review = result?.review.find((r) => r.question_id === q.id);
+            const isCurrent = !result && current === q.id;
             return (
               <div
                 key={q.id}
+                onFocus={() => setCurrent(q.id)}
+                onClick={() => setCurrent(q.id)}
                 className={cn(
-                  "rounded-card border bg-surface p-4",
-                  review ? (review.correct ? "border-good/40" : "border-bad/40") : "border-line",
+                  "rounded-[0.625rem] border bg-surface p-4 ps-[1.125rem] transition-colors",
+                  review
+                    ? review.correct
+                      ? "border-good/40 shadow-[inset_3px_0_0_var(--color-good)]"
+                      : "border-bad/40 shadow-[inset_3px_0_0_var(--color-bad)]"
+                    : isCurrent
+                      ? "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)]"
+                      : "border-line",
                 )}
               >
+                <div className="mb-2 flex items-baseline gap-2">
+                  <span className="font-mono text-sm text-brand-600">{i + 1}</span>
+                  <p className="text-sm leading-relaxed">{q.prompt}</p>
+                </div>
                 <QuestionRenderer
-                  question={toQuestion(q, i, type?.renderer)}
+                  question={{ ...toQuestion(q, i, type?.renderer), prompt: "" }}
                   value={answers[q.id]}
                   onChange={(v) => setAnswers((a) => ({ ...a, [q.id]: v }))}
                   disabled={!!result}
                 />
                 {review && (
-                  <div className={cn("mt-3 rounded-md p-3 text-sm", review.correct ? "bg-good-soft" : "bg-bad-soft")}>
-                    <p className={cn("flex items-center gap-1.5 font-medium", review.correct ? "text-good" : "text-bad")}>
-                      <Icon name={review.correct ? "check" : "x"} className="h-4 w-4" />
+                  <div className="mt-3 rounded-lg bg-paper p-3 text-sm">
+                    <p className={cn("flex items-center gap-1.5 font-semibold", review.correct ? "text-good" : "text-bad")}>
+                      <Icon name={review.correct ? "check" : "x"} size={16} />
                       {review.correct ? "Correct" : "Incorrect"}
                     </p>
-                    <p className="mt-1">Your answer: {fmtAnswer(review.answer)}</p>
-                    {review.accepted_answers.length > 0 && (
-                      <p className="mt-1">Accepted: {review.accepted_answers.join(" / ")}</p>
-                    )}
-                    {review.explanation && <p className="mt-2 text-ink-soft">{review.explanation}</p>}
+                    <dl className="mt-2 grid gap-1 sm:grid-cols-2">
+                      <div>
+                        <dt className="text-xs uppercase tracking-wide text-muted">Your answer</dt>
+                        <dd className={cn("font-medium", !review.correct && "line-through")}>{fmtAnswer(review.answer)}</dd>
+                      </div>
+                      {review.accepted_answers.length > 0 && (
+                        <div>
+                          <dt className="text-xs uppercase tracking-wide text-muted">Accepted</dt>
+                          <dd className="font-medium text-good">{review.accepted_answers.join(" / ")}</dd>
+                        </div>
+                      )}
+                    </dl>
+                    {review.explanation && <p className="mt-2 leading-relaxed text-ink-soft">{review.explanation}</p>}
                   </div>
                 )}
               </div>
             );
           })}
           {!result && (
-            <Button
-              size="lg"
-              disabled={submit.isPending}
-              onClick={() =>
-                submit.mutate({ drillId: drill.drill_id, answers }, { onSuccess: (r) => setResult(r) })
-              }
-            >
-              {submit.isPending ? "Checking…" : "Submit answers"}
-            </Button>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+              <p className="tnum text-sm text-muted">
+                {answeredCount} of {questions.length} answered
+              </p>
+              <Button
+                size="lg"
+                disabled={submit.isPending}
+                onClick={() =>
+                  submit.mutate({ drillId: drill.drill_id, answers }, { onSuccess: (r) => setResult(r) })
+                }
+              >
+                {submit.isPending ? "Checking…" : "Submit answers"}
+              </Button>
+            </div>
           )}
           {submit.isError && <p className="text-sm text-bad">Could not submit. Please try again.</p>}
           {result?.transcript && <Transcript text={result.transcript} />}
@@ -229,7 +283,7 @@ function DrillPage() {
 
 function Stimulus({ group }: { group: Pick<DrillGroup, "passage_text" | "audio_url" | "image_url"> & { image_caption?: string | null } }) {
   return (
-    <div className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+    <div className="grid gap-4 lg:sticky lg:top-6 lg:self-start">
       {group.audio_url && <AudioPlayer src={group.audio_url} />}
       {group.image_url && (
         <figure>
@@ -238,12 +292,13 @@ function Stimulus({ group }: { group: Pick<DrillGroup, "passage_text" | "audio_u
         </figure>
       )}
       {group.passage_text && (
-        <div className="max-h-[70vh] overflow-y-auto rounded-card border border-line bg-surface p-5 font-serif leading-relaxed">
-          {group.passage_text.split(/\n\s*\n/).map((p, i) => (
-            <p key={i} className="mb-3 last:mb-0">
-              {p}
-            </p>
-          ))}
+        <div className="thin-scroll max-h-[70vh] overflow-y-auto rounded-card border border-line bg-surface p-6">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.1em] text-muted">Passage</p>
+          <div className="prose-passage">
+            {group.passage_text.split(/\n\s*\n/).map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -254,7 +309,16 @@ function AudioPlayer({ src }: { src: string }) {
   const ref = useRef<HTMLAudioElement>(null);
   const [rate, setRate] = useState(1);
   return (
-    <div className="rounded-card border border-line bg-surface p-3">
+    <div className="rounded-card border border-line bg-surface p-4">
+      <div className="mb-3 flex items-center gap-3">
+        <span className="grid h-9 w-9 place-items-center rounded-[0.625rem] bg-listening-soft text-listening">
+          <Icon name="headphones" size={17} />
+        </span>
+        <div>
+          <p className="text-sm font-semibold">Recording</p>
+          <p className="text-xs text-muted">Drills let you replay. The mock test plays once.</p>
+        </div>
+      </div>
       <audio ref={ref} controls src={src} className="w-full" />
       <label className="mt-2 flex items-center gap-2 text-xs text-muted">
         Speed
@@ -265,7 +329,7 @@ function AudioPlayer({ src }: { src: string }) {
             setRate(r);
             if (ref.current) ref.current.playbackRate = r;
           }}
-          className="rounded border border-line-strong bg-surface px-1.5 py-0.5"
+          className="rounded-md border border-line-strong bg-surface px-1.5 py-0.5 text-ink"
         >
           {[0.75, 1, 1.25].map((r) => (
             <option key={r} value={r}>
@@ -281,15 +345,15 @@ function AudioPlayer({ src }: { src: string }) {
 function Transcript({ text }: { text: string }) {
   return (
     <details className="rounded-card border border-line bg-surface p-4">
-      <summary className="cursor-pointer text-sm font-medium">Transcript</summary>
-      <div className="mt-3 space-y-1.5 text-sm leading-relaxed">
+      <summary className="cursor-pointer text-sm font-semibold">Transcript</summary>
+      <div className="mt-3 grid gap-1.5 text-sm leading-relaxed">
         {text.split("\n").filter(Boolean).map((line, i) => {
           const m = line.match(/^([A-Z][A-Za-z .'-]{0,30}):\s*(.*)$/);
           return (
             <p key={i}>
               {m ? (
                 <>
-                  <strong>{m[1]}:</strong> {m[2]}
+                  <strong className="text-ink-soft">{m[1]}:</strong> {m[2]}
                 </>
               ) : (
                 line
