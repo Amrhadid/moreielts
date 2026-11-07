@@ -19,7 +19,7 @@ const ADMIN_NAV = [
 function AdminLayout() {
   return (
     <div className="min-h-screen bg-paper">
-      <Header />
+      <Header always title="Admin console" />
       <div className="border-b border-line bg-surface">
         <nav className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6">
           {ADMIN_NAV.map((item) => (

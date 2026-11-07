@@ -5,17 +5,21 @@ export function Progress({
   value,
   className,
   tone = "brand",
+  label,
 }: {
   value: number;
   className?: string;
   tone?: "brand" | "good" | "muted";
+  /** Accessible name. Pass it whenever the bar stands alone. */
+  label?: string;
 }) {
   const bar =
     tone === "good" ? "bg-good" : tone === "muted" ? "bg-line-strong" : "bg-brand-600";
   return (
     <P.Root
       value={value}
-      className={cn("h-2 w-full overflow-hidden rounded-full bg-line", className)}
+      aria-label={label}
+      className={cn("h-1.5 w-full overflow-hidden rounded-full bg-line", className)}
     >
       <P.Indicator
         className={cn("h-full transition-[width] duration-500", bar)}
