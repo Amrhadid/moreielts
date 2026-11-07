@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import {
   Dialog,
@@ -12,11 +13,13 @@ import {
 import { useSubmitAttempt } from "~/lib/queries";
 import type { SectionCode } from "~/types/content";
 
-/**
- * Submission is a server operation: the submit-attempt Edge Function marks the
- * responses and writes the scores. The client only asks for it and routes to
- * the result.
- */
+const SECTION_LABEL: Record<SectionCode, string> = {
+  listening: "Listening",
+  reading: "Reading",
+  writing: "Writing",
+  speaking: "Speaking",
+};
+
 /** A full mock runs in the official order; Speaking ends the attempt. */
 const NEXT_SECTION: Partial<Record<SectionCode, { section: SectionCode; to: string }>> = {
   listening: { section: "reading", to: "/test/reading" },
@@ -24,13 +27,20 @@ const NEXT_SECTION: Partial<Record<SectionCode, { section: SectionCode; to: stri
   writing: { section: "speaking", to: "/test/speaking" },
 };
 
+/**
+ * Submission is a server operation: the submit-attempt Edge Function marks the
+ * responses and writes the scores. The client only asks for it and routes to
+ * the next section or the result.
+ */
 export function SubmitDialog({
   attemptId,
   section,
   formId,
   answeredCount,
   total,
-  label = "Submit",
+  flaggedCount = 0,
+  label,
+  unit = "questions",
 }: {
   attemptId: string;
   section?: SectionCode;
@@ -38,13 +48,17 @@ export function SubmitDialog({
   formId?: string;
   answeredCount: number;
   total: number;
+  flaggedCount?: number;
   label?: string;
+  /** "questions" or "tasks". */
+  unit?: string;
 }) {
   const next = section ? NEXT_SECTION[section] : undefined;
   const navigate = useNavigate();
   const submit = useSubmitAttempt();
   const [error, setError] = useState<string | null>(null);
-  const blank = total - answeredCount;
+  const blank = Math.max(0, total - answeredCount);
+  const sectionLabel = section ? SECTION_LABEL[section] : "section";
 
   async function onSubmit() {
     setError(null);
@@ -65,16 +79,21 @@ export function SubmitDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm">{label}</Button>
+        <Button size="sm">{label ?? "Submit"}</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Submit this section?</DialogTitle>
+        <DialogTitle>Submit {sectionLabel}?</DialogTitle>
         <DialogDescription>
-          You have answered {answeredCount} of {total} questions.
-          {blank > 0
-            ? ` ${blank} ${blank === 1 ? "question is" : "questions are"} still blank. Blank answers score nothing, and you cannot return to this section after submitting.`
-            : " You cannot return to this section after submitting."}
+          You have answered {answeredCount} of {total} {unit}.
+          {blank > 0 ? " Blank answers score nothing." : ""} You cannot return to this
+          section once it is submitted.
         </DialogDescription>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Badge tone="brand">{answeredCount} answered</Badge>
+          {blank > 0 && <Badge tone="neutral">{blank} blank</Badge>}
+          {flaggedCount > 0 && <Badge tone="warn">{flaggedCount} flagged</Badge>}
+        </div>
 
         {error && (
           <p className="mt-3 rounded-lg border border-bad/20 bg-bad-soft px-3 py-2 text-sm text-bad">
@@ -90,8 +109,8 @@ export function SubmitDialog({
             {submit.isPending
               ? "Submitting…"
               : next
-                ? `Submit and continue to ${next.section}`
-                : `Submit ${section ?? "section"}`}
+                ? `Submit and continue to ${SECTION_LABEL[next.section]}`
+                : `Submit ${sectionLabel}`}
           </Button>
         </div>
       </DialogContent>

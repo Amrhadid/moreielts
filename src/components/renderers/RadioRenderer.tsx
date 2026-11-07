@@ -30,8 +30,8 @@ export function RadioRenderer({
             className={cn(
               "flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors",
               active
-                ? "border-brand-500 bg-brand-50"
-                : "border-line hover:border-line-strong hover:bg-paper",
+                ? "border-brand-600 bg-brand-50 text-brand-700"
+                : "border-line hover:border-line-strong",
             )}
           >
             <RG.Item

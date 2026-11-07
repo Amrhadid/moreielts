@@ -29,7 +29,7 @@ export function TextInputRenderer({
       />
       {over && (
         <p id={`${question.id}-warn`} className="mt-1.5 text-xs text-warn">
-          Over the {limit}-word limit — answers longer than this are marked wrong.
+          Over the {limit}-word limit. Answers longer than this are marked wrong.
         </p>
       )}
     </div>

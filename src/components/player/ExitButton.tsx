@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/Dialog";
+import { Icon } from "~/components/ui/Icon";
 import { cn } from "~/lib/cn";
 import { useI18n } from "~/lib/i18n";
 import { formatClock } from "~/lib/text";
@@ -29,10 +30,13 @@ export function ExitButton({
   return (
     <Dialog>
       <DialogTrigger
-        className={cn("text-sm font-medium text-muted hover:text-ink", className)}
+        className={cn(
+          "grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-paper hover:text-ink",
+          className,
+        )}
         aria-label="Exit the test"
       >
-        ← Exit
+        <Icon name="logOut" size={16} className="rtl:rotate-180" />
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>{t("exit.title")}</DialogTitle>
@@ -40,7 +44,7 @@ export function ExitButton({
         {remaining !== null && (
           <p className="mt-4 flex items-center justify-between rounded-lg border border-line bg-paper px-3 py-2 text-sm">
             <span className="text-muted">{t("exit.timeLeft")}</span>
-            <span className="font-mono font-semibold tabular-nums">{formatClock(remaining)}</span>
+            <span className="tnum font-mono font-semibold">{formatClock(remaining)}</span>
           </p>
         )}
         <div className="mt-6 flex justify-end gap-2">

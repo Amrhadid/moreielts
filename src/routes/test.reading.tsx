@@ -6,7 +6,10 @@ import { PlayerStatus } from "~/components/player/PlayerStatus";
 import { QuestionBlock } from "~/components/player/QuestionBlock";
 import { QuestionNavigator } from "~/components/player/QuestionNavigator";
 import { SubmitDialog } from "~/components/player/SubmitDialog";
+import { useFlags } from "~/components/player/useFlags";
+import { usePassageSize } from "~/components/player/usePassageSize";
 import { Button } from "~/components/ui/Button";
+import { Icon } from "~/components/ui/Icon";
 import { cn } from "~/lib/cn";
 import { PremiumGate } from "~/lib/auth";
 import { usePlayerAttempt } from "~/lib/usePlayerAttempt";
@@ -25,24 +28,32 @@ function ReadingRoute() {
   );
 }
 
+const MIN_SPLIT = 35;
+const MAX_SPLIT = 65;
+
 function ReadingPlayer() {
   const player = usePlayerAttempt("reading");
   const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
   const [current, setCurrent] = useState(1);
-  const [flagged, setFlagged] = useState<Set<number>>(new Set());
-  const toggleFlag = useCallback((n: number) => {
-    setFlagged((prev) => {
-      const next = new Set(prev);
-      if (next.has(n)) next.delete(n);
-      else next.add(n);
-      return next;
-    });
-  }, []);
+  const [split, setSplit] = useState(50);
+  const [swapped, setSwapped] = useState(false);
+  const { flagged, toggleFlag } = useFlags(player.attemptId, "reading");
   const refs = useRef(new Map<number, HTMLDivElement>());
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const textSize = usePassageSize();
 
   const numbers = useMemo(
     () => player.flat.map((i) => i.question.number),
     [player.flat],
+  );
+
+  const parts = useMemo(
+    () =>
+      player.groups.map((g) => ({
+        label: `Passage ${g.partNumber}`,
+        numbers: g.questions.map((q) => q.number),
+      })),
+    [player.groups],
   );
 
   const registerRef = useCallback((n: number, el: HTMLDivElement | null) => {
@@ -54,6 +65,26 @@ function ReadingPlayer() {
     setCurrent(n);
     refs.current.get(n)?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, []);
+
+  /* ------------------------------------------------------------ divider */
+
+  const dragging = useRef(false);
+  function onDividerDown(e: React.PointerEvent<HTMLDivElement>) {
+    dragging.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+  function onDividerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!dragging.current || !bodyRef.current) return;
+    const rect = bodyRef.current.getBoundingClientRect();
+    const rtl = getComputedStyle(bodyRef.current).direction === "rtl";
+    let pct = ((e.clientX - rect.left) / rect.width) * 100;
+    if (rtl) pct = 100 - pct;
+    if (swapped) pct = 100 - pct;
+    setSplit(Math.max(MIN_SPLIT, Math.min(MAX_SPLIT, pct)));
+  }
+  function onDividerUp() {
+    dragging.current = false;
+  }
 
   if (player.loading || player.error) {
     return <PlayerStatus loading={player.loading} error={player.error} action={player.errorAction} />;
@@ -71,37 +102,57 @@ function ReadingPlayer() {
     }
   }
 
+  const passageWidth = swapped ? 100 - split : split;
+
   return (
-    <div className="flex h-screen flex-col bg-paper">
+    <div className="flex h-screen flex-col bg-paper" style={textSize.style}>
       <PlayerHeader
+        section="reading"
         sectionName="Reading"
-        contextLabel={`Passage ${currentGroup?.partNumber ?? 1} of ${player.groups.length} · Question ${current} of ${numbers.length}`}
+        contextLabel={`Passage ${currentGroup?.partNumber ?? 1} of ${player.groups.length} · ${player.form?.title ?? "Mock test"}`}
         remaining={player.remaining ?? 0}
+        textSizeIndex={textSize.index}
+        onTextSize={textSize.setIndex}
         right={
-          <SubmitDialog
-            attemptId={player.attemptId!}
-            section="reading"
-            formId={player.form?.id}
-            answeredCount={player.answered.size}
-            total={numbers.length}
-          />
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSwapped((s) => !s)}
+              className="hidden md:inline-flex"
+              aria-label={swapped ? "Put the passage first" : "Put the questions first"}
+            >
+              <Icon name="swap" size={14} />
+              Swap
+            </Button>
+            <SubmitDialog
+              attemptId={player.attemptId!}
+              section="reading"
+              formId={player.form?.id}
+              answeredCount={player.answered.size}
+              total={numbers.length}
+              flaggedCount={flagged.size}
+            />
+          </>
         }
       />
 
-      <PlayerStatus saving={player.saving} saveError={player.saveError} inline />
+      <PlayerStatus saveError={player.saveError} inline />
 
       {/* Mobile pane toggle */}
-      <div className="flex border-b border-line bg-surface md:hidden">
+      <div className="flex border-b border-line bg-surface md:hidden" role="tablist">
         {(["passage", "questions"] as const).map((pane) => (
           <button
             key={pane}
             type="button"
+            role="tab"
+            aria-selected={mobilePane === pane}
             onClick={() => setMobilePane(pane)}
             className={cn(
-              "flex-1 py-2.5 text-sm font-medium capitalize transition-colors",
+              "-mb-px flex-1 border-b-2 py-2.5 text-sm font-semibold capitalize transition-colors",
               mobilePane === pane
-                ? "border-b-2 border-brand-600 text-brand-700"
-                : "text-muted",
+                ? "border-brand-600 text-brand-700"
+                : "border-transparent text-muted",
             )}
           >
             {pane}
@@ -109,22 +160,25 @@ function ReadingPlayer() {
         ))}
       </div>
 
-      <div className="flex min-h-0 flex-1 md:divide-x md:divide-line">
+      <div
+        ref={bodyRef}
+        className="flex min-h-0 flex-1"
+        style={{ flexDirection: swapped ? "row-reverse" : "row" }}
+      >
         {/* Passage pane */}
         <section
           className={cn(
-            "thin-scroll min-h-0 overflow-y-auto bg-surface px-5 py-6 md:block md:w-1/2 md:px-8",
+            "thin-scroll min-h-0 overflow-y-auto bg-surface px-5 py-6 md:block md:px-9",
             mobilePane === "passage" ? "block w-full" : "hidden",
           )}
+          style={{ flexBasis: `${passageWidth}%`, flexGrow: 0, flexShrink: 0 }}
           aria-label="Reading passage"
         >
-          <div className="mx-auto max-w-[62ch]">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted">
+          <div className="mx-auto max-w-[66ch]">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-muted">
               Passage {currentGroup?.partNumber}
             </p>
-            <h2 className="mt-1 mb-5 text-xl font-semibold tracking-tight">
-              {currentGroup?.title}
-            </h2>
+            <h2 className="display mb-4 mt-1 text-[1.4375rem] leading-snug">{currentGroup?.title}</h2>
             {currentGroup?.passageText && (
               <PassageHighlighter
                 text={currentGroup.passageText}
@@ -135,10 +189,24 @@ function ReadingPlayer() {
           </div>
         </section>
 
+        {/* Divider (desktop) */}
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize panes"
+          onPointerDown={onDividerDown}
+          onPointerMove={onDividerMove}
+          onPointerUp={onDividerUp}
+          onPointerCancel={onDividerUp}
+          className="hidden w-2.5 shrink-0 cursor-col-resize touch-none place-items-center bg-line md:grid"
+        >
+          <span className="h-7 w-0.5 rounded-full bg-line-strong" aria-hidden />
+        </div>
+
         {/* Questions pane */}
         <section
           className={cn(
-            "thin-scroll min-h-0 overflow-y-auto px-4 py-6 md:block md:w-1/2 md:px-6",
+            "thin-scroll min-h-0 min-w-0 flex-1 overflow-y-auto px-4 py-5 md:block md:px-7",
             mobilePane === "questions" ? "block w-full" : "hidden",
           )}
           aria-label="Questions"
@@ -154,19 +222,22 @@ function ReadingPlayer() {
                 registerRef={registerRef}
                 flagged={flagged}
                 onToggleFlag={toggleFlag}
+                onFocusQuestion={setCurrent}
               />
             ))}
 
             <div className="flex items-center justify-between gap-3 pb-4">
               <Button variant="outline" onClick={() => step(-1)} disabled={currentIndex <= 0}>
-                ← Previous
+                <Icon name="arrowRight" size={16} className="rotate-180 rtl:rotate-0" />
+                Previous
               </Button>
               <Button
                 variant="outline"
                 onClick={() => step(1)}
                 disabled={currentIndex >= numbers.length - 1}
               >
-                Next →
+                Next
+                <Icon name="arrowRight" size={16} className="rtl:rotate-180" />
               </Button>
             </div>
           </div>
@@ -174,13 +245,20 @@ function ReadingPlayer() {
       </div>
 
       <QuestionNavigator
-        numbers={numbers}
+        parts={parts}
         answered={player.answered}
-        current={current}
         flagged={flagged}
+        current={current}
         onJump={(n) => {
           setMobilePane("questions");
           jumpTo(n);
+        }}
+        onJumpPart={(index) => {
+          const first = parts[index]?.numbers[0];
+          if (first !== undefined) {
+            setMobilePane("questions");
+            jumpTo(first);
+          }
         }}
       />
     </div>
