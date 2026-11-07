@@ -57,20 +57,20 @@ function LoginPage() {
   return (
     <div className="grid min-h-screen place-items-center bg-paper px-4 py-10">
       <div className="w-full max-w-sm">
-        <Link to="/" className="mb-6 flex justify-center">
+        <Link to="/" className="mb-8 flex justify-center" aria-label="MoreIELTS home">
           <Logo />
         </Link>
-        <Card>
-          <CardBody className="pt-6">
-            <h1 className="text-xl font-semibold tracking-tight">Sign in to MoreIELTS</h1>
-            <p className="mt-1 text-sm text-muted">
-              Use your Google account. New here? Signing in creates your account.
-            </p>
+        <h1 className="display text-center text-[1.75rem] leading-tight">Sign in to MoreIELTS</h1>
+        <p className="mt-2 text-center text-sm text-muted">
+          Use your Google account. New here? Signing in creates your account.
+        </p>
 
+        <Card className="mt-6">
+          <CardBody className="pt-5">
             <Button
               variant="outline"
               size="lg"
-              className="mt-6 w-full"
+              className="w-full"
               onClick={signInWithGoogle}
               disabled={googleBusy}
             >
@@ -85,12 +85,18 @@ function LoginPage() {
                 {googleError}
               </p>
             )}
-
-            <p className="mt-5 text-center text-xs leading-relaxed text-muted">
+            <p className="mt-4 text-center text-xs leading-relaxed text-muted">
               Your MoreTOEFL Google account works here too.
             </p>
           </CardBody>
         </Card>
+
+        <p className="mt-6 text-center text-xs leading-relaxed text-muted">
+          MoreIELTS is for Premium members.{" "}
+          <Link to="/pricing" className="font-medium text-brand-600">
+            How to get access
+          </Link>
+        </p>
       </div>
     </div>
   );
