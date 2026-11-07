@@ -77,9 +77,11 @@ function ReadingPlayer() {
     if (!dragging.current || !bodyRef.current) return;
     const rect = bodyRef.current.getBoundingClientRect();
     const rtl = getComputedStyle(bodyRef.current).direction === "rtl";
+    // `split` is the width of whichever pane sits at flex-start, so the
+    // pointer position (measured from the start edge) maps to it directly in
+    // both the normal and the swapped layout.
     let pct = ((e.clientX - rect.left) / rect.width) * 100;
     if (rtl) pct = 100 - pct;
-    if (swapped) pct = 100 - pct;
     setSplit(Math.max(MIN_SPLIT, Math.min(MAX_SPLIT, pct)));
   }
   function onDividerUp() {
@@ -118,7 +120,12 @@ function ReadingPlayer() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setSwapped((s) => !s)}
+              onClick={() => {
+                // Mirror the split too, so the passage keeps its width when it
+                // moves to the other side.
+                setSwapped((s) => !s);
+                setSplit((v) => 100 - v);
+              }}
               className="hidden md:inline-flex"
               aria-label={swapped ? "Put the passage first" : "Put the questions first"}
             >
@@ -168,10 +175,10 @@ function ReadingPlayer() {
         {/* Passage pane */}
         <section
           className={cn(
-            "thin-scroll min-h-0 overflow-y-auto bg-surface px-5 py-6 md:block md:px-9",
+            "thin-scroll min-h-0 basis-full overflow-y-auto bg-surface px-5 py-6 md:block md:shrink-0 md:grow-0 md:[flex-basis:var(--split)] md:px-9",
             mobilePane === "passage" ? "block w-full" : "hidden",
           )}
-          style={{ flexBasis: `${passageWidth}%`, flexGrow: 0, flexShrink: 0 }}
+          style={{ "--split": `${passageWidth}%` } as React.CSSProperties}
           aria-label="Reading passage"
         >
           <div className="mx-auto max-w-[66ch]">
