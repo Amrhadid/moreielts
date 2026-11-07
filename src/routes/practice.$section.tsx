@@ -1,5 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AppShell } from "~/components/layout/AppShell";
+import { Button } from "~/components/ui/Button";
+import { EmptyState } from "~/components/ui/EmptyState";
 import { ObjectiveRunner } from "~/components/practice/ObjectiveRunner";
 import { PracticeShell } from "~/components/practice/PracticeShell";
 import { SpeakingRunner } from "~/components/practice/SpeakingRunner";
@@ -35,13 +37,15 @@ export const Route = createFileRoute("/practice/$section")({
   },
   notFoundComponent: () => (
     <AppShell>
-      <h1 className="text-xl font-semibold tracking-tight">No such practice section</h1>
-      <p className="mt-2 text-sm text-muted">
-        Choose Listening, Reading, Writing or Speaking.
-      </p>
-      <Link to="/practice" className="mt-4 inline-block text-sm font-medium text-brand-600">
-        ← All practice
-      </Link>
+      <EmptyState
+        title="No such practice section"
+        body="Choose Listening, Reading, Writing or Speaking."
+        action={
+          <Button asChild variant="outline">
+            <Link to="/practice">All practice</Link>
+          </Button>
+        }
+      />
     </AppShell>
   ),
   component: PracticeSectionRoute,
