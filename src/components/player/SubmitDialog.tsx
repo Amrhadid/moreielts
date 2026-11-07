@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import {
   Dialog,
@@ -12,6 +13,13 @@ import {
 import { useSubmitAttempt } from "~/lib/queries";
 import type { SectionCode } from "~/types/content";
 
+const SECTION_LABEL: Record<SectionCode, string> = {
+  listening: "Listening",
+  reading: "Reading",
+  writing: "Writing",
+  speaking: "Speaking",
+};
+
 /**
  * Submission is a server operation: the submit-attempt Edge Function marks the
  * responses and writes the scores. The client only asks for it and routes to
@@ -22,18 +30,24 @@ export function SubmitDialog({
   section,
   answeredCount,
   total,
-  label = "Submit",
+  flaggedCount = 0,
+  label,
+  unit = "questions",
 }: {
   attemptId: string;
   section?: SectionCode;
   answeredCount: number;
   total: number;
+  flaggedCount?: number;
   label?: string;
+  /** "questions" or "tasks". */
+  unit?: string;
 }) {
   const navigate = useNavigate();
   const submit = useSubmitAttempt();
   const [error, setError] = useState<string | null>(null);
-  const blank = total - answeredCount;
+  const blank = Math.max(0, total - answeredCount);
+  const sectionLabel = section ? SECTION_LABEL[section] : "section";
 
   async function onSubmit() {
     setError(null);
@@ -48,16 +62,20 @@ export function SubmitDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm">{label}</Button>
+        <Button size="sm">{label ?? "Submit"}</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Submit this section?</DialogTitle>
+        <DialogTitle>Submit {sectionLabel}?</DialogTitle>
         <DialogDescription>
-          You have answered {answeredCount} of {total} questions.
-          {blank > 0
-            ? ` ${blank} ${blank === 1 ? "question is" : "questions are"} still blank. Blank answers score nothing, and you cannot return to this section after submitting.`
-            : " You cannot return to this section after submitting."}
+          You have answered {answeredCount} of {total} {unit}. You cannot return to this
+          section once it is submitted.
         </DialogDescription>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Badge tone="brand">{answeredCount} answered</Badge>
+          {blank > 0 && <Badge tone="neutral">{blank} blank</Badge>}
+          {flaggedCount > 0 && <Badge tone="warn">{flaggedCount} flagged</Badge>}
+        </div>
 
         {error && (
           <p className="mt-3 rounded-lg border border-bad/20 bg-bad-soft px-3 py-2 text-sm text-bad">
@@ -70,7 +88,7 @@ export function SubmitDialog({
             <Button variant="outline">Keep working</Button>
           </DialogClose>
           <Button onClick={onSubmit} disabled={submit.isPending}>
-            {submit.isPending ? "Submitting…" : `Submit ${section ?? "section"}`}
+            {submit.isPending ? "Submitting…" : `Submit ${sectionLabel}`}
           </Button>
         </div>
       </DialogContent>
