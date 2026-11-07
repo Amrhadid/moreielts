@@ -1,253 +1,307 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AppShell } from "~/components/layout/AppShell";
-import { Badge } from "~/components/ui/Badge";
-import { Button } from "~/components/ui/Button";
-import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
-import { Progress } from "~/components/ui/Progress";
-import { formatBand } from "~/lib/scoring";
-import { cn } from "~/lib/cn";
-import { useAuth } from "~/lib/auth";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { Landing } from "~/components/layout/Landing";
-import { useAttempts } from "~/lib/queries";
+import { Badge } from "~/components/ui/Badge";
+import { BandRuler, bandDelta } from "~/components/ui/BandRuler";
+import { Button } from "~/components/ui/Button";
+import { Card } from "~/components/ui/Card";
+import { EmptyState, SkeletonRows } from "~/components/ui/EmptyState";
+import { SectionIcon } from "~/components/ui/SectionIcon";
+import {
+  isCompleted,
+  isOpen,
+  num,
+  overallOf,
+  resumeRoute,
+  resumeSection,
+  shortDate,
+} from "~/components/dashboard/attempts";
+import { useAuth } from "~/lib/auth";
+import { useAttemptResult, useAttemptReview, useAttempts } from "~/lib/queries";
+import { formatBand, tallyBy } from "~/lib/scoring";
+import { SECTIONS, sectionMeta } from "~/lib/sections";
+import type { SectionCode } from "~/types/content";
 
 export const Route = createFileRoute("/")({ component: HomeRoute });
 
-const SECTION_LINKS = [
-  { code: "listening", icon: "◉", label: "Listening", detail: "4 parts · 40 questions · 30 min", to: "/test/listening", color: "text-[#607eea] bg-[#eef1ff]" },
-  { code: "reading", icon: "▤", label: "Reading", detail: "3 passages · 40 questions · 60 min", to: "/test/reading", color: "text-[#07966f] bg-[#e8f8f2]" },
-  { code: "writing", icon: "✎", label: "Writing", detail: "2 tasks · 60 min", to: "/test/writing", color: "text-[#c47918] bg-[#fff4df]" },
-  { code: "speaking", icon: "◌", label: "Speaking", detail: "3 parts · 11–14 min", to: "/test/speaking", color: "text-[#a055c9] bg-[#f7ecfc]" },
-] as const;
-
 /**
  * The homepage is public: visitors without a session get the marketing landing
- * page, signed-in users get their dashboard.
+ * page, signed-in users get Today.
  */
 function HomeRoute() {
   const { session, loading } = useAuth();
-
-  // Render the landing page while the session lookup settles (and on the SSR
-  // pass, where there is never a session) so the public page is what a first
-  // visit paints.
   if (loading || !session) return <Landing />;
-
-  return <Dashboard />;
+  return <Today />;
 }
 
-function Dashboard() {
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
+}
+
+function Today() {
   const { profile, user } = useAuth();
   const { data: attempts, isLoading } = useAttempts(user?.id);
 
-  const targetBand = profile?.target_band ? Number(profile.target_band) : 7;
-  const currentBand = profile?.current_band ? Number(profile.current_band) : null;
-  const gap = currentBand !== null ? targetBand - currentBand : null;
+  const open = attempts?.find(isOpen);
+  const completed = (attempts ?? []).filter(isCompleted);
+  const latest = completed[0];
+  const previous = completed[1];
 
-  const inProgress = attempts?.find(
-    (a) => a.status === "in_progress" || a.status === "awaiting_speaking",
+  // Section bands come from the full score row of the latest completed attempt.
+  const { data: latestResult } = useAttemptResult(latest?.id);
+  const { data: review, isLoading: reviewLoading } = useAttemptReview(
+    latest?.id,
+    Boolean(latest),
   );
-  const completed = (attempts ?? []).filter((a) => a.status === "completed");
 
-  // Band trend from the last six completed attempts, oldest first.
-  const trend = completed
-    .map((a) => a.attempt_scores?.overall_band)
-    .filter((b): b is number => b !== null && b !== undefined)
-    .slice(0, 6)
-    .reverse()
-    .map(Number);
+  const target = profile?.target_band ? Number(profile.target_band) : 7;
+  const estimated =
+    profile?.current_band !== null && profile?.current_band !== undefined
+      ? Number(profile.current_band)
+      : overallOf(latest);
+  const change =
+    overallOf(latest) !== null && overallOf(previous) !== null
+      ? Math.round((overallOf(latest)! - overallOf(previous)!) * 2) / 2
+      : null;
 
-  const firstName = (profile?.full_name ?? user?.email ?? "there").split(" ")[0];
+  const scores = latestResult?.scores;
+  const sectionBand: Record<SectionCode, number | null> = {
+    listening: num(scores?.listening_band),
+    reading: num(scores?.reading_band),
+    writing: num(scores?.writing_band),
+    speaking: num(scores?.speaking_band),
+  };
+
+  const weakest = tallyBy(
+    (review ?? [])
+      .filter((r) => r.section === "listening" || r.section === "reading")
+      .map((r) => ({
+        questionId: r.question_id,
+        typeCode: r.type_code,
+        partNumber: r.part_number,
+        isCorrect: r.is_correct === true,
+      })),
+    (r) => r.typeCode,
+  )
+    .filter((row) => row.total >= 3)
+    .sort((a, b) => a.correct / a.total - b.correct / b.total)
+    .slice(0, 3)
+    .map((row) => {
+      const sample = (review ?? []).find((r) => r.type_code === row.key);
+      return {
+        ...row,
+        label: sample?.type_label ?? row.key,
+        section: (sample?.section ?? "reading") as SectionCode,
+      };
+    });
+
+  const firstName = (profile?.full_name ?? user?.email ?? "there").split(/[\s@]/)[0];
+  const today = new Date().toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
     <AppShell>
-      <div className="mb-8 animate-rise">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-brand-600">Your study space</p>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Welcome back, {firstName}
-        </h1>
-        <p className="mt-1.5 text-sm capitalize text-muted">
-          {profile?.tier === "premium" ? "Premium" : "Free"} plan
-        </p>
-      </div>
+      <PageHeader title={`${greeting()}, ${firstName}`} subtitle={today} />
 
-      {/* Band summary */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="relative overflow-hidden border-brand-100 sm:col-span-2">
-          <CardBody className="pt-5">
-            <span className="pointer-events-none absolute -right-16 -top-16 z-0 h-32 w-32 rounded-full bg-brand-50/70" aria-hidden />
-            <div className="relative z-10 flex flex-wrap items-end gap-8">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                  Estimated band
-                </p>
-                <p className="mt-1 text-5xl font-extrabold tabular-nums">
-                  {currentBand !== null ? formatBand(currentBand) : "—"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                  Target band
-                </p>
-                <p className="mt-1 text-5xl font-extrabold tabular-nums text-brand-600">
-                  {formatBand(targetBand)}
-                </p>
-              </div>
-              <div className="min-w-40 flex-1">
-                <p className="mb-2 text-sm text-ink-soft">
-                  {gap === null
-                    ? "Sit a mock test to get your first estimate"
-                    : gap > 0
-                      ? `${gap.toFixed(1)} bands to go`
-                      : "You are at your target band"}
-                </p>
-                <Progress
-                  value={currentBand !== null ? (currentBand / targetBand) * 100 : 0}
-                />
-                {trend.length > 1 && (
-                  <>
-                    {/* Trend bars scale against the range shown, not the full
-                        0-9 scale, so movement stays visible. */}
-                    <div className="mt-3 flex h-10 items-end gap-1" aria-hidden>
-                      {trend.map((band, i) => {
-                        const min = Math.min(...trend) - 0.5;
-                        const max = Math.max(...trend);
-                        const pct = ((band - min) / (max - min || 1)) * 100;
-                        return (
-                          <span
-                            key={i}
-                            className={cn(
-                              "w-full rounded-sm",
-                              i === trend.length - 1 ? "bg-brand-600" : "bg-brand-200",
-                            )}
-                            style={{ height: `${Math.max(15, pct)}%` }}
-                          />
-                        );
-                      })}
-                    </div>
-                    <p className="mt-1.5 text-xs text-muted">Recent attempts</p>
-                  </>
-                )}
-              </div>
-            </div>
-            <p className="mt-5 text-xs text-muted">
-              AI estimated band — not an official IELTS result.
+      {/* Primary action: the only tinted surface on the page. */}
+      {open ? (
+        <Card className="flex flex-wrap items-center gap-5 border-brand-600 bg-brand-50 px-6 py-5">
+          <SectionIcon code={resumeSection(open)} size="lg" />
+          <div className="min-w-[12rem] flex-1">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-brand-700">
+              {open.status === "awaiting_speaking" ? "Awaiting speaking" : "In progress"}
             </p>
-          </CardBody>
+            <p className="mt-0.5 text-lg font-semibold">
+              Continue {sectionMeta(resumeSection(open)).label} · {open.test_forms?.title ?? "Mock test"}
+            </p>
+            <p className="mt-0.5 text-sm text-ink-soft">
+              Started {shortDate(open.started_at)} · the section clock is set by the server when you return
+            </p>
+          </div>
+          <Button asChild>
+            <Link to={resumeRoute(open)}>Continue test</Link>
+          </Button>
         </Card>
+      ) : (
+        <Card className="flex flex-wrap items-center gap-5 border-brand-600 bg-brand-50 px-6 py-5">
+          <SectionIcon code="listening" size="lg" />
+          <div className="min-w-[12rem] flex-1">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-brand-700">
+              Next step
+            </p>
+            <p className="mt-0.5 text-lg font-semibold">Start your next mock</p>
+            <p className="mt-0.5 text-sm text-ink-soft">
+              Four sections in the official order, under exam timing. About 2 h 45 min.
+            </p>
+          </div>
+          <Button asChild>
+            <Link to="/mock">Choose a test</Link>
+          </Button>
+        </Card>
+      )}
 
-        {/* Continue where you left off */}
-        {inProgress ? (
-          <Card className="border-brand-200 bg-brand-50/40">
-            <CardHeader>
-              <Badge tone="brand">In progress</Badge>
-              <CardTitle className="mt-2">
-                {inProgress.test_forms?.title ?? "Mock test"}
-              </CardTitle>
-            </CardHeader>
-            <CardBody>
-              <p className="text-sm capitalize text-ink-soft">
-                {inProgress.current_section ?? "Not started"} section
-              </p>
-              <Button asChild className="mt-3 w-full">
-                <Link
-                  to={
-                    inProgress.current_section === "listening"
-                      ? "/test/listening"
-                      : inProgress.current_section === "writing"
-                        ? "/test/writing"
-                        : inProgress.current_section === "speaking"
-                          ? "/test/speaking"
-                          : "/test/reading"
-                  }
-                >
-                  Continue test
-                </Link>
-              </Button>
-            </CardBody>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Start a mock test</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <p className="text-sm text-ink-soft">
-                A full timed exam under test conditions.
-              </p>
-              <Button asChild className="mt-3 w-full">
-                <Link to="/mock">Choose a test</Link>
-              </Button>
-            </CardBody>
-          </Card>
-        )}
-      </div>
-
-      {/* Quick links to each section */}
-      <h2 className="mb-3 mt-10 text-lg font-semibold tracking-tight">
-        Practise a section
-      </h2>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {SECTION_LINKS.map((section) => (
-          <Link key={section.code} to={section.to} className="group">
-            <Card className="h-full transition-all group-hover:-translate-y-1 group-hover:border-brand-200 group-hover:bg-brand-50/30 group-hover:shadow-[0_14px_30px_rgba(20,75,120,.09)]">
-              <CardBody className="pt-5">
-                <span className={`grid h-11 w-11 place-items-center rounded-xl text-lg font-bold ${section.color}`} aria-hidden>{section.icon}</span>
-                <p className="mt-4 font-semibold">{section.label}</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted">{section.detail}</p>
-                <span className="mt-4 inline-block text-sm font-medium text-brand-600">
-                  Start →
-                </span>
-              </CardBody>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {/* Recent attempts */}
-      <div className="mb-3 mt-10 flex items-center justify-between">
-        <h2 className="text-lg font-semibold tracking-tight">Recent attempts</h2>
-        <Link to="/results" className="text-sm font-medium text-brand-600">
-          View all
+      {/* Band */}
+      <div className="mb-3 mt-8 flex items-baseline justify-between gap-3">
+        <h2 className="text-[1.0625rem] font-semibold tracking-tight">Your band</h2>
+        <Link to="/learn" className="text-sm font-medium text-brand-600">
+          How this is estimated
         </Link>
       </div>
-      <Card>
-        {isLoading ? (
-          <div className="px-5 py-8 text-center text-sm text-muted">Loading…</div>
-        ) : completed.length === 0 ? (
-          <div className="px-5 py-8 text-center text-sm text-muted">
-            No attempts yet. Your results will appear here.
+      <Card className="grid gap-8 p-6 lg:grid-cols-[1.2fr_1fr]">
+        <div>
+          <div className="mb-7 flex flex-wrap items-end gap-7">
+            <div>
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-muted">Estimated</p>
+              <p className="display tnum text-[3.25rem] leading-none">
+                {estimated !== null ? formatBand(estimated) : "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-muted">Target</p>
+              <p className="display tnum text-[3.25rem] leading-none text-muted">{formatBand(target)}</p>
+            </div>
+            {change !== null && (
+              <div className="pb-2">
+                <Badge tone={change >= 0 ? "good" : "warn"}>
+                  {change > 0 ? `+${formatBand(change)}` : change < 0 ? `−${formatBand(Math.abs(change))}` : "no change"} since{" "}
+                  {shortDate(previous!.started_at)}
+                </Badge>
+              </div>
+            )}
           </div>
-        ) : (
-          <ul className="divide-y divide-line">
-            {completed.slice(0, 5).map((attempt) => (
-              <li key={attempt.id}>
-                <Link
-                  to="/results/$attemptId"
-                  params={{ attemptId: attempt.id }}
-                  className="flex items-center gap-4 px-5 py-4 hover:bg-paper"
-                >
+          <div className="pt-4">
+            <BandRuler band={estimated} target={target} ticks />
+          </div>
+          <p className="mt-4 text-xs text-muted">
+            {estimated === null
+              ? "Sit a mock test to get your first estimate."
+              : "AI estimate. Not an official IELTS result."}
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 content-start">
+          {SECTIONS.map((s) => {
+            const band = sectionBand[s.code];
+            const delta = bandDelta(band, target);
+            return (
+              <Link
+                key={s.code}
+                to="/practice"
+                search={{ section: s.code }}
+                className="flex items-center gap-2.5 rounded-[0.625rem] border border-line px-3 py-2.5 transition-colors hover:border-line-strong hover:bg-paper"
+              >
+                <SectionIcon code={s.code} />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-xs text-muted">{s.label}</span>
+                  <span className="display tnum block text-[1.375rem] leading-tight">
+                    {band !== null ? formatBand(band) : "—"}
+                  </span>
+                </span>
+                {delta && <Badge tone={delta.tone}>{delta.label}</Badge>}
+              </Link>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Focus and recent attempts */}
+      <div className="grid gap-x-10 gap-y-2 lg:grid-cols-[1.1fr_1fr]">
+        <section>
+          <div className="mb-1 mt-8 flex items-baseline justify-between gap-3">
+            <h2 className="text-[1.0625rem] font-semibold tracking-tight">Focus this week</h2>
+            {latest && (
+              <Link
+                to="/results/$attemptId"
+                params={{ attemptId: latest.id }}
+                className="text-sm font-medium text-brand-600"
+              >
+                From your last mock
+              </Link>
+            )}
+          </div>
+          {latest && reviewLoading ? (
+            <SkeletonRows rows={3} />
+          ) : weakest.length === 0 ? (
+            <EmptyState
+              className="mt-3"
+              title="No focus yet"
+              body="Complete a Listening or Reading section and your weakest question types appear here."
+              action={
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/mock">Start a mock</Link>
+                </Button>
+              }
+            />
+          ) : (
+            <ul className="divide-y divide-line">
+              {weakest.map((row) => (
+                <li key={row.key} className="flex items-center gap-3.5 py-3.5">
+                  <SectionIcon code={row.section} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {attempt.test_forms?.title ?? "Test"}
-                    </p>
-                    <p className="mt-0.5 text-xs text-muted">
-                      {new Date(attempt.started_at).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                      })}
+                    <p className="truncate text-sm font-semibold">{row.label}</p>
+                    <p className="text-[0.8125rem] text-muted">
+                      {row.correct} of {row.total} correct in {sectionMeta(row.section).label}
                     </p>
                   </div>
-                  <Badge tone="brand">Mock</Badge>
-                  <span className="w-12 text-right text-lg font-semibold tabular-nums">
-                    {attempt.attempt_scores?.overall_band
-                      ? formatBand(Number(attempt.attempt_scores.overall_band))
-                      : "—"}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/practice" search={{ section: row.section, type: row.key }}>
+                      Practise
+                    </Link>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section>
+          <div className="mb-1 mt-8 flex items-baseline justify-between gap-3">
+            <h2 className="text-[1.0625rem] font-semibold tracking-tight">Recent attempts</h2>
+            <Link to="/results" className="text-sm font-medium text-brand-600">
+              All results
+            </Link>
+          </div>
+          {isLoading ? (
+            <SkeletonRows rows={4} />
+          ) : completed.length === 0 ? (
+            <EmptyState
+              className="mt-3"
+              title="No attempts yet"
+              body="Your results appear here once you submit a section."
+            />
+          ) : (
+            <ul className="divide-y divide-line">
+              {completed.slice(0, 5).map((attempt) => (
+                <li key={attempt.id}>
+                  <Link
+                    to="/results/$attemptId"
+                    params={{ attemptId: attempt.id }}
+                    className="-mx-2 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors hover:bg-surface"
+                  >
+                    <span className="w-14 shrink-0 font-mono text-xs text-muted">
+                      {shortDate(attempt.started_at)}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-sm">
+                      {attempt.test_forms?.title ?? "Test"}
+                    </span>
+                    <Badge>Mock</Badge>
+                    <span className="display tnum w-10 text-right text-lg">
+                      {attempt.attempt_scores?.overall_band
+                        ? formatBand(Number(attempt.attempt_scores.overall_band))
+                        : "—"}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
     </AppShell>
   );
 }

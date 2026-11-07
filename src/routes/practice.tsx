@@ -1,15 +1,38 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { AppShell } from "~/components/layout/AppShell";
-import { Badge } from "~/components/ui/Badge";
+import { useEffect, useMemo, useState } from "react";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { Button } from "~/components/ui/Button";
-import { Card, CardBody } from "~/components/ui/Card";
+import { Card } from "~/components/ui/Card";
+import { EmptyState, SkeletonRows } from "~/components/ui/EmptyState";
+import { SectionIcon } from "~/components/ui/SectionIcon";
+import { isCompleted } from "~/components/dashboard/attempts";
+import {
+  SPEAKING_CHOICES,
+  WRITING_CHOICES,
+  whatItAsks,
+} from "~/components/dashboard/questionTypes";
 import { cn } from "~/lib/cn";
 import { Protected, useAuth } from "~/lib/auth";
-import { useQuestionTypes } from "~/lib/queries";
+import { useAttemptReview, useAttempts, useQuestionTypes } from "~/lib/queries";
+import { SECTIONS, sectionMeta } from "~/lib/sections";
 import type { Difficulty, SectionCode } from "~/types/content";
 
-export const Route = createFileRoute("/practice")({ component: PracticeRoute });
+const SECTION_CODES: SectionCode[] = ["listening", "reading", "writing", "speaking"];
+
+interface PracticeSearch {
+  section?: SectionCode;
+  type?: string;
+}
+
+export const Route = createFileRoute("/practice")({
+  validateSearch: (search: Record<string, unknown>): PracticeSearch => ({
+    section: SECTION_CODES.includes(search.section as SectionCode)
+      ? (search.section as SectionCode)
+      : undefined,
+    type: typeof search.type === "string" && search.type ? search.type : undefined,
+  }),
+  component: PracticeRoute,
+});
 
 function PracticeRoute() {
   return (
@@ -19,178 +42,220 @@ function PracticeRoute() {
   );
 }
 
-const SECTIONS: Array<{ code: SectionCode; label: string; detail: string }> = [
-  { code: "listening", label: "Listening", detail: "4 parts · audio plays once" },
-  { code: "reading", label: "Reading", detail: "3 passages · 60 minutes" },
-  { code: "writing", label: "Writing", detail: "Task 1 and Task 2" },
-  { code: "speaking", label: "Speaking", detail: "3 parts · recorded" },
-];
-
 const DIFFICULTIES: Array<{ code: Difficulty; label: string; detail: string }> = [
-  { code: "foundation", label: "Foundation", detail: "Around band 5–6" },
-  { code: "standard", label: "Standard", detail: "Around band 6–7" },
-  { code: "challenge", label: "Challenge", detail: "Around band 7.5+" },
+  { code: "foundation", label: "Foundation", detail: "band 5 to 6" },
+  { code: "standard", label: "Standard", detail: "band 6 to 7" },
+  { code: "challenge", label: "Challenge", detail: "band 7.5 and up" },
 ];
 
-const PLAYER_ROUTE: Record<SectionCode, string> = {
-  listening: "/test/listening",
-  reading: "/test/reading",
-  writing: "/test/writing",
-  speaking: "/test/speaking",
+const ESTIMATE: Record<SectionCode, string> = {
+  listening: "1 part · 10 questions · about 8 minutes",
+  reading: "1 passage · up to 13 questions · about 15 minutes",
+  writing: "1 task · 20 to 40 minutes",
+  speaking: "1 part · about 4 minutes · recorded",
 };
 
-function Step({ n, title, hint }: { n: number; title: string; hint?: string }) {
-  return (
-    <div className="mb-3 flex items-baseline gap-2.5">
-      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-        {n}
-      </span>
-      <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-      {hint && <span className="text-xs text-muted">{hint}</span>}
-    </div>
-  );
+interface Choice {
+  code: string;
+  label: string;
+  asks: string;
+  wordLimit?: number;
 }
 
 function PracticePicker() {
-  const navigate = useNavigate();
-  const { profile } = useAuth();
-  // The registry now comes from question_types, so a new type appears here
-  // without a client release.
+  const navigate = useNavigate({ from: "/practice" });
+  const search = Route.useSearch();
+  const { user } = useAuth();
   const { data: allTypes, isLoading } = useQuestionTypes();
 
-  const [section, setSection] = useState<SectionCode>("reading");
-  const [type, setType] = useState<string | null>(null);
+  // Accuracy per type comes from the latest completed attempt's review rows.
+  const { data: attempts } = useAttempts(user?.id);
+  const latest = attempts?.find(isCompleted);
+  const { data: review } = useAttemptReview(latest?.id, Boolean(latest));
+
+  const [section, setSection] = useState<SectionCode>(search.section ?? "reading");
+  const [type, setType] = useState<string | null>(search.type ?? null);
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
 
-  const typeRequired = section === "reading" || section === "listening";
-  const types = (allTypes ?? []).filter((t) =>
-    typeRequired
-      ? t.section === section ||
-        (section === "listening" && t.renderer === "text_input") ||
-        (section === "reading" && t.section === "reading")
-      : false,
-  );
-  const ready = !typeRequired || type !== null;
-  const isPremiumUser = profile?.tier === "premium";
+  // A deep link from Today or a result carries section and type.
+  useEffect(() => {
+    if (search.section) setSection(search.section);
+    if (search.type) setType(search.type);
+  }, [search.section, search.type]);
+
+  const choices: Choice[] = useMemo(() => {
+    if (section === "writing") return WRITING_CHOICES.map((c) => ({ ...c }));
+    if (section === "speaking") return SPEAKING_CHOICES.map((c) => ({ ...c }));
+    return (allTypes ?? [])
+      .filter((t) =>
+        section === "listening"
+          ? t.section === "listening" || t.renderer === "text_input"
+          : t.section === "reading",
+      )
+      .map((t) => ({
+        code: t.code,
+        label: t.label,
+        asks: whatItAsks(t.code, section),
+        wordLimit: t.default_word_limit,
+      }));
+  }, [allTypes, section]);
+
+  // Fall back to the first choice whenever the selection is not in this section.
+  const selected = choices.find((c) => c.code === type) ?? choices[0] ?? null;
+  useEffect(() => {
+    if (selected && selected.code !== type) setType(selected.code);
+  }, [selected, type]);
+
+  const accuracy = useMemo(() => {
+    const map = new Map<string, { correct: number; total: number }>();
+    for (const r of review ?? []) {
+      if (r.section !== section) continue;
+      const cur = map.get(r.type_code) ?? { correct: 0, total: 0 };
+      cur.total += 1;
+      if (r.is_correct === true) cur.correct += 1;
+      map.set(r.type_code, cur);
+    }
+    return map;
+  }, [review, section]);
+
+  const meta = sectionMeta(section);
 
   return (
     <AppShell>
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Practice</h1>
-      <p className="mt-1.5 text-sm text-muted">
-        Drill a single question type, untimed, with answers revealed at the end.
-      </p>
+      <PageHeader title="Practice" subtitle="Untimed. Answers revealed at the end." />
 
-      <section className="mt-8">
-        <Step n={1} title="Choose a section" />
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SECTIONS.map((s) => (
-            <button
-              key={s.code}
-              type="button"
-              onClick={() => {
-                setSection(s.code);
-                setType(null);
-              }}
-              className={cn(
-                "rounded-card border p-4 text-left transition-colors",
-                section === s.code
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-line bg-surface hover:border-line-strong",
-              )}
-            >
-              <p className="font-medium">{s.label}</p>
-              <p className="mt-1 text-xs text-muted">{s.detail}</p>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8">
-        <Step
-          n={2}
-          title="Choose a question type"
-          hint={typeRequired ? undefined : "Not applicable for this section"}
-        />
-        {!typeRequired ? (
-          <Card>
-            <CardBody className="pt-5 text-sm text-muted">
-              {section === "writing"
-                ? "Writing practice runs a full Task 1 or Task 2 prompt with the live word count."
-                : "Speaking practice runs all three parts, including the Part 2 cue card."}
-            </CardBody>
-          </Card>
-        ) : isLoading ? (
-          <p className="text-sm text-muted">Loading question types…</p>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {types.map((t) => (
+      <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1fr)_18.75rem]">
+        <div>
+          <div
+            role="tablist"
+            aria-label="Section"
+            className="thin-scroll inline-flex max-w-full gap-0.5 overflow-x-auto rounded-[0.625rem] border border-line bg-surface p-[3px]"
+          >
+            {SECTIONS.map((s) => (
               <button
-                key={t.code}
+                key={s.code}
                 type="button"
-                onClick={() => setType(t.code)}
+                role="tab"
+                aria-selected={section === s.code}
+                onClick={() => {
+                  setSection(s.code);
+                  setType(null);
+                  navigate({ search: { section: s.code }, replace: true });
+                }}
                 className={cn(
-                  "rounded-card border p-4 text-left transition-colors",
-                  type === t.code
-                    ? "border-brand-500 bg-brand-50"
-                    : "border-line bg-surface hover:border-line-strong",
+                  "shrink-0 rounded-[0.4375rem] px-3.5 py-1.5 text-sm font-medium transition-colors",
+                  section === s.code
+                    ? "bg-brand-600 font-semibold text-on-brand"
+                    : "text-ink-soft hover:bg-paper",
                 )}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-medium">{t.label}</p>
-                  <Badge tone={isPremiumUser ? "good" : "neutral"}>
-                    {isPremiumUser ? "Included" : "Free"}
-                  </Badge>
-                </div>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted">
-                  Answered with the {t.renderer.replace("_", " ")} control.
-                </p>
+                {s.label}
               </button>
             ))}
           </div>
-        )}
-      </section>
 
-      <section className="mt-8">
-        <Step n={3} title="Choose a difficulty" />
-        <div className="grid gap-3 sm:grid-cols-3">
-          {DIFFICULTIES.map((d) => (
-            <button
-              key={d.code}
-              type="button"
-              onClick={() => setDifficulty(d.code)}
-              className={cn(
-                "rounded-card border p-4 text-left transition-colors",
-                difficulty === d.code
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-line bg-surface hover:border-line-strong",
-              )}
-            >
-              <p className="font-medium">{d.label}</p>
-              <p className="mt-1 text-xs text-muted">{d.detail}</p>
-            </button>
-          ))}
+          <div className="mt-4 grid gap-2">
+            {isLoading && section !== "writing" && section !== "speaking" ? (
+              <SkeletonRows rows={5} />
+            ) : choices.length === 0 ? (
+              <EmptyState
+                title="No question types yet"
+                body="An admin can add question types from the admin console."
+              />
+            ) : (
+              choices.map((c) => {
+                const acc = accuracy.get(c.code);
+                const pct = acc && acc.total > 0 ? Math.round((acc.correct / acc.total) * 100) : null;
+                const on = selected?.code === c.code;
+                return (
+                  <button
+                    key={c.code}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => setType(c.code)}
+                    className={cn(
+                      "flex w-full items-center gap-3.5 rounded-card border bg-surface px-4 py-3.5 text-left transition-colors",
+                      on
+                        ? "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)]"
+                        : "border-line hover:border-line-strong",
+                    )}
+                  >
+                    <SectionIcon code={section} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{c.label}</span>
+                      <span className="block text-[0.8125rem] text-muted">
+                        {c.asks}
+                        {c.wordLimit ? ` Up to ${c.wordLimit} ${c.wordLimit === 1 ? "word" : "words"}.` : ""}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-right">
+                      {pct !== null ? (
+                        <>
+                          <span
+                            className={cn(
+                              "display tnum block text-[1.1875rem] leading-tight",
+                              pct < 60 && "text-warn",
+                            )}
+                          >
+                            {pct}%
+                          </span>
+                          <span className="block text-[0.6875rem] text-muted">your accuracy</span>
+                        </>
+                      ) : (
+                        <span className="block text-xs text-muted">not tried yet</span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
-        <p className="mt-3 text-xs text-muted">
-          Difficulty selects which fixed practice set you receive. The test itself is
-          never adaptive — questions do not change while you work.
-        </p>
-      </section>
 
-      <div className="sticky bottom-0 mt-10 border-t border-line bg-paper/95 py-4 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-3">
+        <Card className="p-[1.125rem] lg:sticky lg:top-6">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-muted">Your set</p>
+          <p className="mt-1.5 font-semibold">
+            {meta.label}
+            {selected ? ` · ${selected.label}` : ""}
+          </p>
+          <p className="mb-4 text-[0.8125rem] text-muted">{ESTIMATE[section]}</p>
+
+          <p className="mb-1.5 text-xs font-semibold text-muted">Difficulty</p>
+          <div className="mb-[1.125rem] grid gap-1.5" role="radiogroup" aria-label="Difficulty">
+            {DIFFICULTIES.map((d) => {
+              const on = difficulty === d.code;
+              return (
+                <button
+                  key={d.code}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => setDifficulty(d.code)}
+                  className={cn(
+                    "flex items-center justify-between rounded-lg border px-3 py-2.5 text-left text-sm transition-colors",
+                    on
+                      ? "border-brand-600 bg-brand-50 font-semibold text-brand-700"
+                      : "border-line bg-surface text-ink hover:border-line-strong",
+                  )}
+                >
+                  <span>{d.label}</span>
+                  <span className={on ? "text-brand-700" : "text-muted"}>{d.detail}</span>
+                </button>
+              );
+            })}
+          </div>
+
           <Button
-            size="lg"
-            disabled={!ready}
-            onClick={() => navigate({ to: PLAYER_ROUTE[section] })}
+            className="w-full"
+            disabled={!selected}
+            onClick={() => navigate({ to: meta.player })}
           >
             Start practice
           </Button>
-          <p className="text-sm text-muted">
-            {ready
-              ? `${SECTIONS.find((s) => s.code === section)?.label} · ${difficulty}`
-              : "Select a question type to continue"}
+          <p className="mt-2.5 text-[0.6875rem] leading-snug text-muted">
+            Fixed set. The questions do not change as you work.
           </p>
-        </div>
+        </Card>
       </div>
     </AppShell>
   );
