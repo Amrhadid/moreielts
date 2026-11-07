@@ -171,6 +171,43 @@ export function usePlayerAttempt(section: SectionCode) {
     };
   }, []);
 
+  /* ---------------------------------------------------------------- flags */
+
+  // "Flag for review" is a client-side aid, exactly as in the computer-delivered
+  // test. It never reaches the server; it survives a refresh via sessionStorage.
+  const [flagged, setFlagged] = useState<Set<number>>(() => new Set());
+  useEffect(() => {
+    if (!attemptId || typeof window === "undefined") return;
+    try {
+      const raw = window.sessionStorage.getItem(`flags:${attemptId}:${section}`);
+      if (raw) setFlagged(new Set(JSON.parse(raw) as number[]));
+    } catch {
+      /* ignore a corrupt entry */
+    }
+  }, [attemptId, section]);
+
+  const toggleFlag = useCallback(
+    (number: number) => {
+      setFlagged((prev) => {
+        const next = new Set(prev);
+        if (next.has(number)) next.delete(number);
+        else next.add(number);
+        if (attemptId && typeof window !== "undefined") {
+          try {
+            window.sessionStorage.setItem(
+              `flags:${attemptId}:${section}`,
+              JSON.stringify([...next]),
+            );
+          } catch {
+            /* storage may be unavailable; the flag still works for this page */
+          }
+        }
+        return next;
+      });
+    },
+    [attemptId, section],
+  );
+
   /* -------------------------------------------------------------- content */
 
   const groups = useMemo(
@@ -202,6 +239,8 @@ export function usePlayerAttempt(section: SectionCode) {
     answers,
     setAnswer,
     answered,
+    flagged,
+    toggleFlag,
     remaining,
     saving,
     saveError,

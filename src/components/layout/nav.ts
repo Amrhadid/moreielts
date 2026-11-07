@@ -1,15 +1,27 @@
+import {
+  BarChart3,
+  ClipboardList,
+  GraduationCap,
+  LayoutDashboard,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
+
 export interface NavItem {
   label: string;
-  to: string;
-  /** Emoji stand-in. TODO(design): swap for the icon set once chosen. */
-  icon: string;
+  to: "/" | "/practice" | "/mock" | "/results" | "/learn";
+  icon: LucideIcon;
   blurb: string;
 }
 
+/**
+ * The one navigation. Desktop renders it as the left rail, phones as the
+ * bottom tab bar. Enhance folded into the dashboard as the Focus block.
+ */
 export const PRIMARY_NAV: NavItem[] = [
-  { label: "My Tests", to: "/", icon: "🏠", blurb: "Dashboard and progress" },
-  { label: "Practice", to: "/practice", icon: "🎯", blurb: "Drill one question type" },
-  { label: "Mock Test", to: "/mock", icon: "📝", blurb: "Full timed exam" },
-  { label: "Learn", to: "/learn", icon: "📖", blurb: "Strategy and format" },
-  { label: "Enhance", to: "/enhance", icon: "✨", blurb: "Targeted improvement" },
+  { label: "Today", to: "/", icon: LayoutDashboard, blurb: "Your next step and your band" },
+  { label: "Practice", to: "/practice", icon: Target, blurb: "Drill one question type" },
+  { label: "Mock test", to: "/mock", icon: ClipboardList, blurb: "Full timed exam" },
+  { label: "Results", to: "/results", icon: BarChart3, blurb: "Every attempt" },
+  { label: "Learn", to: "/learn", icon: GraduationCap, blurb: "Format and question types" },
 ];

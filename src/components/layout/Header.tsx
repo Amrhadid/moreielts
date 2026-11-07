@@ -1,44 +1,127 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { signOut, useAuth } from "~/lib/auth";
+import { Button } from "~/components/ui/Button";
+import { cn } from "~/lib/cn";
 import { Logo } from "./Logo";
-import { PRIMARY_NAV } from "./nav";
 
-export function Header() {
-  const [open, setOpen] = useState(false);
-  const { profile, user, session, isAdmin } = useAuth();
-
-  const email = profile?.email ?? user?.email ?? "";
-  const name = profile?.full_name ?? email;
-  const initials =
-    (profile?.full_name ?? email)
+function initialsOf(name: string) {
+  return (
+    name
       .split(/[\s@.]+/)
       .filter(Boolean)
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase())
-      .join("") || "?";
+      .join("") || "?"
+  );
+}
+
+/** Avatar button with the account menu. Used by the rail and the top bars. */
+export function AccountMenu({ className }: { className?: string }) {
+  const { profile, user, isAdmin } = useAuth();
+  const email = profile?.email ?? user?.email ?? "";
+  const name = profile?.full_name ?? email;
+  const plan = profile?.tier === "premium" ? "Premium" : "Free plan";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link to="/" className="shrink-0">
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger
+        aria-label="Account menu"
+        className={cn(
+          "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-writing-soft text-xs font-bold text-writing",
+          className,
+        )}
+      >
+        {initialsOf(name)}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="end"
+          sideOffset={8}
+          className="z-50 w-60 rounded-xl border border-line bg-surface p-1 shadow-raised"
+        >
+          <div className="px-3 py-2">
+            <p className="truncate text-sm font-semibold">{name}</p>
+            <p className="truncate text-xs text-muted">{email}</p>
+            <p className="mt-1 text-xs text-muted">{plan}</p>
+          </div>
+          <DropdownMenu.Separator className="my-1 h-px bg-line" />
+          {[
+            { label: "My results", to: "/results" as const },
+            { label: "Learn the format", to: "/learn" as const },
+            ...(isAdmin ? [{ label: "Admin console", to: "/admin" as const }] : []),
+          ].map((item) => (
+            <DropdownMenu.Item key={item.to} asChild>
+              <Link
+                to={item.to}
+                className="block cursor-pointer rounded-md px-3 py-2 text-sm outline-none data-[highlighted]:bg-paper"
+              >
+                {item.label}
+              </Link>
+            </DropdownMenu.Item>
+          ))}
+          <DropdownMenu.Separator className="my-1 h-px bg-line" />
+          <DropdownMenu.Item
+            onSelect={() => void signOut()}
+            className="cursor-pointer rounded-md px-3 py-2 text-sm text-muted outline-none data-[highlighted]:bg-paper"
+          >
+            Sign out
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
+
+/**
+ * Marketing header for visitors without a session: a few anchors and one
+ * accent button. Nothing here links into a protected route.
+ */
+export function MarketingHeader() {
+  return (
+    <header className="border-b border-line bg-surface">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link to="/" aria-label="MoreIELTS home">
           <Logo />
         </Link>
-
-        <nav className="ml-6 hidden items-center gap-1 md:flex">
-          {PRIMARY_NAV.filter((i) => i.to !== "/").map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="rounded-xl px-3.5 py-2.5 text-sm font-semibold text-ink-soft transition-all hover:bg-paper hover:text-ink data-[status=active]:bg-brand-50 data-[status=active]:text-brand-700"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="flex items-center gap-1 text-sm font-medium" aria-label="Site">
+          <a href="#how" className="hidden rounded-lg px-3 py-2 text-ink-soft hover:bg-paper sm:block">
+            How it works
+          </a>
+          <a href="#sections" className="hidden rounded-lg px-3 py-2 text-ink-soft hover:bg-paper sm:block">
+            The test
+          </a>
+          <Link to="/login" className="rounded-lg px-3 py-2 text-ink-soft hover:bg-paper">
+            Sign in
+          </Link>
+          <Button asChild size="sm" className="ml-1">
+            <Link to="/signup">Start free</Link>
+          </Button>
         </nav>
+      </div>
+    </header>
+  );
+}
 
+/**
+ * Compact top bar for signed-in screens on phones and tablets, and for the
+ * admin console at every width. The desktop student app has no top bar: the
+ * rail carries brand, navigation and account.
+ */
+export function Header({ always = false, title }: { always?: boolean; title?: string }) {
+  const { isAdmin } = useAuth();
+  return (
+    <header
+      className={cn(
+        "sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur-xl",
+        !always && "lg:hidden",
+      )}
+    >
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:px-6">
+        <Link to="/" className="shrink-0" aria-label="MoreIELTS home">
+          <Logo compact={Boolean(title)} />
+        </Link>
+        {title && <p className="truncate text-sm font-semibold">{title}</p>}
         <div className="ml-auto flex items-center gap-2">
           {isAdmin && (
             <Link
@@ -48,103 +131,7 @@ export function Header() {
               Admin
             </Link>
           )}
-
-          {!session && (
-            <Link
-              to="/login"
-              className="inline-flex h-9 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
-            >
-              Sign in
-            </Link>
-          )}
-
-          {session && (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger
-              aria-label="Profile menu"
-              className="grid h-9 w-9 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700"
-            >
-              {initials}
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                align="end"
-                sideOffset={8}
-                className="z-50 w-56 rounded-lg border border-line bg-surface p-1 shadow-lg"
-              >
-                <div className="px-3 py-2">
-                  <p className="text-sm font-medium">{name}</p>
-                  <p className="text-xs text-muted">{email}</p>
-                </div>
-                <DropdownMenu.Separator className="my-1 h-px bg-line" />
-                {[
-                  { label: "My results", to: "/results" as const },
-                  ...(isAdmin ? [{ label: "Admin console", to: "/admin" as const }] : []),
-                ].map((item) => (
-                  <DropdownMenu.Item key={item.to} asChild>
-                    <Link
-                      to={item.to}
-                      className="block cursor-pointer rounded-md px-3 py-2 text-sm outline-none data-[highlighted]:bg-paper"
-                    >
-                      {item.label}
-                    </Link>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator className="my-1 h-px bg-line" />
-                <DropdownMenu.Item
-                  onSelect={() => void signOut()}
-                  className="cursor-pointer rounded-md px-3 py-2 text-sm text-muted outline-none data-[highlighted]:bg-paper"
-                >
-                  Sign out
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
-          )}
-
-          <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger
-              aria-label="Open navigation"
-              className="grid h-9 w-9 place-items-center rounded-lg border border-line text-lg md:hidden"
-            >
-              ☰
-            </Dialog.Trigger>
-            <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40" />
-              <Dialog.Content className="fixed inset-y-0 right-0 z-50 w-72 border-l border-line bg-surface p-4">
-                <div className="flex items-center justify-between">
-                  <Dialog.Title className="text-sm font-semibold text-muted">
-                    Menu
-                  </Dialog.Title>
-                  <Dialog.Close aria-label="Close navigation" className="px-2 text-lg">
-                    ✕
-                  </Dialog.Close>
-                </div>
-                <nav className="mt-4 grid gap-1">
-                  {PRIMARY_NAV.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium hover:bg-paper"
-                    >
-                      <span aria-hidden>{item.icon}</span>
-                      {item.label}
-                    </Link>
-                  ))}
-                  {isAdmin && (
-                    <Link
-                      to="/admin"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium hover:bg-paper"
-                    >
-                      <span aria-hidden>⚙️</span> Admin
-                    </Link>
-                  )}
-                </nav>
-              </Dialog.Content>
-            </Dialog.Portal>
-          </Dialog.Root>
+          <AccountMenu />
         </div>
       </div>
     </header>

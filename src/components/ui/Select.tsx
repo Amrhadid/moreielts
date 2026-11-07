@@ -1,4 +1,5 @@
 import * as S from "@radix-ui/react-select";
+import { ChevronDown } from "lucide-react";
 import { cn } from "~/lib/cn";
 
 export interface SelectOption {
@@ -27,21 +28,21 @@ export function Select({
         aria-label={ariaLabel}
         className={cn(
           "inline-flex h-10 w-full items-center justify-between gap-2 rounded-lg",
-          "border border-line-strong bg-surface px-3 text-left text-sm",
-          "data-[placeholder]:text-muted/70",
+          "border border-line-strong bg-surface px-3 text-left text-sm text-ink",
+          "data-[placeholder]:text-muted",
           className,
         )}
       >
         <S.Value placeholder={placeholder} />
         <S.Icon aria-hidden className="text-muted">
-          ▾
+          <ChevronDown className="h-4 w-4" />
         </S.Icon>
       </S.Trigger>
       <S.Portal>
         <S.Content
           position="popper"
           sideOffset={4}
-          className="z-50 max-h-72 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-line bg-surface shadow-lg"
+          className="z-50 max-h-72 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-line bg-surface shadow-raised"
         >
           <S.Viewport className="p-1">
             {options.map((o) => (

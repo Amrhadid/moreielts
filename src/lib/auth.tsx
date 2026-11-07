@@ -129,7 +129,7 @@ export function Protected({ children }: { children: ReactNode }) {
         </p>
         <Link
           to="/login"
-          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-semibold text-on-brand hover:bg-brand-700"
         >
           Sign in
         </Link>
