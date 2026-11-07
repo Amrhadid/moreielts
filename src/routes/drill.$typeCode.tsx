@@ -228,7 +228,7 @@ function DrillPage() {
                   <p className="text-sm leading-relaxed">{q.prompt}</p>
                 </div>
                 <QuestionRenderer
-                  question={{ ...toQuestion(q, i, type?.renderer), prompt: "" }}
+                  question={toQuestion(q, i, type?.renderer)}
                   value={answers[q.id]}
                   onChange={(v) => setAnswers((a) => ({ ...a, [q.id]: v }))}
                   disabled={!!result}
