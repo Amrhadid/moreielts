@@ -1,11 +1,16 @@
 import type { ComponentProps } from "react";
 import { cn } from "~/lib/cn";
 
+/**
+ * A card marks an object you can pick or act on: a test form, a question, a
+ * summary panel. Lists and headings sit on the page without one. Cards carry
+ * a border and no shadow; the raised shadow is reserved for floating things.
+ */
 export function Card({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "rounded-card border border-line bg-surface shadow-[0_8px_30px_rgba(20,49,78,0.055)] transition-[border-color,box-shadow,transform] duration-200",
+        "rounded-card border border-line bg-surface transition-colors duration-150",
         className,
       )}
       {...props}

@@ -1,9 +1,10 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AppShell } from "~/components/layout/AppShell";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
+import { EmptyState, SkeletonRows } from "~/components/ui/EmptyState";
 import { Textarea } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
 import { EssayFeedback } from "~/components/writing/EssayFeedback";
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/writing-lab")({
   }),
   component: () => (
     <PremiumGate>
-      <AppShell>
+      <AppShell wide>
         <WritingLab />
       </AppShell>
     </PremiumGate>
@@ -77,10 +78,7 @@ function WritingLab() {
 
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("writing.title")}</h1>
-        <p className="mt-1 text-sm text-muted">{t("writing.subtitle")}</p>
-      </header>
+      <PageHeader title={t("writing.title")} subtitle={t("writing.subtitle")} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0">
@@ -182,12 +180,12 @@ function Composer(p: {
   const err = submit.error ? errorText(submit.error) : null;
 
   return (
-    <div className="space-y-5">
+    <div className="grid gap-5">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <CardTitle>Choose a prompt</CardTitle>
-            <div className="inline-flex rounded-lg border border-line bg-paper p-0.5" role="tablist">
+            <div className="inline-flex rounded-[0.625rem] border border-line bg-surface p-1" role="tablist">
               {([1, 2] as const).map((n) => (
                 <button
                   key={n}
@@ -198,8 +196,8 @@ function Composer(p: {
                     p.setPrompt(null);
                   }}
                   className={cn(
-                    "rounded-md px-3 py-1 text-sm font-medium",
-                    p.task === n ? "bg-surface text-ink shadow-sm" : "text-muted",
+                    "rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors",
+                    p.task === n ? "bg-brand-600 font-semibold text-on-brand" : "text-ink-soft hover:bg-paper",
                   )}
                 >
                   Task {n}
@@ -208,10 +206,10 @@ function Composer(p: {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="space-y-3 px-5 pb-5">
-          <div className="flex gap-2 text-sm">
+        <CardBody className="grid gap-3">
+          <div className="flex flex-wrap gap-2 text-sm">
             <Button size="sm" variant={useCustom ? "ghost" : "secondary"} onClick={() => setUseCustom(false)}>
-              From the library
+              <Icon name="list" size={14} /> From the library
             </Button>
             <Button size="sm" variant={useCustom ? "secondary" : "ghost"} onClick={() => setUseCustom(true)}>
               <Icon name="pen" size={14} /> Write your own prompt
@@ -235,11 +233,11 @@ function Composer(p: {
               placeholder={`Paste or type a Task ${p.task} question…`}
             />
           ) : prompts.isLoading ? (
-            <p className="text-sm text-muted">Loading prompts…</p>
+            <SkeletonRows rows={2} />
           ) : list.length === 0 ? (
-            <p className="text-sm text-muted">No Task {p.task} prompts yet — write your own instead.</p>
+            <p className="text-sm text-muted">No Task {p.task} prompts yet. Write your own instead.</p>
           ) : (
-            <ul className="grid max-h-72 gap-2 overflow-y-auto sm:grid-cols-2">
+            <ul className="thin-scroll grid max-h-72 gap-2 overflow-y-auto sm:grid-cols-2">
               {list.map((x) => {
                 const locked = x.is_premium && !isPremium;
                 const active = p.prompt?.group_id === x.group_id;
@@ -248,7 +246,7 @@ function Composer(p: {
                     {locked ? (
                       <Link
                         to="/pricing"
-                        className="flex h-full items-center justify-between gap-2 rounded-lg border border-line bg-paper p-3 text-start text-sm text-muted"
+                        className="flex h-full items-center justify-between gap-2 rounded-[0.625rem] border border-line bg-paper p-3 text-start text-sm text-muted"
                       >
                         <span className="line-clamp-2">{x.form_title}</span>
                         <span className="flex shrink-0 items-center gap-1 text-xs">
@@ -259,9 +257,12 @@ function Composer(p: {
                       <button
                         type="button"
                         onClick={() => p.setPrompt(x)}
+                        aria-pressed={active}
                         className={cn(
-                          "h-full w-full rounded-lg border p-3 text-start text-sm",
-                          active ? "border-brand-600 bg-brand-50" : "border-line hover:bg-paper",
+                          "h-full w-full rounded-[0.625rem] border bg-surface p-3 text-start text-sm transition-colors",
+                          active
+                            ? "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)]"
+                            : "border-line hover:border-line-strong",
                         )}
                       >
                         <span className="line-clamp-2 font-medium">{x.form_title}</span>
@@ -277,8 +278,8 @@ function Composer(p: {
           )}
 
           {!useCustom && p.prompt && (
-            <div className="rounded-lg border border-line bg-paper p-4">
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{p.prompt.prompt}</p>
+            <div className="rounded-[0.625rem] border border-line bg-paper p-4">
+              <div className="prose-passage whitespace-pre-wrap text-[1rem]">{p.prompt.prompt}</div>
               {p.task === 1 && p.prompt.image_url && (
                 <img src={p.prompt.image_url} alt="Task 1 chart" className="mt-3 max-h-80 rounded-md border border-line" />
               )}
@@ -287,57 +288,50 @@ function Composer(p: {
         </CardBody>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <CardTitle>
-              Your essay{" "}
-              {p.parentId && (
-                <Badge tone="brand" className="ms-2">
-                  Rewrite
-                </Badge>
-              )}
-            </CardTitle>
-            <Timer minutes={MINUTES[p.task]} />
-          </div>
-        </CardHeader>
-        <CardBody className="space-y-3 px-5 pb-5">
-          <Textarea
-            ref={p.editorRef}
-            rows={16}
-            value={p.body}
-            onChange={(e) => p.setBody(e.target.value)}
-            placeholder="Start writing…"
-            spellCheck={false}
-            className="font-[inherit] leading-relaxed"
-          />
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className={cn("text-sm", words > 0 && words < min ? "text-warn" : "text-muted")}>
-              {words} / {min} words{words > 0 && words < min ? ` · ${min - words} to go` : words >= min ? " · minimum reached" : ""}
-            </span>
-            <div className="flex gap-2">
-              {p.parentId && (
-                <Button variant="ghost" size="sm" onClick={() => p.setParentId(null)}>
-                  Not a rewrite
-                </Button>
-              )}
-              <Button onClick={onSubmit} disabled={!canSubmit}>
-                {submit.isPending ? "Submitting…" : "Submit for feedback"}
+      <div>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <p className="flex items-center gap-2 text-sm font-semibold">
+            Your essay
+            {p.parentId && <Badge tone="brand">Rewrite</Badge>}
+          </p>
+          <Timer minutes={MINUTES[p.task]} />
+        </div>
+        <textarea
+          ref={p.editorRef}
+          rows={16}
+          value={p.body}
+          onChange={(e) => p.setBody(e.target.value)}
+          placeholder="Start writing. There is no maximum length."
+          spellCheck={false}
+          className="min-h-[22rem] w-full resize-y rounded-t-card border border-line-strong bg-surface px-5 py-4 font-serif text-[1.0625rem] leading-[1.8] text-ink placeholder:text-muted/70 focus:border-brand-500 focus:outline-none"
+        />
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-b-card border border-t-0 border-line-strong bg-surface px-4 py-2.5 text-xs text-muted">
+          <span className={cn("tnum", words > 0 && words < min ? "text-warn" : "")}>
+            {words} words · minimum {min}
+            {words > 0 && words < min ? ` · ${min - words} to go` : words >= min ? " · minimum reached" : ""}
+          </span>
+          <div className="flex gap-2">
+            {p.parentId && (
+              <Button variant="ghost" size="sm" onClick={() => p.setParentId(null)}>
+                Not a rewrite
               </Button>
-            </div>
+            )}
+            <Button size="sm" onClick={onSubmit} disabled={!canSubmit}>
+              {submit.isPending ? "Submitting…" : "Submit for feedback"}
+            </Button>
           </div>
-          {err && (
-            <p className="rounded-lg border border-bad/20 bg-bad-soft p-3 text-sm text-bad">
-              {err.text}{" "}
-              {err.pricing && (
-                <Link to="/pricing" className="font-semibold underline">
-                  See Premium
-                </Link>
-              )}
-            </p>
-          )}
-        </CardBody>
-      </Card>
+        </div>
+        {err && (
+          <p className="mt-3 rounded-[0.625rem] border border-bad/30 bg-bad-soft p-3 text-sm text-bad">
+            {err.text}{" "}
+            {err.pricing && (
+              <Link to="/pricing" className="font-semibold underline">
+                See Premium
+              </Link>
+            )}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -363,7 +357,12 @@ function Timer({ minutes }: { minutes: number }) {
   const ss = String(left % 60).padStart(2, "0");
   return (
     <div className="flex items-center gap-2">
-      <span className={cn("font-mono text-sm tabular-nums", left === 0 ? "text-bad" : left < 300 ? "text-warn" : "text-ink")}>
+      <span
+        className={cn(
+          "rounded-lg border px-2.5 py-1 font-mono text-sm tabular-nums",
+          left === 0 ? "border-bad/30 bg-bad-soft text-bad" : left < 300 ? "border-warn/30 bg-warn-soft text-warn" : "border-line-strong bg-paper text-ink",
+        )}
+      >
         {left === 0 ? "Time's up" : `${mm}:${ss}`}
       </span>
       <Button size="sm" variant="ghost" onClick={() => setEndsAt(null)}>
@@ -382,7 +381,7 @@ function StatusPill({ e }: { e: EssayRow }) {
     return (
       <span className="flex items-center gap-1.5 text-xs text-muted">
         <span className="size-3 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
-        Grading… usually under a minute
+        Grading, usually under a minute
       </span>
     );
   if (e.status === "failed") return <Badge tone="bad">Grading failed</Badge>;
@@ -401,50 +400,46 @@ function History({ essays, loading, activeId }: { essays: EssayRow[]; loading: b
 
   return (
     <aside className="min-w-0">
-      <Card>
-        <CardHeader>
-          <CardTitle>Your essays</CardTitle>
-        </CardHeader>
-        <CardBody className="space-y-4 px-5 pb-5">
-          {loading ? (
-            <p className="text-sm text-muted">Loading…</p>
-          ) : groups.length === 0 ? (
-            <p className="text-sm text-muted">Nothing yet. Your graded essays will appear here.</p>
-          ) : (
-            groups.map((g) => {
-              const drafts = [...g].reverse(); // oldest first
-              return (
-                <div key={groupKey(g[0])} className="border-b border-line pb-3 last:border-0 last:pb-0">
-                  <div className="mb-1 flex items-start justify-between gap-2">
-                    <p className="line-clamp-2 text-sm font-medium">
-                      <span className="text-muted">T{g[0].task_number} · </span>
-                      {g[0].prompt}
-                    </p>
-                    <Trend values={drafts.map((d) => d.task_band)} />
-                  </div>
-                  <ul className="space-y-1">
-                    {g.map((e) => (
-                      <li key={e.id}>
-                        <Link
-                          to="/writing-lab"
-                          search={{ essay: e.id }}
-                          className={cn(
-                            "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-paper",
-                            activeId === e.id && "bg-brand-50",
-                          )}
-                        >
-                          <span className="text-muted">{new Date(e.created_at).toLocaleDateString()}</span>
-                          <StatusPill e={e} />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+      <h2 className="mb-3 text-lg font-semibold tracking-tight">Your essays</h2>
+      {loading ? (
+        <SkeletonRows rows={3} />
+      ) : groups.length === 0 ? (
+        <EmptyState title="Nothing yet" body="Your graded essays and every rewrite will appear here." />
+      ) : (
+        <div className="divide-y divide-line">
+          {groups.map((g) => {
+            const drafts = [...g].reverse(); // oldest first
+            return (
+              <div key={groupKey(g[0])} className="py-3 first:pt-0">
+                <div className="mb-1 flex items-start justify-between gap-2">
+                  <p className="line-clamp-2 text-sm font-medium">
+                    <span className="text-muted">T{g[0].task_number} · </span>
+                    {g[0].prompt}
+                  </p>
+                  <Trend values={drafts.map((d) => d.task_band)} />
                 </div>
-              );
-            })
-          )}
-        </CardBody>
-      </Card>
+                <ul className="grid gap-1">
+                  {g.map((e) => (
+                    <li key={e.id}>
+                      <Link
+                        to="/writing-lab"
+                        search={{ essay: e.id }}
+                        className={cn(
+                          "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-paper",
+                          activeId === e.id && "bg-brand-50",
+                        )}
+                      >
+                        <span className="font-mono text-muted">{new Date(e.created_at).toLocaleDateString()}</span>
+                        <StatusPill e={e} />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </aside>
   );
 }
@@ -482,8 +477,9 @@ function EssayDetail({
   onRewrite: (e: EssayRow) => void;
 }) {
   const drafts = all.filter((e) => groupKey(e) === groupKey(essay)).reverse();
+  const graded = essay.status !== "pending" && essay.status !== "failed";
   return (
-    <div className="space-y-4">
+    <div className="grid gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <Icon name="arrowRight" size={14} className="rotate-180 rtl:rotate-0" /> Back to editor
@@ -496,26 +492,20 @@ function EssayDetail({
         </div>
       </div>
 
-      <Card>
-        <CardBody className="p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted">Task {essay.task_number} prompt</p>
-          <p className="mt-1 whitespace-pre-wrap text-sm">{essay.prompt}</p>
-        </CardBody>
-      </Card>
+      <div className="rounded-[0.625rem] border border-line bg-surface px-4 py-3">
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">Task {essay.task_number} prompt</p>
+        <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{essay.prompt}</p>
+      </div>
 
       {essay.status === "pending" ? (
-        <Card>
-          <CardBody className="flex items-center gap-3 p-5 text-sm text-muted">
-            <span className="size-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
-            Grading… usually under a minute. This page updates by itself.
-          </CardBody>
-        </Card>
+        <div className="flex items-center gap-3 rounded-card border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-700" role="status">
+          <span className="size-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
+          Grading, usually under a minute. This page updates by itself.
+        </div>
       ) : essay.status === "failed" ? (
-        <Card>
-          <CardBody className="p-5 text-sm text-bad">
-            We could not grade this essay. You can submit it again with “Rewrite this essay”.
-          </CardBody>
-        </Card>
+        <div className="rounded-card border border-bad/30 bg-bad-soft px-4 py-3 text-sm text-bad" role="alert">
+          We could not grade this essay. You can submit it again with “Rewrite this essay”.
+        </div>
       ) : (
         <EssayFeedback
           taskNumber={essay.task_number}
@@ -525,17 +515,22 @@ function EssayDetail({
           lexical_resource={essay.lexical_resource}
           grammatical_range={essay.grammatical_range}
           feedback={essay.feedback}
+          body={essay.body}
         />
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            Your essay <span className="text-sm font-normal text-muted">· {countWords(essay.body)} words</span>
-          </CardTitle>
-        </CardHeader>
-        <CardBody className="whitespace-pre-wrap px-5 pb-5 text-sm leading-relaxed">{essay.body}</CardBody>
-      </Card>
+      {!graded && (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Your essay <span className="text-sm font-normal text-muted">· {countWords(essay.body)} words</span>
+            </CardTitle>
+          </CardHeader>
+          <CardBody>
+            <div className="prose-passage whitespace-pre-wrap text-[1rem]">{essay.body}</div>
+          </CardBody>
+        </Card>
+      )}
     </div>
   );
 }

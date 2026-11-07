@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AppShell } from "~/components/layout/AppShell";
+import { AppShell, PageHeader } from "~/components/layout/AppShell";
 import { Badge } from "~/components/ui/Badge";
-import { Card, CardBody } from "~/components/ui/Card";
+import { Icon } from "~/components/ui/Icon";
+import { SectionIcon } from "~/components/ui/SectionIcon";
 import { QUESTION_GUIDES } from "~/data/question-guides";
 
 export const Route = createFileRoute("/guides/")({
@@ -21,32 +22,35 @@ export const Route = createFileRoute("/guides/")({
 function GuidesIndex() {
   return (
     <AppShell>
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-        IELTS question type strategies
-      </h1>
-      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">
-        How each Reading and Listening question type works, the steps that score marks, and
-        the traps that lose them — with a worked example for each.
-      </p>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <PageHeader
+        title="IELTS question type strategies"
+        subtitle="How each Reading and Listening question type works, the steps that score marks, and the traps that lose them, with a worked example for each."
+      />
+      <ul className="divide-y divide-line border-y border-line">
         {QUESTION_GUIDES.map((guide) => (
-          <Link key={guide.slug} to="/guides/$slug" params={{ slug: guide.slug }} className="group">
-            <Card className="h-full transition-colors group-hover:border-brand-200">
-              <CardBody className="pt-5">
-                <div className="flex flex-wrap gap-1.5">
-                  {guide.sections.map((s) => (
-                    <Badge key={s} tone="neutral">
-                      <span className="capitalize">{s}</span>
-                    </Badge>
-                  ))}
-                </div>
-                <h2 className="mt-3 font-semibold">{guide.name}</h2>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{guide.summary}</p>
-              </CardBody>
-            </Card>
-          </Link>
+          <li key={guide.slug}>
+            <Link
+              to="/guides/$slug"
+              params={{ slug: guide.slug }}
+              className="-mx-2 flex items-center gap-4 rounded-lg px-2 py-4 hover:bg-surface"
+            >
+              <SectionIcon code={guide.sections[0]} />
+              <div className="min-w-0 flex-1">
+                <h2 className="font-semibold">{guide.name}</h2>
+                <p className="mt-0.5 text-sm leading-relaxed text-muted">{guide.summary}</p>
+              </div>
+              <div className="hidden items-center gap-1.5 sm:flex">
+                {guide.sections.map((s) => (
+                  <Badge key={s} tone="neutral">
+                    <span className="capitalize">{s}</span>
+                  </Badge>
+                ))}
+              </div>
+              <Icon name="arrowRight" size={16} className="shrink-0 text-muted rtl:rotate-180" />
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </AppShell>
   );
 }

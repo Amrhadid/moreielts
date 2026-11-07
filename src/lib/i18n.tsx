@@ -13,7 +13,8 @@ export type Locale = "en" | "ar";
 
 const STRINGS = {
   en: {
-    "nav.home": "My Tests",
+    "nav.home": "Today",
+    "nav.more": "More",
     "nav.plan": "Study plan",
     "nav.practice": "Practice",
     "nav.drills": "Drills",
@@ -87,7 +88,8 @@ const STRINGS = {
     "variant.general_training": "General Training",
   },
   ar: {
-    "nav.home": "اختباراتي",
+    "nav.home": "اليوم",
+    "nav.more": "المزيد",
     "nav.plan": "خطة الدراسة",
     "nav.practice": "تدريب",
     "nav.drills": "تمارين الأسئلة",

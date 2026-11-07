@@ -1,7 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AppShell } from "~/components/layout/AppShell";
 import { Button } from "~/components/ui/Button";
-import { Card, CardBody, CardHeader, CardTitle } from "~/components/ui/Card";
+import { Card, CardBody } from "~/components/ui/Card";
+import { Icon } from "~/components/ui/Icon";
+import { SectionIcon } from "~/components/ui/SectionIcon";
 import { guideBySlug, QUESTION_GUIDES } from "~/data/question-guides";
 
 export const Route = createFileRoute("/guides/$slug")({
@@ -36,53 +38,66 @@ function GuidePage() {
         </Link>{" "}
         / <span className="text-ink">{guide.name}</span>
       </nav>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{guide.name}</h1>
-      <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink-soft">{guide.summary}</p>
-      <p className="mt-2 max-w-2xl text-sm text-muted">
-        <strong className="font-semibold text-ink-soft">What it tests:</strong> {guide.tests}
-      </p>
-
-      <div className="mt-8 grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <div className="grid gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>How to answer</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <ol className="grid list-decimal gap-2.5 ps-5 text-sm leading-relaxed text-ink-soft">
-                {guide.steps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Common traps</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <ul className="grid list-disc gap-2 ps-5 text-sm leading-relaxed text-ink-soft">
-                {guide.traps.map((trap) => (
-                  <li key={trap}>{trap}</li>
-                ))}
-              </ul>
-            </CardBody>
-          </Card>
-          <Card className="border-brand-100 bg-brand-50/40">
-            <CardHeader>
-              <CardTitle>Worked example</CardTitle>
-            </CardHeader>
-            <CardBody className="grid gap-2 text-sm leading-relaxed">
-              <p className="font-serif text-ink">{guide.example.prompt}</p>
-              <p>
-                <span className="font-semibold text-good">Answer: {guide.example.answer}</span>
-              </p>
-              <p className="text-ink-soft">{guide.example.why}</p>
-            </CardBody>
-          </Card>
+      <div className="mt-4 flex items-start gap-4">
+        <SectionIcon code={guide.sections[0]} size="lg" className="mt-1 hidden sm:grid" />
+        <div className="min-w-0">
+          <p className="text-xs capitalize text-muted">{guide.sections.join(" · ")}</p>
+          <h1 className="display mt-1 text-[1.75rem] leading-tight sm:text-[2.25rem]">{guide.name}</h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-soft">{guide.summary}</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            <strong className="font-semibold text-ink-soft">What it tests:</strong> {guide.tests}
+          </p>
         </div>
+      </div>
 
-        <aside className="grid content-start gap-4">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_1fr] lg:gap-12">
+        <article className="grid gap-10">
+          <section aria-labelledby="steps">
+            <h2 id="steps" className="text-lg font-semibold tracking-tight">
+              How to answer
+            </h2>
+            <ol className="mt-3 grid gap-3">
+              {guide.steps.map((step, i) => (
+                <li key={step} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
+                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 font-mono text-xs font-semibold text-brand-700">
+                    {i + 1}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section aria-labelledby="traps">
+            <h2 id="traps" className="text-lg font-semibold tracking-tight">
+              Common traps
+            </h2>
+            <ul className="mt-3 grid gap-2.5">
+              {guide.traps.map((trap) => (
+                <li key={trap} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
+                  <Icon name="x" size={16} className="mt-0.5 shrink-0 text-bad" />
+                  <span>{trap}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section aria-labelledby="example">
+            <h2 id="example" className="text-lg font-semibold tracking-tight">
+              Worked example
+            </h2>
+            <Card className="mt-3 border-brand-600/40">
+              <CardBody className="grid gap-3 pt-5 text-sm leading-relaxed">
+                <p className="prose-passage text-[1rem]">{guide.example.prompt}</p>
+                <p className="flex items-center gap-2 font-semibold text-good">
+                  <Icon name="check" size={16} />
+                  Answer: {guide.example.answer}
+                </p>
+                <p className="text-ink-soft">{guide.example.why}</p>
+              </CardBody>
+            </Card>
+          </section>
+        </article>
+
+        <aside className="grid content-start gap-6">
           <Card>
             <CardBody className="pt-5">
               <p className="font-semibold">Practise {guide.name}</p>
@@ -97,20 +112,23 @@ function GuidePage() {
             </CardBody>
           </Card>
           {others.length > 0 && (
-            <Card>
-              <CardBody className="pt-5">
-                <p className="text-sm font-semibold">Related strategies</p>
-                <ul className="mt-2 grid gap-1.5 text-sm">
-                  {others.map((g) => (
-                    <li key={g.slug}>
-                      <Link to="/guides/$slug" params={{ slug: g.slug }} className="text-brand-600 hover:underline">
-                        {g.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </CardBody>
-            </Card>
+            <div>
+              <p className="text-sm font-semibold">Related strategies</p>
+              <ul className="mt-2 divide-y divide-line border-y border-line">
+                {others.map((g) => (
+                  <li key={g.slug}>
+                    <Link
+                      to="/guides/$slug"
+                      params={{ slug: g.slug }}
+                      className="flex items-center justify-between gap-3 py-2.5 text-sm font-medium text-ink hover:text-brand-700"
+                    >
+                      {g.name}
+                      <Icon name="arrowRight" size={14} className="shrink-0 text-muted rtl:rotate-180" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </aside>
       </div>

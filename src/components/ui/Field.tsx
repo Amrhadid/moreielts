@@ -5,8 +5,9 @@ export function Input({ className, ...props }: ComponentProps<"input">) {
   return (
     <input
       className={cn(
-        "h-10 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm",
-        "placeholder:text-muted/70 focus:border-brand-500",
+        "h-10 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink",
+        "placeholder:text-muted/70 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25",
+        "disabled:opacity-60",
         className,
       )}
       {...props}
@@ -18,8 +19,8 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
   return (
     <textarea
       className={cn(
-        "w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm leading-relaxed",
-        "placeholder:text-muted/70 focus:border-brand-500",
+        "w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm leading-relaxed text-ink",
+        "placeholder:text-muted/70 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25",
         className,
       )}
       {...props}

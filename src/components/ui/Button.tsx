@@ -6,21 +6,23 @@ type Variant = "primary" | "secondary" | "ghost" | "danger" | "outline";
 type Size = "sm" | "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
-  primary:
-    "bg-brand-600 text-white hover:bg-brand-700 border border-transparent",
-  secondary:
-    "bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-100",
+  primary: "bg-brand-600 text-on-brand hover:bg-brand-700 border border-transparent",
+  secondary: "bg-brand-50 text-brand-700 hover:bg-brand-100 border border-transparent",
   outline: "bg-surface text-ink hover:bg-paper border border-line-strong",
   ghost: "bg-transparent text-ink-soft hover:bg-paper border border-transparent",
   danger: "bg-bad text-white hover:opacity-90 border border-transparent",
 };
 
 const SIZES: Record<Size, string> = {
-  sm: "h-8 px-3 text-sm gap-1.5",
-  md: "h-11 px-5 text-sm gap-2",
-  lg: "h-13 px-7 text-base gap-2",
+  sm: "h-8 px-3 text-[0.8125rem] gap-1.5 rounded-lg",
+  md: "h-10 px-4 text-sm gap-2 rounded-[0.5625rem]",
+  lg: "h-12 px-6 text-[0.9375rem] gap-2 rounded-[0.625rem]",
 };
 
+/**
+ * Buttons change colour on hover, never position: a control that moves under
+ * the pointer is a distraction inside the test players.
+ */
 export function Button({
   variant = "primary",
   size = "md",
@@ -36,7 +38,7 @@ export function Button({
   return (
     <Comp
       className={cn(
-        "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0",
+        "inline-flex shrink-0 items-center justify-center whitespace-nowrap font-semibold transition-colors duration-150",
         "disabled:pointer-events-none disabled:opacity-50",
         VARIANTS[variant],
         SIZES[size],

@@ -11,6 +11,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "./supabase";
 import { WhatsAppPremiumButton } from "~/components/WhatsApp";
+import { Icon } from "~/components/ui/Icon";
 import type { LearnerRow, ProfileRow } from "~/types/database";
 
 /** One ProfileRow for the app, from the shared account and the learner row. */
@@ -181,7 +182,7 @@ export function Protected({ children }: { children: ReactNode }) {
         </p>
         <Link
           to="/login"
-          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-semibold text-on-brand hover:bg-brand-700"
         >
           Sign in
         </Link>
@@ -248,7 +249,7 @@ export function PremiumGate({ children }: { children: ReactNode }) {
         </p>
         <Link
           to="/login"
-          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+          className="mt-5 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-semibold text-on-brand hover:bg-brand-700"
         >
           Sign in
         </Link>
@@ -259,7 +260,7 @@ export function PremiumGate({ children }: { children: ReactNode }) {
   if (!isPremium) {
     return (
       <Centered>
-        <span aria-hidden className="text-3xl">🔒</span>
+        <span aria-hidden className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-warn-soft text-warn"><Icon name="lock" size={22} /></span>
         <h1 className="mt-3 text-xl font-semibold tracking-tight">Premium members only</h1>
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Every MoreIELTS mock exam, practice set and AI correction is part of Premium.

@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { Logo } from "~/components/layout/Logo";
-import { ExitButton } from "~/components/player/ExitButton";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { PlayerHeader } from "~/components/player/PlayerHeader";
 import { PlayerStatus } from "~/components/player/PlayerStatus";
 import { Button } from "~/components/ui/Button";
+import { Card } from "~/components/ui/Card";
 import { Textarea } from "~/components/ui/Field";
+import { Icon } from "~/components/ui/Icon";
 import { cn } from "~/lib/cn";
 import { formatClock } from "~/lib/text";
 import { PremiumGate } from "~/lib/auth";
@@ -29,21 +30,39 @@ const PREP_SECONDS = 60;
 /** Part 2 long turn: candidates speak for one to two minutes. */
 const LONG_TURN_SECONDS = 120;
 
-const WAVE = [8, 16, 26, 14, 30, 22, 34, 18, 28, 12, 24, 32, 20, 10, 26, 18, 30, 14, 22, 8];
-
-function Waveform({ active }: { active: boolean }) {
+/**
+ * Progress ring. The conic fill grows with `progress` (0 to 1); the inner disc
+ * carries the time and a state label.
+ */
+function Ring({
+  progress,
+  time,
+  state,
+  tone = "speaking",
+}: {
+  progress: number;
+  time: string;
+  state: string;
+  tone?: "speaking" | "bad" | "good";
+}) {
+  const colour =
+    tone === "bad" ? "var(--color-bad)" : tone === "good" ? "var(--color-good)" : "var(--color-speaking)";
+  const pct = Math.max(0, Math.min(100, progress * 100));
+  const style = {
+    background: `conic-gradient(${colour} ${pct}%, var(--color-line) 0)`,
+  } as CSSProperties;
   return (
-    <div aria-hidden className="flex h-12 items-center justify-center gap-1">
-      {WAVE.map((h, i) => (
-        <span
-          key={i}
-          className={cn(
-            "w-1 rounded-full transition-colors",
-            active ? "animate-pulse bg-brand-500" : "bg-line-strong",
-          )}
-          style={{ height: `${active ? h : Math.max(4, h / 3)}px` }}
-        />
-      ))}
+    <div
+      className="relative grid h-40 w-40 place-items-center rounded-full"
+      style={style}
+      role="img"
+      aria-label={`${state}, ${time}`}
+    >
+      <div className="absolute inset-2.5 rounded-full bg-paper" aria-hidden />
+      <div className="relative text-center">
+        <p className="tnum font-mono text-[2rem] font-medium leading-none">{time}</p>
+        <p className="mt-1.5 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-muted">{state}</p>
+      </div>
     </div>
   );
 }
@@ -138,32 +157,44 @@ function Recorder({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart]);
 
+  const ringState =
+    state === "recording"
+      ? "Recording"
+      : state === "uploading"
+        ? "Uploading"
+        : state === "recorded"
+          ? "Recorded"
+          : "Ready";
+
   return (
-    <div className="rounded-card border border-line bg-surface p-6 text-center">
-      <Waveform active={state === "recording"} />
-      <p className="mt-3 font-mono text-sm tabular-nums text-muted">
-        {formatClock(elapsed)} / {formatClock(maxSeconds)}
-      </p>
+    <div className="grid justify-items-center gap-5">
+      <Ring
+        progress={state === "idle" ? 0 : elapsed / maxSeconds}
+        time={formatClock(elapsed)}
+        state={ringState}
+        tone={state === "recording" ? "bad" : state === "recorded" ? "good" : "speaking"}
+      />
+      <p className="tnum font-mono text-xs text-muted">up to {formatClock(maxSeconds)}</p>
 
-      {error && <p className="mt-3 text-sm text-bad">{error}</p>}
+      {error && <p className="max-w-md text-center text-sm text-bad">{error}</p>}
 
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         {state === "idle" && (
           <Button size="lg" onClick={start}>
-            <span aria-hidden className="me-1">●</span> Record answer
+            <Icon name="mic" size={16} />
+            Record answer
           </Button>
         )}
         {state === "recording" && (
           <Button size="lg" variant="danger" onClick={stop}>
-            <span aria-hidden className="me-1">■</span> Stop
+            <Icon name="square" size={14} fill="currentColor" />
+            Stop
           </Button>
         )}
         {state === "uploading" && <p className="text-sm text-muted">Uploading…</p>}
         {state === "recorded" && (
           <>
-            {playbackUrl && (
-              <audio controls src={playbackUrl} className="h-9 max-w-full" />
-            )}
+            {playbackUrl && <audio controls src={playbackUrl} className="h-9 max-w-full" />}
             <Button
               variant="ghost"
               onClick={() => {
@@ -172,13 +203,40 @@ function Recorder({
                 setState("idle");
               }}
             >
+              <Icon name="rotateCcw" size={16} />
               Re-record
             </Button>
-            <Button onClick={onDone}>Next →</Button>
+            <Button onClick={onDone}>
+              Next
+              <Icon name="arrowRight" size={16} className="rtl:rotate-180" />
+            </Button>
           </>
         )}
       </div>
     </div>
+  );
+}
+
+function PartStepper({ parts, current }: { parts: number[]; current: number }) {
+  return (
+    <ol className="flex items-center gap-1.5" aria-label="Speaking parts">
+      {parts.map((p, i) => (
+        <li
+          key={p}
+          aria-current={i === current ? "step" : undefined}
+          className={cn(
+            "rounded-full border px-2.5 py-1 text-xs font-semibold",
+            i === current
+              ? "border-transparent bg-speaking-soft text-speaking"
+              : i < current
+                ? "border-line text-ink-soft"
+                : "border-line text-muted",
+          )}
+        >
+          Part {p}
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -229,108 +287,95 @@ function SpeakingPlayer() {
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex h-14 max-w-3xl items-center gap-4 px-4">
-          <ExitButton remaining={player.remaining} />
-          <Logo />
-          <p className="ms-auto text-sm text-muted">Speaking · 11–14 minutes</p>
-        </div>
-      </header>
+      <PlayerHeader
+        section="speaking"
+        sectionName="Speaking"
+        contextLabel={`Part ${group?.partNumber ?? 1} of ${player.groups.length} · 11 to 14 minutes`}
+        remaining={null}
+        centre={<PartStepper parts={player.groups.map((g) => g.partNumber)} current={partIndex} />}
+      />
 
-      <PlayerStatus saving={player.saving} saveError={player.saveError} inline />
+      <PlayerStatus saveError={player.saveError} inline />
 
-      {/* Part progress */}
-      <div className="mx-auto w-full max-w-3xl px-4 pt-6">
-        <ol className="flex gap-2">
-          {player.groups.map((g, i) => (
-            <li key={g.id} className="flex-1">
-              <div
-                className={cn("h-1 rounded-full", i <= partIndex ? "bg-brand-600" : "bg-line")}
-              />
-              <p
-                className={cn(
-                  "mt-2 text-xs",
-                  i === partIndex ? "font-medium text-ink" : "text-muted",
-                )}
-              >
-                Part {g.partNumber}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </div>
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+        <div className="grid justify-items-center gap-6">
+          <div className="text-center">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-muted">{group?.title}</p>
+            <p className="mt-1 text-sm text-ink-soft">{group?.instructions}</p>
+          </div>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted">
-          {group?.title}
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft">{group?.instructions}</p>
+          {isCueCard ? (
+            <>
+              {phase === "prep" && (
+                <Ring
+                  progress={(PREP_SECONDS - prepRemaining) / PREP_SECONDS}
+                  time={formatClock(prepRemaining)}
+                  state="Preparing"
+                />
+              )}
 
-        {isCueCard ? (
-          <>
-            <div className="mt-6 rounded-card border-2 border-line-strong bg-surface p-6">
-              <div className="prose-passage whitespace-pre-line text-[1rem]">
-                {group?.passageText}
-              </div>
-            </div>
+              <Card className="w-full p-6">
+                <p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-speaking">
+                  Cue card
+                </p>
+                <div className="prose-passage mt-2 whitespace-pre-line">{group?.passageText}</div>
+              </Card>
 
-            {phase === "prep" ? (
-              <div className="mt-6">
-                <div className="mb-3 flex items-center justify-between">
-                  <p className="text-sm font-medium">Preparation time</p>
-                  <p className="font-mono text-lg tabular-nums text-brand-700">
-                    {formatClock(prepRemaining)}
+              {phase === "prep" ? (
+                <div className="w-full">
+                  <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    rows={5}
+                    placeholder="Make notes here. You may refer to them while you speak."
+                    aria-label="Preparation notes"
+                  />
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-xs text-muted">
+                      You have one minute to prepare. The recording starts on its own when
+                      the minute ends.
+                    </p>
+                    <Button variant="outline" onClick={() => setPhase("talk")}>
+                      Start talking now
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid w-full justify-items-center gap-5">
+                  {notes && (
+                    <div className="w-full rounded-[0.625rem] border border-line bg-surface p-4">
+                      <p className="mb-1 text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-muted">
+                        Your notes
+                      </p>
+                      <p className="whitespace-pre-line text-sm">{notes}</p>
+                    </div>
+                  )}
+                  {question && player.attemptId && (
+                    <Recorder
+                      key={question.id}
+                      attemptId={player.attemptId}
+                      questionId={question.id}
+                      maxSeconds={LONG_TURN_SECONDS}
+                      autoStart
+                      onUploaded={(url) => player.setAnswer(question.id, url)}
+                      onDone={advance}
+                    />
+                  )}
+                  <p className="max-w-md text-center text-xs text-muted">
+                    Speak for one to two minutes. The recording stops on its own at two
+                    minutes, as the examiner would.
                   </p>
                 </div>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={6}
-                  placeholder="Make notes here — you may refer to them while you speak."
-                />
-                <div className="mt-3 flex justify-end">
-                  <Button variant="outline" onClick={() => setPhase("talk")}>
-                    I'm ready — start speaking
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-6">
-                {notes && (
-                  <div className="mb-4 rounded-lg border border-line bg-surface p-4">
-                    <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted">
-                      Your notes
-                    </p>
-                    <p className="whitespace-pre-line text-sm">{notes}</p>
-                  </div>
-                )}
-                {question && player.attemptId && (
-                  <Recorder
-                    key={question.id}
-                    attemptId={player.attemptId}
-                    questionId={question.id}
-                    maxSeconds={LONG_TURN_SECONDS}
-                    autoStart
-                    onUploaded={(url) => player.setAnswer(question.id, url)}
-                    onDone={advance}
-                  />
-                )}
-                <p className="mt-3 text-center text-xs text-muted">
-                  Speak for one to two minutes. The recording stops automatically at two
-                  minutes.
+              )}
+            </>
+          ) : (
+            <>
+              <Card className="w-full p-6">
+                <p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-muted">
+                  Question {questionIndex + 1} of {group?.questions.length ?? 0}
                 </p>
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <div className="mt-6 rounded-card border border-line bg-surface p-6">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                Question {questionIndex + 1} of {group?.questions.length ?? 0}
-              </p>
-              <p className="mt-2 text-lg leading-relaxed">{question?.prompt}</p>
-            </div>
-            <div className="mt-5">
+                <p className="display mt-2 text-[1.375rem] leading-snug">{question?.prompt}</p>
+              </Card>
               {question && player.attemptId && (
                 <Recorder
                   key={question.id}
@@ -341,44 +386,44 @@ function SpeakingPlayer() {
                   onDone={advance}
                 />
               )}
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {finished && (
-          <div className="mt-8 rounded-card border border-brand-200 bg-brand-50 p-6 text-center">
-            <p className="font-medium">That is the end of the speaking test.</p>
-            <p className="mt-1 text-sm text-muted">
-              Your recordings will be scored against the four speaking criteria.
-            </p>
-            <Button
-              className="mt-4"
-              disabled={submit.isPending}
-              onClick={() =>
-                submit.mutate(
-                  { attemptId: player.attemptId! },
-                  {
-                    onSuccess: () =>
-                      navigate({ to: "/results/$attemptId", params: { attemptId: player.attemptId! } }),
-                  },
-                )
-              }
-            >
-              {submit.isPending ? "Submitting…" : "Finish and score"}
-            </Button>
-            {submit.isSuccess && (
-              <p className="mt-3">
-                <Link
-                  to="/results/$attemptId"
-                  params={{ attemptId: player.attemptId! }}
-                  className="text-sm font-medium text-brand-600"
-                >
-                  See your result →
-                </Link>
+          {finished && (
+            <Card className="w-full border-brand-600 bg-brand-50 p-6 text-center">
+              <p className="display text-xl">That is the end of the speaking test.</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                Your recordings will be scored against the four speaking criteria.
               </p>
-            )}
-          </div>
-        )}
+              <Button
+                className="mt-4"
+                disabled={submit.isPending}
+                onClick={() =>
+                  submit.mutate(
+                    { attemptId: player.attemptId! },
+                    {
+                      onSuccess: () =>
+                        navigate({ to: "/results/$attemptId", params: { attemptId: player.attemptId! } }),
+                    },
+                  )
+                }
+              >
+                {submit.isPending ? "Submitting…" : "Finish and score"}
+              </Button>
+              {submit.isSuccess && (
+                <p className="mt-3">
+                  <Link
+                    to="/results/$attemptId"
+                    params={{ attemptId: player.attemptId! }}
+                    className="text-sm font-semibold text-brand-600"
+                  >
+                    See your result
+                  </Link>
+                </p>
+              )}
+            </Card>
+          )}
+        </div>
       </main>
     </div>
   );

@@ -15,6 +15,7 @@ export function QuestionBlock({
   registerRef,
   flagged,
   onToggleFlag,
+  onFocusQuestion,
 }: {
   group: ItemGroup;
   answers: AnswerSheet;
@@ -24,56 +25,68 @@ export function QuestionBlock({
   /** Optional "flag for review" support. */
   flagged?: Set<number>;
   onToggleFlag?: (n: number) => void;
+  /** Called when the candidate interacts with a question, so it becomes current. */
+  onFocusQuestion?: (n: number) => void;
 }) {
   return (
-    <section className="mb-8">
-      <div className="mb-4 rounded-lg border border-line bg-paper px-4 py-3">
-        <p className="text-sm leading-relaxed text-ink-soft">{group.instructions}</p>
+    <section className="mb-6 grid gap-2.5">
+      <div className="rounded-[0.5625rem] border border-line bg-surface px-3.5 py-2.5">
+        <p className="text-[0.8125rem] leading-relaxed text-ink-soft">{group.instructions}</p>
       </div>
 
-      <div className="grid gap-5">
-        {group.questions.map((q) => (
+      {group.questions.map((q) => {
+        const isCurrent = q.number === current;
+        const isFlagged = flagged?.has(q.number) ?? false;
+        return (
           <div
             key={q.id}
             ref={(el) => registerRef(q.number, el)}
+            onFocusCapture={() => onFocusQuestion?.(q.number)}
+            onPointerDownCapture={() => onFocusQuestion?.(q.number)}
             className={cn(
-              "scroll-mt-24 rounded-card border p-4 shadow-[0_3px_12px_rgba(20,49,78,.035)] transition-all",
-              q.number === current
-                ? "border-brand-200 bg-brand-50/40"
-                : "border-line bg-surface",
+              "scroll-mt-20 rounded-[0.625rem] border bg-surface py-3.5 pe-4 ps-[1.0625rem] transition-colors",
+              isCurrent
+                ? "border-brand-600 shadow-[inset_3px_0_0_var(--color-brand-600)] rtl:shadow-[inset_-3px_0_0_var(--color-brand-600)]"
+                : "border-line",
             )}
           >
-            <div className="mb-2 flex items-baseline gap-2">
-              <span className="text-sm font-semibold text-brand-700">{q.number}</span>
-              <span className="text-[0.6875rem] uppercase tracking-wide text-muted">
-                {q.typeLabel ?? q.type}
+            <div className="mb-2 flex items-start gap-2.5">
+              <span className="tnum pt-0.5 font-mono text-[0.8125rem] font-medium text-brand-600">
+                {q.number}
               </span>
+              <p className="flex-1 text-sm leading-relaxed">{q.prompt}</p>
               {onToggleFlag && (
                 <button
                   type="button"
                   onClick={() => onToggleFlag(q.number)}
-                  aria-pressed={flagged?.has(q.number) ?? false}
+                  aria-pressed={isFlagged}
+                  aria-label={
+                    isFlagged
+                      ? `Remove flag from question ${q.number}`
+                      : `Flag question ${q.number} for review`
+                  }
                   className={cn(
-                    "ms-auto inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs transition-colors",
-                    flagged?.has(q.number)
-                      ? "bg-warn-soft text-warn"
-                      : "text-muted hover:bg-paper",
+                    "grid h-7 w-7 shrink-0 place-items-center rounded-md transition-colors",
+                    isFlagged ? "bg-warn-soft text-warn" : "text-muted hover:bg-paper hover:text-ink",
                   )}
                 >
-                  <Icon name="flag" className="size-3.5" />
-                  {flagged?.has(q.number) ? "Flagged" : "Flag for review"}
+                  <Icon
+                    name="flag"
+                    size={14}
+                    strokeWidth={2}
+                    fill={isFlagged ? "currentColor" : "none"}
+                  />
                 </button>
               )}
             </div>
-            <p className="mb-3 text-sm leading-relaxed">{q.prompt}</p>
             <QuestionRenderer
               question={q}
               value={answers[q.id]}
               onChange={(value) => onAnswer(q.id, value)}
             />
           </div>
-        ))}
-      </div>
+        );
+      })}
     </section>
   );
 }

@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/Button";
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Input, Label } from "~/components/ui/Field";
 import { Icon } from "~/components/ui/Icon";
+import { Logo } from "~/components/layout/Logo";
 import { useAuth } from "~/lib/auth";
 import { useI18n } from "~/lib/i18n";
 import { WhatsAppPremiumButton } from "~/components/WhatsApp";
@@ -59,9 +60,28 @@ function Pricing() {
     : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-semibold tracking-tight">{t("pricing.title")}</h1>
-      <p className="mt-2 text-muted">MoreIELTS is for Premium members. Unlock everything with an access code.</p>
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <div className="flex items-center justify-between gap-4">
+        <Link to="/" aria-label="MoreIELTS home">
+          <Logo />
+        </Link>
+        {user ? (
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/">Back to Today</Link>
+          </Button>
+        ) : (
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/login">Sign in</Link>
+          </Button>
+        )}
+      </div>
+      <p className="mt-10 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-brand-600">
+        Premium only
+      </p>
+      <h1 className="display mt-2 text-[2rem] leading-tight sm:text-[2.5rem]">{t("pricing.title")}</h1>
+      <p className="mt-3 max-w-[56ch] text-base text-ink-soft">
+        MoreIELTS is for Premium members. Unlock everything with an access code.
+      </p>
 
       {search.paid && (
         <div role="status" className="mt-6 rounded-lg border border-good/20 bg-good-soft px-4 py-3 text-sm text-good">
@@ -77,9 +97,10 @@ function Pricing() {
       )}
 
       {isPremium && (
-        <div className="mt-6 flex flex-wrap items-center gap-2 rounded-lg border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-700">
+        <div className="mt-6 flex flex-wrap items-center gap-2 rounded-lg border border-brand-600/30 bg-brand-50 px-4 py-3 text-sm text-brand-700">
           <Icon name="crown" size={18} />
-          You are on Premium{expires ? ` until ${expires}` : ""}. Another code extends it.
+          <span>You are on Premium{expires ? ` until ${expires}` : ""}. Another code extends it.</span>
+          <Badge tone="brand" className="ms-auto">Active</Badge>
         </div>
       )}
 
@@ -98,10 +119,10 @@ function Pricing() {
         </Card>
       )}
 
-      <Card className="mt-6 border-brand-200">
+      <Card className="mt-6 border-brand-600">
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <CardTitle>Premium</CardTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <CardTitle className="display text-2xl">Premium</CardTitle>
             <Badge tone="brand">Everything included</Badge>
           </div>
           <CardDescription>
@@ -110,11 +131,11 @@ function Pricing() {
           </CardDescription>
         </CardHeader>
         <CardBody>
-          <ul className="grid gap-2 text-sm sm:grid-cols-2">
+          <ul className="grid gap-2.5 text-sm sm:grid-cols-2">
             {FEATURES.map((f) => (
-              <li key={f} className="flex gap-2">
-                <Icon name="check" size={18} className="shrink-0 text-brand-600" />
-                {f}
+              <li key={f} className="flex gap-2.5">
+                <Icon name="check" size={18} className="mt-0.5 shrink-0 text-good" />
+                <span className="text-ink-soft">{f}</span>
               </li>
             ))}
           </ul>
@@ -214,11 +235,11 @@ function PremiumWelcome({ onContinue }: { onContinue: () => void }) {
       aria-labelledby="premium-welcome-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 backdrop-blur-sm"
     >
-      <div className="w-full max-w-md animate-rise rounded-2xl border border-brand-100 bg-surface p-8 text-center shadow-xl">
+      <div className="w-full max-w-md animate-rise rounded-2xl border border-line bg-surface p-8 text-center shadow-raised">
         <div className="mx-auto flex h-16 w-16 animate-wa-pop items-center justify-center rounded-full bg-brand-50 text-brand-600" style={{ animationDelay: "0s" }}>
           <Icon name="crown" size={32} />
         </div>
-        <h2 id="premium-welcome-title" className="mt-5 text-2xl font-bold tracking-tight">
+        <h2 id="premium-welcome-title" className="display mt-5 text-2xl">
           Welcome to Premium!
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted">

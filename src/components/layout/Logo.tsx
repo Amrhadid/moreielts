@@ -1,12 +1,17 @@
-export function Logo({ className }: { className?: string }) {
+import { cn } from "~/lib/cn";
+
+export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
-      <span aria-hidden className="relative grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-sm font-black text-white shadow-[0_4px_0_#075ea2]">
-        M<span className="absolute -end-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-surface bg-warn" />
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <span
+        aria-hidden
+        className="display grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-[0.9375rem] text-on-brand"
+      >
+        M
       </span>
-      <span className="text-[1.125rem] font-extrabold tracking-tight">
-        More<span className="text-brand-600">IELTS</span>
-      </span>
+      {!compact && (
+        <span className="text-[1.0625rem] font-bold tracking-[-0.01em] text-ink">MoreIELTS</span>
+      )}
     </span>
   );
 }

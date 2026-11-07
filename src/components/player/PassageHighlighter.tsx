@@ -145,7 +145,7 @@ export function PassageHighlighter({
           key={h.id}
           role="button"
           tabIndex={0}
-          title={h.note || "Highlighted — click for options"}
+          title={h.note || "Highlighted. Click for options"}
           onClick={(e) => {
             const box = rootRef.current!.getBoundingClientRect();
             const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -157,7 +157,7 @@ export function PassageHighlighter({
             if (e.key === "Enter") (e.currentTarget as HTMLElement).click();
           }}
           className={cn(
-            "cursor-pointer rounded-sm bg-yellow-200 px-0.5 text-inherit dark:bg-yellow-500/40",
+            "cursor-pointer rounded-sm bg-highlight px-0.5 text-inherit",
             h.note && "underline decoration-warn decoration-dotted underline-offset-4",
           )}
         >
@@ -181,6 +181,22 @@ export function PassageHighlighter({
 
   return (
     <div>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-muted">
+        <span>Select text, then press Highlight (or H). Click a highlight for a note.</span>
+        {highlights.length > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              update([]);
+              setActive(null);
+              setPending(null);
+            }}
+            className="rounded-md px-2 py-1 font-semibold text-brand-600 hover:bg-brand-50"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
       <div ref={rootRef} className="relative" onMouseUp={readSelection} onKeyUp={readSelection} onTouchEnd={() => setTimeout(readSelection, 0)}>
         <div className="prose-passage">{paragraphs.map(renderParagraph)}</div>
 
@@ -201,7 +217,7 @@ export function PassageHighlighter({
             className="absolute z-20 w-64 -translate-x-1/2 -translate-y-full pb-2 rtl:translate-x-1/2"
             style={{ left: active.x, top: active.y }}
           >
-            <div className="rounded-lg border border-line bg-surface p-2 shadow-lg">
+            <div className="rounded-lg border border-line bg-surface p-2 shadow-raised">
               {noteDraft === null ? (
                 <div className="flex gap-2">
                   <Button
@@ -273,7 +289,7 @@ export function PassageHighlighter({
           <ul className="grid gap-2">
             {notes.map((h) => (
               <li key={h.id} className="text-sm">
-                <span className="rounded-sm bg-yellow-200 px-1 dark:bg-yellow-500/40">
+                <span className="rounded-sm bg-highlight px-1">
                   {paragraphs[h.para]?.slice(h.start, h.end).slice(0, 60)}
                   {h.end - h.start > 60 ? "…" : ""}
                 </span>
