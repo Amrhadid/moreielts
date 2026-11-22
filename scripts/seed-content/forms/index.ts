@@ -3,6 +3,7 @@ import { academic1 } from "./academic-1";
 import { academic2 } from "./academic-2";
 import { academic3 } from "./academic-3";
 import { academic4 } from "./academic-4";
+import { cambridge17Test1 } from "./cambridge-17-test-1";
 import { general1 } from "./general-1";
 import { general2 } from "./general-2";
 import { mockAcademic1 } from "./mock-academic-1";
@@ -28,4 +29,6 @@ export const FORMS: SeedForm[] = [
   mockAcademic2,
   mockGeneral1,
   mockGeneral2,
+  // Past papers (authentic Cambridge exams).
+  cambridge17Test1,
 ];
