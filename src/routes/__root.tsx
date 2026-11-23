@@ -21,7 +21,8 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#2448a8" },
       { property: "og:site_name", content: "MoreIELTS" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/icons/icon-512.png" },
+      { property: "og:image", content: "https://moreielts.com/icons/icon-512.png" },
+      { name: "twitter:card", content: "summary" },
       { title: "MoreIELTS — IELTS practice and mock exams" },
       {
         name: "description",
