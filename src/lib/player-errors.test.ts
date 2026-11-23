@@ -25,6 +25,20 @@ describe("describeStartupError", () => {
     expect(r.action?.search).toBeUndefined();
   });
 
+  it("explains the Cairo daily limit and free resumes", () => {
+    const r = describeStartupError("mock_daily_limit", "listening", undefined, []);
+    expect(r.text).toMatch(/midnight Cairo/);
+    expect(r.text).toMatch(/resume/);
+    expect(r.action?.to).toBe("/results");
+  });
+
+  it("explains the subscription allowance without asking for an immediate renewal", () => {
+    const r = describeStartupError("mock_subscription_limit", "listening", undefined, []);
+    expect(r.text).toMatch(/20 mock tests/);
+    expect(r.text).toMatch(/next subscription period/);
+    expect(r.action?.to).toBe("/results");
+  });
+
   it("passes unknown errors through", () => {
     const r = describeStartupError("attempt_not_found", "listening", undefined, []);
     expect(r.text).toBe("attempt_not_found");
