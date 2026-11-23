@@ -20,7 +20,8 @@ for f in "$ROOT"/supabase/migrations/*.sql; do
 done
 
 psql -q -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/seed.sql" >/dev/null
-psql -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/tests/rls_test.sql" 2>&1 |
-  grep -E "NOTICE|ERROR" || true
-psql -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/tests/practice_test.sql" 2>&1 |
-  grep -E "NOTICE|ERROR" || true
+# pipefail plus no swallowed status: SQL assertion errors must fail CI.
+for suite in rls_test practice_test premium_limits_test; do
+  psql -d "$DB" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/tests/$suite.sql"
+done
+python3 "$ROOT/scripts/test-premium-concurrency.py"
