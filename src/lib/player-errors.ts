@@ -44,6 +44,18 @@ export function describeStartupError(
         : { label: "See your results", to: "/results" },
     };
   }
+  if (message.includes("mock_daily_limit")) {
+    return {
+      text: "You have already started today's mock test. You can resume it, or start a new one after midnight Cairo time. Abandoned tests count toward your allowance.",
+      action: { label: "Your attempts", to: "/results" },
+    };
+  }
+  if (message.includes("mock_subscription_limit")) {
+    return {
+      text: "You have used all 20 mock tests in this subscription period. You can still resume an unfinished test or use skill practice. A new allowance starts with your next subscription period.",
+      action: { label: "Your attempts", to: "/results" },
+    };
+  }
   if (message.includes("premium_required")) {
     return {
       text: "Mock exams are part of Premium. Enter your access code to unlock them.",
