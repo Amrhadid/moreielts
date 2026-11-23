@@ -82,7 +82,9 @@ do $$ begin
   exception when raise_exception then if sqlerrm <> 'mock_subscription_limit' then raise; end if; end;
   begin
     delete from public.ielts_mock_usage where user_id=auth.uid();
-    raise exception 'FAIL usage deletion';
+    if (select count(*) from public.ielts_mock_usage where user_id=auth.uid()) <> 20 then
+      raise exception 'FAIL usage deletion';
+    end if;
   exception when insufficient_privilege then null; end;
 end; $$;
 reset role;
@@ -113,18 +115,22 @@ do $$ begin
   raise notice 'PASS code renewal period';
 end; $$;
 -- Admin test activity must not consume the learner quota.
+set local request.jwt.claim.sub = '';
 update public.profiles set role='admin' where id='77777777-7777-7777-7777-777777777777';
+set local request.jwt.claim.sub = '77777777-7777-7777-7777-777777777777';
 set local role authenticated;
 select public.ielts_start_attempt('aaaaaaaa-7777-7777-7777-777777777771');
 reset role;
+set local request.jwt.claim.sub = '';
 update public.profiles set role='user' where id='77777777-7777-7777-7777-777777777777';
 update public.ielts_learners set premium_expires_at=now()-interval '1 second' where user_id='77777777-7777-7777-7777-777777777777';
+set local request.jwt.claim.sub = '77777777-7777-7777-7777-777777777777';
 set local role authenticated;
 do $$ begin
   begin
     perform public.ielts_start_attempt('aaaaaaaa-7777-7777-7777-777777777771');
     raise exception 'FAIL expired resume';
   exception when raise_exception then if sqlerrm <> 'premium_required' then raise; end if; end;
-  raise notice 'PASS admin bypass and expired membership';
+  raise notice 'PASS admin bypass and non-premium membership';
 end; $$;
 rollback;
