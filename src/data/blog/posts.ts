@@ -2,8 +2,15 @@ import type { BlogPost } from "./types";
 import { PLAN } from "./plan";
 
 import { POST_BAND_SCORES } from "./posts/ielts-band-scores-explained";
+import { SCORES } from "./posts/scores";
+import { LISTENING } from "./posts/listening";
+import { READING } from "./posts/reading";
+import { WRITING } from "./posts/writing";
+import { SPEAKING } from "./posts/speaking";
+import { VOCAB } from "./posts/vocab";
+import { PLANNING } from "./posts/planning";
 
-export const POSTS: BlogPost[] = [POST_BAND_SCORES];
+export const POSTS: BlogPost[] = [POST_BAND_SCORES, ...SCORES, ...LISTENING, ...READING, ...WRITING, ...SPEAKING, ...VOCAB, ...PLANNING];
 
 export const postBySlug = (slug: string) => POSTS.find((p) => p.slug === slug);
 

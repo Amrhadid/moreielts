@@ -4,9 +4,10 @@
  */
 import { writeFileSync } from "node:fs";
 import { QUESTION_GUIDES } from "../src/data/question-guides";
+import { POSTS } from "../src/data/blog/posts";
 
 const SITE = (process.env.SITE_URL ?? "https://moreielts.com").replace(/\/$/, "");
-const paths = ["/", "/learn", "/guides", "/pricing", ...QUESTION_GUIDES.map((g) => `/guides/${g.slug}`)];
+const paths = ["/", "/learn", "/guides", "/pricing", "/blog", ...POSTS.map((p) => `/blog/${p.slug}`), ...QUESTION_GUIDES.map((g) => `/guides/${g.slug}`)];
 
 const xml = [
   '<?xml version="1.0" encoding="UTF-8"?>',
